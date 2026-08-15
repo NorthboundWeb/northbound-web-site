@@ -10,6 +10,7 @@ import {
 import { currency, site } from '@/lib/site'
 import {
   ADVANCED_MANAGEMENT_PRICE,
+  COMPLIMENTARY_MONTH_TERMS,
   buildPackages,
   managementPlans,
   process,
@@ -78,9 +79,9 @@ export default function HomePage() {
             <dl className="grid grid-cols-2 gap-x-8 gap-y-10 border-t border-line pt-10 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12">
               {[
                 { term: 'Pricing', detail: 'Fixed package prices, £199 to £399' },
-                { term: 'Replies', detail: 'Within one working day, every time' },
+                { term: 'Replies', detail: 'Usually within one working day' },
                 { term: 'Ownership', detail: 'Your code, your repository, your domain' },
-                { term: 'Aftercare', detail: 'Management from £39/month, cancel anytime' },
+                { term: 'Aftercare', detail: 'Optional plans, £39 to £149/month' },
               ].map((item) => (
                 <div key={item.term}>
                   <dt className="eyebrow">{item.term}</dt>
@@ -140,8 +141,8 @@ export default function HomePage() {
 
                   {pkg.freeAdvancedMonth ? (
                     <p className="mt-5 text-[13px] leading-relaxed text-ink-faint">
-                      Includes 1 month of Advanced Management free, worth{' '}
-                      {currency.format(ADVANCED_MANAGEMENT_PRICE)}.
+                      Includes 1 complimentary month of Advanced Management,
+                      worth {currency.format(ADVANCED_MANAGEMENT_PRICE)}.
                     </p>
                   ) : null}
 
@@ -164,7 +165,7 @@ export default function HomePage() {
           <SectionHeading
             eyebrow="After launch"
             title="Keep it looked after."
-            lede="Optional, and never a condition of the build. Every plan is rolling — cancel whenever, and the code stays yours either way."
+            lede="Optional, and not a condition of the build. Plans are rolling — cancel before your next billing date and future renewals stop."
           />
 
           <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
@@ -172,25 +173,26 @@ export default function HomePage() {
               <li key={plan.slug} className="flex flex-col bg-paper p-8">
                 <h3 className="text-xl">{plan.name}</h3>
                 <p className="mt-4 font-serif text-3xl text-accent">
-                  {plan.variable ? (
-                    <span className="text-lg text-ink-faint">from </span>
-                  ) : null}
                   {currency.format(plan.price)}
                   <span className="font-sans text-base text-ink-faint">
                     /month
                   </span>
                 </p>
-                <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
+                <p className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-muted">
                   {plan.summary}
+                </p>
+                <p className="mt-6 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
+                  {plan.changeTime}
                 </p>
               </li>
             ))}
           </ul>
 
           <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-faint">
-            The Advanced and Fully Custom builds both include the first month of
-            Advanced Management free, worth{' '}
-            {currency.format(ADVANCED_MANAGEMENT_PRICE)}.
+            The Advanced and Custom builds each include one complimentary month
+            of Advanced Management, worth{' '}
+            {currency.format(ADVANCED_MANAGEMENT_PRICE)}.{' '}
+            {COMPLIMENTARY_MONTH_TERMS}
           </p>
         </Container>
       </Section>

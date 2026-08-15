@@ -56,7 +56,7 @@ export default function OpengraphImage() {
         </div>
 
         <div style={{ display: 'flex', fontSize: 28, color: '#a1acb1' }}>
-          Design · Development · Care plans · {site.location}
+          Design · Development · Management · {site.location}
         </div>
       </div>
     ),

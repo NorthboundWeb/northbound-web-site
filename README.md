@@ -21,22 +21,65 @@ them — each has one home.
 The prices in `src/lib/services.ts` are the **real advertised prices**, not
 examples:
 
-| Package | Price |
-|---|---|
-| Basic Build | £199 |
-| Standard Build | £299 (marked *Most popular*) |
-| Advanced Build | £399 — includes 1 month Advanced Management free |
-| Fully Custom Build | from £499 — includes 1 month Advanced Management free |
+| Build | Price | Pages | Revisions |
+|---|---|---|---|
+| Basic | £199 | Up to 3 | 1 round |
+| Standard | £299 (*Most popular*) | Up to 5 | 2 rounds |
+| Advanced | £399 + complimentary month | Up to 8 | 3 rounds |
+| Custom | from £499 + complimentary month | No cap | Agreed in the quote |
 
-| Management plan | Price |
+| Build | Estimated timescale |
 |---|---|
-| Website Management | from £39/month |
-| Advanced Management | £80/month |
-| Complete Management | £149/month |
+| Basic | ~5–7 working days |
+| Standard | ~7–10 working days |
+| Advanced | ~10–15 working days |
+| Custom | Agreed in the written quote |
 
-Only the Fully Custom Build is variable, because its final figure depends on
-requirements. The three packaged builds must **not** be described as "example",
-"starting from" or "indicative" prices anywhere in the copy.
+| Management plan | Price | Included change time |
+|---|---|---|
+| Essential | £39/month | Up to 30 minutes per billing month |
+| Advanced | £80/month | Up to 1 hour per billing month |
+| Complete | £149/month | Up to 2 hours per billing month |
+
+Payment is **50% deposit to begin, 50% once complete and approved, before go-live**.
+
+Prices are shown as plain figures — **no VAT wording either way**, by decision.
+
+Only the Custom build is variable. The three fixed builds must **not** be
+described as "example", "starting from" or "indicative" prices anywhere.
+
+**Rules that the copy must keep honouring:**
+
+- Included change time does **not** roll over; work beyond it is quoted first.
+- Never promise unlimited fixes, updates or support.
+- No absolute promises ("every time") and no guaranteed same-day response.
+- The complimentary month must **not** auto-convert into a paid subscription —
+  the customer chooses at the end of it.
+- A management plan is optional and must not be implied as a condition of
+  having a website built.
+- Custom's £499 must not imply that accounts, databases, payments, portals or
+  ecommerce are included; those are quoted separately.
+
+- Timelines are **estimates, never guarantees**, and must always render
+  alongside `TIMELINE_TERMS` so the conditions travel with the number.
+- Cancelling a plan stops future renewals; the current billing period is not
+  part-refunded. Never say cancelling takes the site offline — the terms
+  promise options (continue hosting separately where available, or transfer to
+  another provider).
+- Management cards lead with benefits. Change time renders **below** them, so a
+  plan does not read as hours sold by the month.
+- Copywriting, photography, logo/brand design and paid stock are **not** in the
+  fixed packages.
+- "Priority support" is a queue position, **not** a response-time promise.
+- Advanced's booking integration is **connecting/embedding an existing service**.
+  Bespoke booking systems are scoped and quoted separately.
+- Revision feedback is requested within **10 working days** of a preview; later
+  feedback can pause the project. **Silence is never treated as approval.**
+- No VAT wording, in either direction.
+
+These live in `managementTerms`, `commercialTerms`, `TIMELINE_TERMS`,
+`COMPLIMENTARY_MONTH_TERMS`, each plan's `changeTime`, and the `note` field on
+the Custom package — all in `src/lib/services.ts`.
 
 `ADVANCED_MANAGEMENT_PRICE` is exported from `src/lib/services.ts` and used
 wherever the free month is mentioned, so its stated value cannot drift out of

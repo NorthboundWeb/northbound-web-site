@@ -97,7 +97,7 @@ export function ContactForm() {
         <h2 className="font-serif text-2xl">Message sent</h2>
         <p className="mt-3 leading-relaxed text-ink-muted">
           {state.message ??
-            'Thanks — your message is with me. I reply within one working day.'}
+            'Thanks — your message is with me. I normally reply within one working day.'}
         </p>
       </div>
     )

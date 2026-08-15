@@ -17,11 +17,41 @@ business name, URL and contact email are in `src/lib/site.ts`. Edit copy there
 rather than in pages.
 
 **Prices are real, not illustrative.** Basic £199, Standard £299, Advanced £399
-and the management plans are the actual advertised prices. Do **not** describe
-them as example, indicative or "starting from" figures. Only the Fully Custom
-Build carries a "from" (£499), because its final price depends on requirements.
-Use the exported `ADVANCED_MANAGEMENT_PRICE` wherever the free month's value is
+and the management plans (£39 / £80 / £149) are the actual advertised prices. Do
+**not** describe them as example, indicative or "starting from" figures. Only
+Custom carries a "from" (£499), because its scope is agreed per project. Use the
+exported `ADVANCED_MANAGEMENT_PRICE` wherever the complimentary month's value is
 quoted, so it cannot drift from the plan's own price.
+
+**Promises are bounded on purpose.** Never write unlimited fixes, updates or
+support. No absolutes ("every time"), no guaranteed same-day response. Included
+change time does not roll over, and extra work is quoted before it is done. The
+complimentary month must never be described as auto-renewing. A management plan
+is optional and must not read as a condition of having a site built. Custom's
+£499 must not imply accounts, databases, payments, portals or ecommerce are
+included.
+
+**Commercial terms are load-bearing.** Payment is 50% deposit to begin and 50%
+once complete and approved, before go-live — never imply the balance is
+optional at that point. Timelines are estimates and must always render with
+`TIMELINE_TERMS` beside them; never write "guaranteed in X days". Cancelling a
+plan stops future renewals and does not part-refund the current period, and
+must never be described as taking the site offline. Copywriting, photography,
+logo/brand design and paid stock are not in the fixed packages. Add **no VAT
+wording** in either direction.
+
+"Priority support" is a **place in the queue, not an SLA** — Advanced and
+Complete requests go ahead of Essential ones. Never attach a response time to
+it. Advanced's booking integration means **connecting or embedding an existing
+third-party service**; bespoke booking systems, availability logic, custom
+payment flows, accounts or automated workflows are quoted separately. Revision
+feedback is asked for within **10 working days** of a preview, after which the
+project may pause and the date may move — and **silence is never treated as
+approval**.
+
+These constraints are encoded in `managementTerms`, `commercialTerms`,
+`TIMELINE_TERMS`, `COMPLIMENTARY_MONTH_TERMS`, each plan's `changeTime`, and
+the `note` fields on the Advanced and Custom packages.
 
 **Do not invent social proof.** No testimonials, client logos, case studies,
 review counts or years-of-experience claims unless Che supplies real ones. The

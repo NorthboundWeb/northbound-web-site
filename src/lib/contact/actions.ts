@@ -163,6 +163,6 @@ export async function submitEnquiry(
 
   return {
     status: 'success',
-    message: 'Thanks — your message is with me. I reply within one working day.',
+    message: 'Thanks — your message is with me. I normally reply within one working day.',
   }
 }

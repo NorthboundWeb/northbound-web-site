@@ -9,15 +9,19 @@ import {
 } from '@/components/ui'
 import {
   ADVANCED_MANAGEMENT_PRICE,
+  COMPLIMENTARY_MONTH_TERMS,
+  TIMELINE_TERMS,
   buildPackages,
+  commercialTerms,
   managementPlans,
+  managementTerms,
 } from '@/lib/services'
 import { currency, site } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Packages and prices',
   description:
-    'Website packages at fixed prices: Basic Build £199, Standard Build £299, Advanced Build £399, and Fully Custom from £499. Monthly management plans from £39.',
+    'Website packages at fixed prices: Basic £199, Standard £299, Advanced £399, and Custom from £499. Optional management plans at £39, £80 and £149 a month.',
   alternates: { canonical: '/services' },
 }
 
@@ -33,9 +37,8 @@ export default function ServicesPage() {
             </h1>
             <p className="mt-7 text-lg leading-relaxed text-ink-muted">
               Three packages at fixed prices, so you know what you are paying
-              before you speak to me. The fourth is for genuinely bespoke work,
-              where the figure depends on what you need building. Every build
-              includes hosting setup, HTTPS and a repository you own.
+              before you speak to me. The fourth is for work that does not fit a
+              package, where the scope and the price are agreed together first.
             </p>
           </div>
         </Container>
@@ -80,8 +83,18 @@ export default function ServicesPage() {
                   </p>
                   <p className="mt-3 text-sm text-ink-faint">
                     {pkg.variable
-                      ? 'One-off. The final figure depends on what you need building, and is confirmed in writing before any work starts.'
-                      : 'One-off, all in. No monthly fee unless you choose one.'}
+                      ? 'Starting price. The final figure is agreed in writing before any work begins.'
+                      : 'One-off. 50% deposit to begin, 50% once complete and approved, before it goes live.'}
+                  </p>
+
+                  <p className="mt-5 text-sm text-ink-muted">
+                    <span className="font-medium text-ink">
+                      Estimated timescale:{' '}
+                    </span>
+                    {pkg.timeline}
+                  </p>
+                  <p className="mt-2 text-xs leading-relaxed text-ink-faint">
+                    {TIMELINE_TERMS}
                   </p>
                 </div>
 
@@ -89,6 +102,12 @@ export default function ServicesPage() {
                   <span className="font-medium text-ink">Best for: </span>
                   {pkg.bestFor}
                 </p>
+
+                {pkg.note ? (
+                  <p className="mt-6 border-l-2 border-line-strong pl-4 text-sm leading-relaxed text-ink-faint">
+                    {pkg.note}
+                  </p>
+                ) : null}
               </div>
 
               <div className="lg:pt-2">
@@ -106,6 +125,12 @@ export default function ServicesPage() {
                     </li>
                   ))}
                 </ul>
+
+                {pkg.freeAdvancedMonth ? (
+                  <p className="mt-7 rounded-xl bg-accent-wash p-5 text-sm leading-relaxed text-ink-muted">
+                    {COMPLIMENTARY_MONTH_TERMS}
+                  </p>
+                ) : null}
               </div>
             </div>
           </Container>
@@ -117,10 +142,10 @@ export default function ServicesPage() {
         <Container>
           <SectionHeading
             eyebrow="Management plans"
-            title="Optional, rolling, and never a condition of the build."
-            lede={`The Advanced and Fully Custom builds include the first month of Advanced Management free, worth ${currency.format(
+            title="Optional, rolling, and not a condition of the build."
+            lede={`The Advanced and Custom builds include one complimentary month of Advanced Management, worth ${currency.format(
               ADVANCED_MANAGEMENT_PRICE
-            )}. After that, keep it or cancel — the site is yours either way.`}
+            )}. ${COMPLIMENTARY_MONTH_TERMS}`}
           />
 
           <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-3">
@@ -128,9 +153,6 @@ export default function ServicesPage() {
               <div key={plan.slug} className="flex flex-col bg-paper p-8">
                 <h3 className="text-2xl">{plan.name}</h3>
                 <p className="mt-4 font-serif text-4xl text-accent">
-                  {plan.variable ? (
-                    <span className="text-xl text-ink-faint">from </span>
-                  ) : null}
                   {currency.format(plan.price)}
                   <span className="font-sans text-base text-ink-faint">
                     /month
@@ -139,7 +161,7 @@ export default function ServicesPage() {
                 <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
                   {plan.summary}
                 </p>
-                <ul className="mt-7 space-y-3.5">
+                <ul className="mt-7 flex-1 space-y-3.5">
                   {plan.includes.map((item) => (
                     <li key={item} className="flex gap-3.5">
                       <span
@@ -148,6 +170,61 @@ export default function ServicesPage() {
                       />
                       <span className="text-[15px] leading-relaxed text-ink-muted">
                         {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Change time sits below the benefits on purpose — a plan is
+                    the site being looked after, not hours sold by the month. */}
+                <p className="mt-7 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
+                  {plan.changeTime}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 rounded-2xl border border-line bg-paper-sunk p-8">
+            <h3 className="eyebrow">How the plans work</h3>
+            <ul className="mt-6 space-y-3">
+              {managementTerms.map((term) => (
+                <li key={term} className="flex gap-3.5">
+                  <span
+                    aria-hidden
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ink-faint"
+                  />
+                  <span className="text-[15px] leading-relaxed text-ink-muted">
+                    {term}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Practical terms */}
+      <Section id="terms" className="scroll-mt-24 border-t border-line">
+        <Container>
+          <SectionHeading
+            eyebrow="The practical bits"
+            title="How a project actually works."
+            lede="The things people normally have to ask for. Easier to put them here."
+          />
+
+          <div className="mt-16 grid gap-x-14 gap-y-12 sm:grid-cols-2">
+            {commercialTerms.map((term) => (
+              <div key={term.title} className="border-t border-line pt-6">
+                <h3 className="text-xl">{term.title}</h3>
+                <ul className="mt-5 space-y-3.5">
+                  {term.points.map((point) => (
+                    <li key={point} className="flex gap-3.5">
+                      <span
+                        aria-hidden
+                        className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
+                      />
+                      <span className="text-[15px] leading-relaxed text-ink-muted">
+                        {point}
                       </span>
                     </li>
                   ))}

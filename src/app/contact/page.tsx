@@ -5,7 +5,7 @@ import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Get a quote',
-  description: `Tell ${site.name} about your project and get a written quote with a fixed scope and a fixed price. Replies within one working day.`,
+  description: `Tell ${site.name} about your project and get a written quote with a fixed scope and a fixed price. Replies usually within one working day.`,
   alternates: { canonical: '/contact' },
 }
 
@@ -13,12 +13,22 @@ const answers = [
   {
     question: 'What happens after I send this?',
     answer:
-      'I read it properly and reply within one working day. If it looks like a fit, the next step is a short call to fill in the gaps — no charge and no obligation.',
+      'I read it properly and normally reply within one working day. If it looks like a fit, the next step is a short call to fill in the gaps — no charge and no obligation.',
   },
   {
     question: 'When do I find out the price?',
     answer:
-      'You already know it — the package prices are on the services page, and they are what you pay. Only a Fully Custom Build varies, and that figure is confirmed in writing before any work starts.',
+      'You already know it — the package prices are on the services page, and they are what you pay. Only a Custom build varies, and its scope and price are agreed in writing before any work begins.',
+  },
+  {
+    question: 'How does payment work?',
+    answer:
+      'A 50% deposit secures the project and lets work begin. The remaining 50% is payable once the site is complete and approved, before it goes live.',
+  },
+  {
+    question: 'How long does a build take?',
+    answer:
+      'Roughly 5–7 working days for Basic, 7–10 for Standard and 10–15 for Advanced. Custom is agreed in your quote. These are estimates: the clock starts once the deposit and your content have arrived, and slow feedback moves the date.',
   },
   {
     question: 'What if I do not know what I need?',
@@ -28,7 +38,7 @@ const answers = [
   {
     question: 'Do I have to take a management plan?',
     answer:
-      'No. Every plan is optional and rolling, and the build price does not depend on taking one. The Advanced and Fully Custom builds include the first month free so you can try it before deciding.',
+      'No. Plans are optional and rolling, and the build price does not depend on taking one. The Advanced and Custom builds include a complimentary month of Advanced Management — it does not turn into a paid subscription on its own, so if you do nothing when it ends, nothing is charged.',
   },
 ]
 

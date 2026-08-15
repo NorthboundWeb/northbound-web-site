@@ -1,15 +1,20 @@
 import { z } from 'zod'
 import { buildPackages, managementPlans } from '@/lib/services'
 
+/**
+ * Builds and management plans both have a tier called "Advanced", so the plan
+ * names are suffixed here. Without it the dropdown shows two options reading
+ * simply "Advanced", and the enquiry email cannot tell which one was picked.
+ */
 export const projectTypes = [
-  ...buildPackages.map((pkg) => pkg.name),
-  ...managementPlans.map((plan) => plan.name),
+  ...buildPackages.map((pkg) => `${pkg.name} build`),
+  ...managementPlans.map((plan) => `${plan.name} management`),
   'Not sure yet',
   'Something else',
 ] as const
 
 /**
- * Only asked about for a Fully Custom Build, where the price genuinely varies.
+ * Only asked about for a Custom build, where the price genuinely varies.
  * The packaged builds have published prices, so a budget question would be
  * asking something the visitor can already read off the page.
  */

@@ -1,11 +1,15 @@
 /**
- * Northbound Web's offer: fixed-price build packages and monthly management
+ * Northbound Web's offer: fixed-price website builds and monthly management
  * plans.
  *
- * These are the real advertised prices, not illustrations. Only the Fully
- * Custom Build is variable ("from £499"), because its final figure depends on
- * requirements. Do not reintroduce "example price" or "starting from" framing
- * around the £199, £299 and £399 packages — they are the advertised prices.
+ * These are the real advertised prices, not illustrations. Only the Custom
+ * build is variable ("from £499"), because its scope is agreed per project.
+ * Do not reintroduce "example price" or "starting from" framing around the
+ * £199, £299 and £399 packages — they are the advertised prices.
+ *
+ * Everything a customer is promised lives in this file. Do not add
+ * deliverables here that have not been agreed as part of the offer, and do not
+ * promise unlimited fixes, updates or support anywhere.
  */
 
 /** Advanced Management's monthly price, quoted wherever the free month is mentioned. */
@@ -21,82 +25,90 @@ export type BuildPackage = {
   summary: string
   bestFor: string
   includes: string[]
-  /** Whether the package bundles a free month of Advanced Management. */
+  /**
+   * An estimate, never a guarantee. Always render alongside TIMELINE_TERMS so
+   * the conditions the estimate depends on are never separated from it.
+   */
+  timeline: string
+  /** Shown as small print under the package — used to bound what is included. */
+  note?: string
+  /** Whether the package bundles a complimentary month of Advanced Management. */
   freeAdvancedMonth?: boolean
 }
 
 export const buildPackages: BuildPackage[] = [
   {
-    slug: 'basic-build',
-    name: 'Basic Build',
+    slug: 'basic',
+    name: 'Basic',
     price: 199,
     summary:
-      'A single, well-built page that tells people who you are, what you do and how to reach you. Enough to look established and be found — without paying for pages you would never fill.',
+      'A small, well-built site that tells people who you are, what you do and how to reach you.',
     bestFor:
       'Sole traders and new businesses who need a credible presence quickly.',
     includes: [
-      'One-page website, designed around your business rather than a template',
-      'Mobile and tablet layouts, tested on real screen sizes',
-      'Enquiry form with spam protection, delivered to your inbox',
-      'Core SEO: page titles, descriptions and a sitemap search engines can read',
-      'HTTPS, hosting and deployment set up for you',
-      'Your code in a repository you own',
+      'Up to 3 pages',
+      'Mobile responsive',
+      'Contact form',
+      'Basic SEO setup',
+      '1 revision round',
     ],
+    timeline: 'Approximately 5–7 working days',
   },
   {
-    slug: 'standard-build',
-    name: 'Standard Build',
+    slug: 'standard',
+    name: 'Standard',
     price: 299,
     badge: 'Most popular',
     summary:
-      'The size of site most small businesses actually need: room to explain each service properly, build trust, and give search engines something to rank.',
+      'Room to explain each of your services properly, with analytics so you can see what visitors do.',
     bestFor:
       'Established businesses with a few distinct services or locations to cover.',
     includes: [
-      'Everything in the Basic Build',
-      'Up to five pages',
-      'A page per service or product, so each one can rank on its own',
-      'Google Business Profile and local SEO groundwork',
-      'Analytics, so you can see what visitors actually do',
-      'A copy review across every page before launch',
+      'Everything in Basic',
+      'Up to 5 pages',
+      'Analytics setup',
+      'Google Business link or integration, where applicable',
+      '2 revision rounds',
     ],
+    timeline: 'Approximately 7–10 working days',
   },
   {
-    slug: 'advanced-build',
-    name: 'Advanced Build',
+    slug: 'advanced',
+    name: 'Advanced',
     price: 399,
     freeAdvancedMonth: true,
     summary:
-      'A larger site with something working behind it — online booking, enquiry routing, or a connection to a tool you already use. For businesses whose website has a job to do beyond looking right.',
+      'A larger site, with the option of a third-party booking tool connected where that suits how you work.',
     bestFor:
-      'Businesses taking bookings or enquiries at volume, or with a lot to say.',
+      'Businesses taking bookings or enquiries regularly, or with more to say.',
     includes: [
-      'Everything in the Standard Build',
-      'Up to ten pages',
-      'Online booking, enquiry routing or a straightforward integration',
-      'Structured data, so search results show more than a blue link',
-      'A dedicated performance and accessibility pass before launch',
-      `One month of Advanced Management included free, worth £${ADVANCED_MANAGEMENT_PRICE}`,
+      'Everything in Standard',
+      'Up to 8 pages',
+      'One standard third-party booking integration, where compatible and appropriate',
+      '3 revision rounds',
+      `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
     ],
+    timeline: 'Approximately 10–15 working days',
+    note: 'The booking integration means connecting or embedding a suitable booking service you already use, or one we pick together. Building a booking system from scratch — complex availability rules, custom payment flows, customer accounts or automated booking workflows — is a bigger job, so that gets scoped and quoted separately.',
   },
   {
-    slug: 'fully-custom-build',
-    name: 'Fully Custom Build',
+    slug: 'custom',
+    name: 'Custom',
     price: 499,
     variable: true,
     freeAdvancedMonth: true,
     summary:
-      'When a website is not enough — customer portals, booking systems, dashboards, internal tools. Software with accounts, data and rules, built on the same foundations as everything else here.',
+      'For projects that do not fit a package. We agree the requirements and scope together, and the price is quoted from that.',
     bestFor:
-      'Businesses running something important on spreadsheets, email threads or paper.',
+      'Businesses whose requirements do not fit one of the fixed packages.',
     includes: [
-      'Everything in the Advanced Build',
-      'Customer accounts, portals, dashboards or internal tools',
-      'A database designed for the job, with access rules enforced server-side',
-      'Payments, email and third-party integrations where the workflow needs them',
-      'Built and delivered in stages, so you see it working as it goes',
-      `One month of Advanced Management included free, worth £${ADVANCED_MANAGEMENT_PRICE}`,
+      'Requirements and scope agreed individually',
+      'No fixed page cap',
+      'Revision allowance agreed in the project quote',
+      `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
     ],
+    timeline: 'Agreed individually in your written quote',
+    note: '£499 is where a custom project starts, not what every custom project costs. Substantial functionality — user accounts, databases, payments, customer portals, ecommerce and the like — is not included in that starting price. Anything of that kind is scoped and quoted separately before any work begins.',
   },
 ]
 
@@ -104,54 +116,133 @@ export type ManagementPlan = {
   slug: string
   name: string
   price: number
-  /** True where the price is a floor rather than a single advertised figure. */
-  variable?: boolean
   summary: string
+  /**
+   * The benefits of the plan. Change time is deliberately NOT listed here — a
+   * plan is looking after the site, not a block of hours sold by the month.
+   * It goes in `changeTime`, rendered below the benefits.
+   */
   includes: string[]
+  changeTime: string
 }
 
 export const managementPlans: ManagementPlan[] = [
   {
-    slug: 'website-management',
-    name: 'Website Management',
+    slug: 'essential',
+    name: 'Essential',
     price: 39,
-    variable: true,
     summary:
-      'The essentials, so the site stays fast, secure and online instead of quietly rotting.',
+      'Keeps the site online, secure and up to date, without you having to think about it.',
     includes: [
-      'Hosting and deployment managed for you',
-      'Security and dependency updates applied',
-      'Uptime monitoring and regular backups',
-      'Small content and copy changes each month',
-      'Cancel whenever — the code stays yours regardless',
+      'Hosting and technical maintenance',
+      'Security and dependency maintenance, where applicable',
+      'Uptime monitoring',
     ],
+    changeTime:
+      'Includes up to 30 minutes of requested website changes per billing month.',
   },
   {
     slug: 'advanced-management',
-    name: 'Advanced Management',
+    name: 'Advanced',
     price: ADVANCED_MANAGEMENT_PRICE,
     summary:
-      'More change time each month, plus active monitoring — so problems get found by me rather than by your customers.',
+      'Adds a regular check on how the site is actually performing, and moves your requests up the queue.',
     includes: [
-      'Everything in Website Management',
-      'More change time each month for updates and new sections',
-      'Error monitoring, with fixes included rather than billed',
-      'A monthly performance and SEO check',
-      'Priority response on working days',
+      'Everything in Essential',
+      'Analytics and performance check',
+      'Priority support — your requests go ahead of Essential ones in the queue',
+    ],
+    changeTime:
+      'Includes up to 1 hour of requested website changes per billing month.',
+  },
+  {
+    slug: 'complete',
+    name: 'Complete',
+    price: 149,
+    summary:
+      'The site reviewed and reported on properly, so you can see how it is doing rather than guess.',
+    includes: [
+      'Everything in Advanced',
+      'Performance and SEO review',
+      'Simple monthly performance report',
+    ],
+    changeTime:
+      'Includes up to 2 hours of requested website changes per billing month.',
+  },
+]
+
+/**
+ * The terms that bound every management plan. Shown wherever plans are, so the
+ * limits are as visible as the features.
+ */
+export const managementTerms = [
+  'Unused change time does not roll over from one billing month to the next.',
+  'Additional work beyond the included allowance can be quoted separately.',
+  'Priority support means Advanced and Complete requests are handled ahead of Essential ones. It is a place in the queue rather than a guaranteed response time.',
+  'You can cancel before your next billing date, which stops future renewals. Amounts already charged for the current billing period are not partially refunded if you cancel part-way through it.',
+  'If you end a plan, I will set out your options — either continuing hosting separately, where that is available, or transferring the website to another suitable hosting provider.',
+  'A management plan is optional. It is not a condition of having a website built.',
+]
+
+/** Stated wherever the complimentary month is mentioned. */
+export const COMPLIMENTARY_MONTH_TERMS =
+  'The complimentary month does not turn into a paid subscription automatically. When it ends, you decide whether to start a paid management plan — if you do nothing, nothing is charged.'
+
+/**
+ * The conditions every timeline estimate depends on. Render this wherever a
+ * `timeline` is shown; an estimate separated from its conditions reads as a
+ * guarantee, which is exactly what these are not.
+ */
+export const TIMELINE_TERMS =
+  'Estimates, not guarantees. The clock starts once the deposit has been received and I have the information, content and assets needed to begin. Delays in content, feedback or approvals can move the completion date.'
+
+/**
+ * The practical commercial terms, shown on the services page. Wording here is
+ * deliberately bounded — read the constraints at the top of this file before
+ * editing any of it.
+ */
+export const commercialTerms: { title: string; points: string[] }[] = [
+  {
+    title: 'Payment',
+    points: [
+      'A 50% deposit secures your project and allows work to begin.',
+      'The remaining 50% is payable once the website is complete and approved, before it goes live.',
     ],
   },
   {
-    slug: 'complete-management',
-    name: 'Complete Management',
-    price: 149,
-    summary:
-      'The website treated as an ongoing part of the business, improved deliberately rather than only when something breaks.',
-    includes: [
-      'Everything in Advanced Management',
-      'Ongoing content, page and copy updates',
-      'Improvements planned with you each quarter',
-      'Analytics reporting in plain English',
-      'Same-day response on working days',
+    title: 'Timescales',
+    points: [
+      'Basic — approximately 5–7 working days.',
+      'Standard — approximately 7–10 working days.',
+      'Advanced — approximately 10–15 working days.',
+      'Custom — agreed individually in your written quote.',
+      TIMELINE_TERMS,
+    ],
+  },
+  {
+    title: 'Revisions and feedback',
+    points: [
+      'Each package includes a set number of revision rounds — one on Basic, two on Standard, three on Advanced. Custom is agreed in your quote.',
+      'Please send the feedback for each round within 10 working days of getting the preview link.',
+      'If it arrives later than that, the project may be paused and the estimated completion date may move.',
+      'Silence is never treated as approval. If I have not heard from you, I will follow up rather than sign the work off on your behalf.',
+    ],
+  },
+  {
+    title: 'Domains',
+    points: [
+      'Your domain should be owned and controlled by you.',
+      'I can help you buy one, configure it, and connect it to your site.',
+      'Domain registration and renewal charges are separate, unless a written quote says otherwise.',
+    ],
+  },
+  {
+    title: 'Content and images',
+    points: [
+      'You normally supply your business information, any branding or logo files you have, specific photographs you want used, accurate service or product details, and your contact information.',
+      'I format and structure what you send, and make reasonable improvements to it as part of the build.',
+      'Professional copywriting, photography, logo or brand design, and paid stock assets are not included in the fixed packages. Anything substantially outside a package can be quoted separately.',
+      'Waiting on content is the most common reason a project runs past its estimate.',
     ],
   },
 ]
@@ -166,7 +257,7 @@ export const process = [
   {
     step: '02',
     title: 'Confirmation',
-    body: 'You know the price before anything starts, because it is published. For a Fully Custom Build, the final figure is confirmed in writing once the requirements are clear.',
+    body: 'You know the price before anything starts, because it is published. For a Custom build, the scope and the final figure are agreed in writing first. A 50% deposit secures the project, and the remaining 50% is payable once the site is complete and approved, before it goes live.',
   },
   {
     step: '03',
@@ -176,17 +267,17 @@ export const process = [
   {
     step: '04',
     title: 'Build',
-    body: 'Built in the open on a live preview link you can check at any point. You see progress as it happens rather than a reveal at the end.',
+    body: 'Built in the open on a live preview link you can check at any point. Most packages take somewhere between one and three weeks, counted from the deposit and the arrival of your content — an estimate rather than a promise, since it moves if content or feedback is slow.',
   },
   {
     step: '05',
-    title: 'Launch',
-    body: 'Testing across real devices, performance and accessibility checks, analytics and monitoring connected, then a careful DNS switch — planned in advance so nothing goes dark.',
+    title: 'Revisions',
+    body: 'Your package includes a set number of revision rounds — one on Basic, two on Standard, three on Advanced. A round means you collect your changes, send them over, and I work through them together. Feedback within 10 working days of the preview keeps things moving; later than that and the finish date can shift. I will never take silence as approval.',
   },
   {
     step: '06',
-    title: 'Aftercare',
-    body: 'Handover with documentation you can actually use. Then either you take it from there, or a management plan keeps it maintained and monitored.',
+    title: 'Launch',
+    body: 'Testing across real devices, then a careful DNS switch — planned in advance so nothing goes dark. Handover comes with documentation you can actually use, and a management plan afterwards is entirely optional.',
   },
 ]
 
@@ -202,7 +293,7 @@ export const standards = [
   },
   {
     title: 'Secure',
-    body: 'Secrets stay server-side and never reach the browser. Forms validate on the server, not just in the page. Databases enforce access rules at the row level rather than trusting the front end to behave.',
+    body: 'Secrets stay server-side and never reach the browser. Forms validate on the server, not just in the page. Where a project stores data, access rules are enforced by the database rather than by trusting the front end to behave.',
   },
   {
     title: 'Yours to keep',
@@ -214,6 +305,6 @@ export const standards = [
   },
   {
     title: 'Monitored',
-    body: 'Errors and downtime are reported automatically. Problems get found by monitoring rather than by a customer emailing to say your contact form has been broken for a fortnight.',
+    body: 'Sites are built so that downtime can be spotted by monitoring rather than by a customer emailing to say the contact form has been broken for a fortnight. Uptime monitoring is part of every management plan.',
   },
 ]
