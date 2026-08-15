@@ -25,8 +25,8 @@ export const metadata: Metadata = {
 
 const beliefs = [
   {
-    title: 'The quote is the quote',
-    body: 'You get a fixed price for a fixed scope before anything starts. If the work grows because you have asked for something new, we agree that separately, in writing, before I build it. No invoice should ever be a surprise.',
+    title: 'The price is on the page',
+    body: 'Package prices are published, and they are what you pay. If the work grows because you have asked for something new, we agree that separately, in writing, before I build it. No invoice should ever be a surprise.',
   },
   {
     title: 'You own everything',
@@ -38,7 +38,7 @@ const beliefs = [
   },
   {
     title: 'The honest answer, even when it costs me',
-    body: 'If a five-hundred-pound landing page would do what you need, I will not quote for a five-thousand-pound website. If the thing you are describing does not need a developer at all, I will say so. Long-term relationships pay better than one oversold project.',
+    body: 'If the Basic Build would do what you need, I will not sell you the Advanced one. If the thing you are describing does not need a developer at all, I will say so. Long-term relationships pay better than one oversold project.',
   },
 ]
 

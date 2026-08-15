@@ -11,13 +11,17 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 Marketing site for Northbound Web. Next.js 16 App Router, Tailwind CSS v4,
 TypeScript. Every route is static; there is no database and no auth.
 
-**Copy lives in data files, not JSX.** Services, prices, the process steps and
-the build standards are all in `src/lib/services.ts`; the business name, URL and
-contact email are in `src/lib/site.ts`. Edit copy there rather than in pages.
+**Copy lives in data files, not JSX.** Packages, management plans, prices, the
+process steps and the build standards are all in `src/lib/services.ts`; the
+business name, URL and contact email are in `src/lib/site.ts`. Edit copy there
+rather than in pages.
 
-**Prices are illustrative.** `fromPrice` values are example starting figures and
-every page says the real number comes from a written quote. Do not present them
-as fixed rates.
+**Prices are real, not illustrative.** Basic £199, Standard £299, Advanced £399
+and the management plans are the actual advertised prices. Do **not** describe
+them as example, indicative or "starting from" figures. Only the Fully Custom
+Build carries a "from" (£499), because its final price depends on requirements.
+Use the exported `ADVANCED_MANAGEMENT_PRICE` wherever the free month's value is
+quoted, so it cannot drift from the plan's own price.
 
 **Do not invent social proof.** No testimonials, client logos, case studies,
 review counts or years-of-experience claims unless Che supplies real ones. The

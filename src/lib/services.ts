@@ -1,121 +1,157 @@
 /**
- * Services and example pricing.
+ * Northbound Web's offer: fixed-price build packages and monthly management
+ * plans.
  *
- * PLACEHOLDER PRICING: every `fromPrice` below is an illustrative figure, not a
- * committed rate. They exist so visitors can self-qualify before enquiring.
- * Review them against your own costs before launch — and note the site says
- * everywhere that the real number comes from a quote, so changing these does
- * not contradict anything else on the page.
+ * These are the real advertised prices, not illustrations. Only the Fully
+ * Custom Build is variable ("from £499"), because its final figure depends on
+ * requirements. Do not reintroduce "example price" or "starting from" framing
+ * around the £199, £299 and £399 packages — they are the advertised prices.
  */
 
-export type Service = {
+/** Advanced Management's monthly price, quoted wherever the free month is mentioned. */
+export const ADVANCED_MANAGEMENT_PRICE = 80
+
+export type BuildPackage = {
   slug: string
-  title: string
+  name: string
+  price: number
+  /** True only where the price is a floor rather than the advertised figure. */
+  variable?: boolean
+  badge?: string
   summary: string
-  /** Illustrative starting price in GBP. */
-  fromPrice: number
-  /** How the fee is usually structured, shown next to the price. */
-  priceNote: string
-  includes: string[]
   bestFor: string
+  includes: string[]
+  /** Whether the package bundles a free month of Advanced Management. */
+  freeAdvancedMonth?: boolean
 }
 
-export const services: Service[] = [
+export const buildPackages: BuildPackage[] = [
   {
-    slug: 'business-website',
-    title: 'Business website',
+    slug: 'basic-build',
+    name: 'Basic Build',
+    price: 199,
     summary:
-      'The site most small businesses actually need: a handful of well-written pages that explain what you do, prove you can be trusted with it, and make getting in touch easy.',
-    fromPrice: 1200,
-    priceNote: 'one-off project fee',
-    bestFor: 'Established businesses whose current site is dated, slow, or costing them enquiries.',
+      'A single, well-built page that tells people who you are, what you do and how to reach you. Enough to look established and be found — without paying for pages you would never fill.',
+    bestFor:
+      'Sole traders and new businesses who need a credible presence quickly.',
     includes: [
-      'Up to around six pages, designed rather than dropped into a template',
-      'Written to your audience, not stuffed with keywords',
+      'One-page website, designed around your business rather than a template',
+      'Mobile and tablet layouts, tested on real screen sizes',
       'Enquiry form with spam protection, delivered to your inbox',
-      'Mobile-first layout tested on real screen sizes',
-      'SEO fundamentals, metadata and structured data',
-      'Analytics so you can see what visitors actually do',
+      'Core SEO: page titles, descriptions and a sitemap search engines can read',
+      'HTTPS, hosting and deployment set up for you',
+      'Your code in a repository you own',
     ],
   },
   {
-    slug: 'landing-page',
-    title: 'Landing page',
+    slug: 'standard-build',
+    name: 'Standard Build',
+    price: 299,
+    badge: 'Most popular',
     summary:
-      'A single page built around one action — book a call, request a quote, buy a thing. Useful when you are running ads or launching something and need a page that converts.',
-    fromPrice: 600,
-    priceNote: 'one-off project fee',
-    bestFor: 'Campaigns, launches and paid traffic that needs somewhere sharp to land.',
+      'The size of site most small businesses actually need: room to explain each service properly, build trust, and give search engines something to rank.',
+    bestFor:
+      'Established businesses with a few distinct services or locations to cover.',
     includes: [
-      'One page, one goal, no competing navigation',
-      'Copy structured around objections and proof',
-      'Fast load — the thing that quietly kills ad performance',
-      'Conversion tracking wired up from day one',
-      'A/B-friendly structure if you want to test later',
+      'Everything in the Basic Build',
+      'Up to five pages',
+      'A page per service or product, so each one can rank on its own',
+      'Google Business Profile and local SEO groundwork',
+      'Analytics, so you can see what visitors actually do',
+      'A copy review across every page before launch',
     ],
   },
   {
-    slug: 'redesign',
-    title: 'Redesign and rebuild',
+    slug: 'advanced-build',
+    name: 'Advanced Build',
+    price: 399,
+    freeAdvancedMonth: true,
     summary:
-      'Your business has moved on and the website has not. A rebuild keeps what is working — your traffic, your rankings, your content — and replaces the parts that are holding you back.',
-    fromPrice: 1800,
-    priceNote: 'one-off project fee',
-    bestFor: 'Sites that still bring in business but embarrass you when you send the link.',
+      'A larger site with something working behind it — online booking, enquiry routing, or a connection to a tool you already use. For businesses whose website has a job to do beyond looking right.',
+    bestFor:
+      'Businesses taking bookings or enquiries at volume, or with a lot to say.',
     includes: [
-      'Audit of what is currently working and worth keeping',
-      'Redirect mapping so existing search rankings survive the move',
-      'New design and front end, built on modern foundations',
-      'Content migrated and tidied rather than dumped across',
-      'Performance and accessibility brought up to standard',
+      'Everything in the Standard Build',
+      'Up to ten pages',
+      'Online booking, enquiry routing or a straightforward integration',
+      'Structured data, so search results show more than a blue link',
+      'A dedicated performance and accessibility pass before launch',
+      `One month of Advanced Management included free, worth £${ADVANCED_MANAGEMENT_PRICE}`,
     ],
   },
   {
-    slug: 'web-application',
-    title: 'Web application',
+    slug: 'fully-custom-build',
+    name: 'Fully Custom Build',
+    price: 499,
+    variable: true,
+    freeAdvancedMonth: true,
     summary:
-      'When a website is not enough — customer portals, booking systems, dashboards, internal tools. Software with accounts, data and rules, built on the same stack as everything else here.',
-    fromPrice: 4000,
-    priceNote: 'quoted per project, usually staged',
-    bestFor: 'Businesses running something important on spreadsheets, email threads or paper.',
+      'When a website is not enough — customer portals, booking systems, dashboards, internal tools. Software with accounts, data and rules, built on the same foundations as everything else here.',
+    bestFor:
+      'Businesses running something important on spreadsheets, email threads or paper.',
     includes: [
-      'Discovery first — the wrong build is the expensive one',
-      'Secure accounts and permissions, designed to the data you hold',
-      'Database designed for the job, with access controls enforced server-side',
-      'Payments, email and integrations where the workflow needs them',
-      'Delivered in stages so you see it working as it is built',
+      'Everything in the Advanced Build',
+      'Customer accounts, portals, dashboards or internal tools',
+      'A database designed for the job, with access rules enforced server-side',
+      'Payments, email and third-party integrations where the workflow needs them',
+      'Built and delivered in stages, so you see it working as it goes',
+      `One month of Advanced Management included free, worth £${ADVANCED_MANAGEMENT_PRICE}`,
     ],
   },
+]
+
+export type ManagementPlan = {
+  slug: string
+  name: string
+  price: number
+  /** True where the price is a floor rather than a single advertised figure. */
+  variable?: boolean
+  summary: string
+  includes: string[]
+}
+
+export const managementPlans: ManagementPlan[] = [
   {
-    slug: 'automation',
-    title: 'Automations and integrations',
+    slug: 'website-management',
+    name: 'Website Management',
+    price: 39,
+    variable: true,
     summary:
-      'Connect the tools you already pay for so information stops being retyped. Enquiries into your CRM, payments into your accounts, updates into the places your team actually looks.',
-    fromPrice: 450,
-    priceNote: 'per automation, depending on the systems involved',
-    bestFor: 'Any job someone on your team does every week by copying and pasting.',
-    includes: [
-      'A look at where time is genuinely going before anything is built',
-      'Connections between the systems you already use',
-      'Error handling, so a silent failure does not lose you work',
-      'Documented, so it is not a black box only I understand',
-    ],
-  },
-  {
-    slug: 'care-plan',
-    title: 'Website care plan',
-    summary:
-      'Ongoing management, so the site stays fast, secure and current instead of quietly rotting. Hosting, updates, monitoring, backups and a set amount of change time each month.',
-    fromPrice: 45,
-    priceNote: 'per month, rolling',
-    bestFor: 'Anyone who does not want to think about their website until they need something changed.',
+      'The essentials, so the site stays fast, secure and online instead of quietly rotting.',
     includes: [
       'Hosting and deployment managed for you',
-      'Dependency and security updates applied',
-      'Uptime and error monitoring, so I usually know before you do',
-      'Backups and version history for every change',
-      'Content and copy changes included each month',
-      'Cancel whenever — no lock-in, and the code is yours regardless',
+      'Security and dependency updates applied',
+      'Uptime monitoring and regular backups',
+      'Small content and copy changes each month',
+      'Cancel whenever — the code stays yours regardless',
+    ],
+  },
+  {
+    slug: 'advanced-management',
+    name: 'Advanced Management',
+    price: ADVANCED_MANAGEMENT_PRICE,
+    summary:
+      'More change time each month, plus active monitoring — so problems get found by me rather than by your customers.',
+    includes: [
+      'Everything in Website Management',
+      'More change time each month for updates and new sections',
+      'Error monitoring, with fixes included rather than billed',
+      'A monthly performance and SEO check',
+      'Priority response on working days',
+    ],
+  },
+  {
+    slug: 'complete-management',
+    name: 'Complete Management',
+    price: 149,
+    summary:
+      'The website treated as an ongoing part of the business, improved deliberately rather than only when something breaks.',
+    includes: [
+      'Everything in Advanced Management',
+      'Ongoing content, page and copy updates',
+      'Improvements planned with you each quarter',
+      'Analytics reporting in plain English',
+      'Same-day response on working days',
     ],
   },
 ]
@@ -125,12 +161,12 @@ export const process = [
   {
     step: '01',
     title: 'Conversation',
-    body: 'A call to work out what the site is for, who it is talking to, and what would count as it working. No charge, no obligation, and no proposal written before I understand the business.',
+    body: 'A call to work out what the site is for, who it is talking to, and which package fits. No charge and no obligation — and if a smaller package would do the job, that is the one I will point you at.',
   },
   {
     step: '02',
-    title: 'Quote',
-    body: 'A written proposal with fixed scope and a fixed price, so you know the number before anything starts. If there is a cheaper way to get you what you need, that is what I will quote for.',
+    title: 'Confirmation',
+    body: 'You know the price before anything starts, because it is published. For a Fully Custom Build, the final figure is confirmed in writing once the requirements are clear.',
   },
   {
     step: '03',
@@ -150,7 +186,7 @@ export const process = [
   {
     step: '06',
     title: 'Aftercare',
-    body: 'Handover with documentation you can actually use. Then either you take it from there, or a care plan keeps it maintained and monitored.',
+    body: 'Handover with documentation you can actually use. Then either you take it from there, or a management plan keeps it maintained and monitored.',
   },
 ]
 

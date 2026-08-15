@@ -5,14 +5,19 @@ import {
   Container,
   Eyebrow,
   Section,
+  SectionHeading,
 } from '@/components/ui'
-import { services } from '@/lib/services'
+import {
+  ADVANCED_MANAGEMENT_PRICE,
+  buildPackages,
+  managementPlans,
+} from '@/lib/services'
 import { currency, site } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Services and prices',
+  title: 'Packages and prices',
   description:
-    'Business websites, landing pages, redesigns, web applications, automations and ongoing care plans. Example starting prices, with every project quoted properly.',
+    'Website packages at fixed prices: Basic Build £199, Standard Build £299, Advanced Build £399, and Fully Custom from £499. Monthly management plans from £39.',
   alternates: { canonical: '/services' },
 }
 
@@ -22,25 +27,24 @@ export default function ServicesPage() {
       <Section className="border-b border-line pb-16 sm:pb-20">
         <Container>
           <div className="max-w-3xl">
-            <Eyebrow>Services</Eyebrow>
+            <Eyebrow>Packages and prices</Eyebrow>
             <h1 className="mt-6 text-4xl leading-[1.1] font-normal sm:text-5xl">
-              What it costs, before you have to ask.
+              What it costs, without having to ask.
             </h1>
             <p className="mt-7 text-lg leading-relaxed text-ink-muted">
-              Every figure below is an example starting price — enough to tell
-              you whether we are in the same ballpark without a call. What you
-              actually pay comes from a written quote with a fixed scope, because
-              the best thing to build depends on your business, and I would
-              rather work that out than sell you a package that nearly fits.
+              Three packages at fixed prices, so you know what you are paying
+              before you speak to me. The fourth is for genuinely bespoke work,
+              where the figure depends on what you need building. Every build
+              includes hosting setup, HTTPS and a repository you own.
             </p>
           </div>
         </Container>
       </Section>
 
-      {services.map((service, index) => (
+      {buildPackages.map((pkg, index) => (
         <section
-          key={service.slug}
-          id={service.slug}
+          key={pkg.slug}
+          id={pkg.slug}
           className={
             index % 2 === 1
               ? 'scroll-mt-24 border-b border-line bg-paper-sunk py-16 sm:py-20'
@@ -50,31 +54,47 @@ export default function ServicesPage() {
           <Container>
             <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
               <div>
-                <h2 className="text-3xl leading-tight">{service.title}</h2>
+                <div className="flex flex-wrap items-center gap-3">
+                  <h2 className="text-3xl leading-tight">{pkg.name}</h2>
+                  {pkg.badge ? (
+                    <span className="rounded-full bg-accent-wash px-3 py-1 text-[11px] font-medium tracking-wide text-accent uppercase">
+                      {pkg.badge}
+                    </span>
+                  ) : null}
+                </div>
+
                 <p className="mt-5 text-[17px] leading-relaxed text-ink-muted">
-                  {service.summary}
+                  {pkg.summary}
                 </p>
 
                 <div className="mt-8 border-t border-line pt-6">
-                  <p className="eyebrow">Example price</p>
-                  <p className="mt-3 font-serif text-4xl text-accent">
-                    From {currency.format(service.fromPrice)}
+                  <p className="font-serif text-5xl text-accent">
+                    {pkg.variable ? (
+                      <>
+                        <span className="text-2xl text-ink-faint">from </span>
+                        {currency.format(pkg.price)}
+                      </>
+                    ) : (
+                      currency.format(pkg.price)
+                    )}
                   </p>
-                  <p className="mt-2 text-sm text-ink-faint">
-                    {service.priceNote} · quoted properly before we start
+                  <p className="mt-3 text-sm text-ink-faint">
+                    {pkg.variable
+                      ? 'One-off. The final figure depends on what you need building, and is confirmed in writing before any work starts.'
+                      : 'One-off, all in. No monthly fee unless you choose one.'}
                   </p>
                 </div>
 
                 <p className="mt-8 text-[15px] leading-relaxed text-ink-muted">
                   <span className="font-medium text-ink">Best for: </span>
-                  {service.bestFor}
+                  {pkg.bestFor}
                 </p>
               </div>
 
               <div className="lg:pt-2">
                 <h3 className="eyebrow">What is included</h3>
                 <ul className="mt-6 space-y-4">
-                  {service.includes.map((item) => (
+                  {pkg.includes.map((item) => (
                     <li key={item} className="flex gap-3.5">
                       <span
                         aria-hidden
@@ -92,20 +112,66 @@ export default function ServicesPage() {
         </section>
       ))}
 
-      <Section>
+      {/* Management plans */}
+      <Section id="management" className="scroll-mt-24">
+        <Container>
+          <SectionHeading
+            eyebrow="Management plans"
+            title="Optional, rolling, and never a condition of the build."
+            lede={`The Advanced and Fully Custom builds include the first month of Advanced Management free, worth ${currency.format(
+              ADVANCED_MANAGEMENT_PRICE
+            )}. After that, keep it or cancel — the site is yours either way.`}
+          />
+
+          <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-3">
+            {managementPlans.map((plan) => (
+              <div key={plan.slug} className="flex flex-col bg-paper p-8">
+                <h3 className="text-2xl">{plan.name}</h3>
+                <p className="mt-4 font-serif text-4xl text-accent">
+                  {plan.variable ? (
+                    <span className="text-xl text-ink-faint">from </span>
+                  ) : null}
+                  {currency.format(plan.price)}
+                  <span className="font-sans text-base text-ink-faint">
+                    /month
+                  </span>
+                </p>
+                <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
+                  {plan.summary}
+                </p>
+                <ul className="mt-7 space-y-3.5">
+                  {plan.includes.map((item) => (
+                    <li key={item} className="flex gap-3.5">
+                      <span
+                        aria-hidden
+                        className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
+                      />
+                      <span className="text-[15px] leading-relaxed text-ink-muted">
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      <Section className="border-t border-line bg-paper-sunk">
         <Container>
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl leading-tight sm:text-4xl">
-              Not sure which of these you need?
+              Not sure which package you need?
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-ink-muted">
               That is normal, and it is my job rather than yours. Describe the
-              business and what is not working, and I will tell you what I would
-              build and what it would cost.
+              business and what is not working, and I will tell you which one
+              fits — including when it is the cheaper one.
             </p>
             <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <ButtonLink href="/contact" size="lg">
-                Get a quote <Arrow />
+                Get started <Arrow />
               </ButtonLink>
               <a
                 href={`mailto:${site.email}`}

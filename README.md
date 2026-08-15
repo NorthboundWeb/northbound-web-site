@@ -14,12 +14,33 @@ them — each has one home.
 |---|---|---|
 | Domain | `NEXT_PUBLIC_SITE_URL` env var, and the fallback in `src/lib/site.ts` | `northboundweb.co.uk` |
 | Contact email | `site.email` in `src/lib/site.ts` | `hello@northboundweb.co.uk` |
-| Example prices | `fromPrice` on each service in `src/lib/services.ts` | Illustrative figures |
 | Resend keys | Vercel env vars | Not set |
 
-The prices are shown as **example starting prices** throughout, and every page
-says the real figure comes from a written quote. Changing them does not
-contradict any other copy on the site.
+## Pricing
+
+The prices in `src/lib/services.ts` are the **real advertised prices**, not
+examples:
+
+| Package | Price |
+|---|---|
+| Basic Build | £199 |
+| Standard Build | £299 (marked *Most popular*) |
+| Advanced Build | £399 — includes 1 month Advanced Management free |
+| Fully Custom Build | from £499 — includes 1 month Advanced Management free |
+
+| Management plan | Price |
+|---|---|
+| Website Management | from £39/month |
+| Advanced Management | £80/month |
+| Complete Management | £149/month |
+
+Only the Fully Custom Build is variable, because its final figure depends on
+requirements. The three packaged builds must **not** be described as "example",
+"starting from" or "indicative" prices anywhere in the copy.
+
+`ADVANCED_MANAGEMENT_PRICE` is exported from `src/lib/services.ts` and used
+wherever the free month is mentioned, so its stated value cannot drift out of
+sync with the plan's own price.
 
 The About page deliberately contains no claims that could be checked and found
 false — no invented years of experience, client counts or case studies. Add
@@ -55,7 +76,7 @@ src/
   app/
     layout.tsx          root layout, fonts, metadata, header/footer
     page.tsx            home
-    services/           services and example prices
+    services/           packages, prices and management plans
     approach/           process, standards, stack
     about/              positioning
     contact/            enquiry form page

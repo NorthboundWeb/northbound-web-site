@@ -18,7 +18,7 @@ const answers = [
   {
     question: 'When do I find out the price?',
     answer:
-      'After that call, in writing, with the scope spelled out alongside it. You will not be asked to commit to anything before you have seen the number.',
+      'You already know it — the package prices are on the services page, and they are what you pay. Only a Fully Custom Build varies, and that figure is confirmed in writing before any work starts.',
   },
   {
     question: 'What if I do not know what I need?',
@@ -26,9 +26,9 @@ const answers = [
       'Then describe the problem rather than the solution — what is not working, or what takes too long. Working out what to build is part of the job.',
   },
   {
-    question: 'Do you take on small jobs?',
+    question: 'Do I have to take a management plan?',
     answer:
-      'Yes. A single landing page or a fix to an existing site is fine. If it is genuinely too small to be worth either of our time, I will tell you and point you somewhere sensible.',
+      'No. Every plan is optional and rolling, and the build price does not depend on taking one. The Advanced and Fully Custom builds include the first month free so you can try it before deciding.',
   },
 ]
 

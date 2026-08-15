@@ -1,18 +1,24 @@
 import { z } from 'zod'
-import { services } from '@/lib/services'
+import { buildPackages, managementPlans } from '@/lib/services'
 
 export const projectTypes = [
-  ...services.map((service) => service.title),
+  ...buildPackages.map((pkg) => pkg.name),
+  ...managementPlans.map((plan) => plan.name),
+  'Not sure yet',
   'Something else',
 ] as const
 
+/**
+ * Only asked about for a Fully Custom Build, where the price genuinely varies.
+ * The packaged builds have published prices, so a budget question would be
+ * asking something the visitor can already read off the page.
+ */
 export const budgetBands = [
   'Not sure yet',
-  'Under £1,000',
+  'Around £499',
+  '£500 – £1,000',
   '£1,000 – £2,500',
-  '£2,500 – £5,000',
-  '£5,000 – £10,000',
-  'Over £10,000',
+  'Over £2,500',
 ] as const
 
 /**

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Wordmark } from '@/components/logo'
 import { Container } from '@/components/ui'
-import { services } from '@/lib/services'
+import { buildPackages } from '@/lib/services'
 import { site } from '@/lib/site'
 
 export function SiteFooter() {
@@ -23,19 +23,27 @@ export function SiteFooter() {
             </a>
           </div>
 
-          <nav aria-label="Services">
-            <h2 className="eyebrow">Services</h2>
+          <nav aria-label="Packages">
+            <h2 className="eyebrow">Packages</h2>
             <ul className="mt-5 space-y-3">
-              {services.map((service) => (
-                <li key={service.slug}>
+              {buildPackages.map((pkg) => (
+                <li key={pkg.slug}>
                   <Link
-                    href={`/services#${service.slug}`}
+                    href={`/services#${pkg.slug}`}
                     className="text-sm text-ink-muted transition-colors hover:text-ink"
                   >
-                    {service.title}
+                    {pkg.name}
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/services#management"
+                  className="text-sm text-ink-muted transition-colors hover:text-ink"
+                >
+                  Management plans
+                </Link>
+              </li>
             </ul>
           </nav>
 

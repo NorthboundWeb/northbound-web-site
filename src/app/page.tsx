@@ -8,7 +8,13 @@ import {
   SectionHeading,
 } from '@/components/ui'
 import { currency, site } from '@/lib/site'
-import { process, services, standards } from '@/lib/services'
+import {
+  ADVANCED_MANAGEMENT_PRICE,
+  buildPackages,
+  managementPlans,
+  process,
+  standards,
+} from '@/lib/services'
 
 export default function HomePage() {
   const jsonLd = {
@@ -19,7 +25,17 @@ export default function HomePage() {
     url: site.url,
     email: site.email,
     areaServed: site.location,
-    serviceType: services.map((service) => service.title),
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Website packages',
+      itemListElement: buildPackages.map((pkg) => ({
+        '@type': 'Offer',
+        name: pkg.name,
+        price: pkg.price,
+        priceCurrency: 'GBP',
+        description: pkg.summary,
+      })),
+    },
   }
 
   return (
@@ -61,10 +77,10 @@ export default function HomePage() {
             {/* Supporting facts rather than invented testimonials or logos. */}
             <dl className="grid grid-cols-2 gap-x-8 gap-y-10 border-t border-line pt-10 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12">
               {[
-                { term: 'Quotes', detail: 'Fixed price, agreed before any work starts' },
+                { term: 'Pricing', detail: 'Fixed package prices, £199 to £399' },
                 { term: 'Replies', detail: 'Within one working day, every time' },
                 { term: 'Ownership', detail: 'Your code, your repository, your domain' },
-                { term: 'Aftercare', detail: 'Care plans from £45/month, cancel anytime' },
+                { term: 'Aftercare', detail: 'Management from £39/month, cancel anytime' },
               ].map((item) => (
                 <div key={item.term}>
                   <dt className="eyebrow">{item.term}</dt>
@@ -82,24 +98,55 @@ export default function HomePage() {
       <Section>
         <Container>
           <SectionHeading
-            eyebrow="What I do"
-            title="Six things, done properly."
-            lede="Most small businesses need one or two of these. If you are not sure which, that is exactly what the first conversation is for."
+            eyebrow="Packages"
+            title="Four packages. Prices on the page."
+            lede="You should not have to sit through a sales call to find out what a website costs. Pick the size that fits, or ask me which one does."
           />
 
-          <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
-              <li key={service.slug} className="bg-paper">
+          <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+            {buildPackages.map((pkg) => (
+              <li key={pkg.slug} className="bg-paper">
                 <Link
-                  href={`/services#${service.slug}`}
+                  href={`/services#${pkg.slug}`}
                   className="group flex h-full flex-col p-8 transition-colors hover:bg-paper-sunk"
                 >
-                  <h3 className="text-xl">{service.title}</h3>
-                  <p className="mt-3 flex-1 text-[15px] leading-relaxed text-ink-muted">
-                    {service.summary}
+                  {/* Reserved row so the badge never pushes one card's title
+                      onto a second line and knocks its price out of alignment
+                      with the others. */}
+                  <div className="mb-3 flex h-5 items-center">
+                    {pkg.badge ? (
+                      <span className="rounded-full bg-accent-wash px-2.5 py-1 text-[10px] font-medium tracking-wide text-accent uppercase">
+                        {pkg.badge}
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <h3 className="text-xl">{pkg.name}</h3>
+
+                  <p className="mt-4 font-serif text-3xl text-accent">
+                    {pkg.variable ? (
+                      <>
+                        <span className="text-lg text-ink-faint">from </span>
+                        {currency.format(pkg.price)}
+                      </>
+                    ) : (
+                      currency.format(pkg.price)
+                    )}
                   </p>
+
+                  <p className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-muted">
+                    {pkg.summary}
+                  </p>
+
+                  {pkg.freeAdvancedMonth ? (
+                    <p className="mt-5 text-[13px] leading-relaxed text-ink-faint">
+                      Includes 1 month of Advanced Management free, worth{' '}
+                      {currency.format(ADVANCED_MANAGEMENT_PRICE)}.
+                    </p>
+                  ) : null}
+
                   <p className="mt-6 flex items-center gap-2 text-sm font-medium text-accent">
-                    From {currency.format(service.fromPrice)}
+                    What is included
                     <span className="transition-transform group-hover:translate-x-1">
                       <Arrow />
                     </span>
@@ -108,13 +155,42 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
+        </Container>
+      </Section>
+
+      {/* Management plans */}
+      <Section className="border-t border-line pt-0">
+        <Container>
+          <SectionHeading
+            eyebrow="After launch"
+            title="Keep it looked after."
+            lede="Optional, and never a condition of the build. Every plan is rolling — cancel whenever, and the code stays yours either way."
+          />
+
+          <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
+            {managementPlans.map((plan) => (
+              <li key={plan.slug} className="flex flex-col bg-paper p-8">
+                <h3 className="text-xl">{plan.name}</h3>
+                <p className="mt-4 font-serif text-3xl text-accent">
+                  {plan.variable ? (
+                    <span className="text-lg text-ink-faint">from </span>
+                  ) : null}
+                  {currency.format(plan.price)}
+                  <span className="font-sans text-base text-ink-faint">
+                    /month
+                  </span>
+                </p>
+                <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
+                  {plan.summary}
+                </p>
+              </li>
+            ))}
+          </ul>
 
           <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-faint">
-            Those are example starting prices, shown so you can judge whether we
-            are in the same ballpark before spending time on a call. Your actual
-            price comes from a written quote — because the right thing to build
-            depends on your business, and I would rather quote for that than sell
-            you a package.
+            The Advanced and Fully Custom builds both include the first month of
+            Advanced Management free, worth{' '}
+            {currency.format(ADVANCED_MANAGEMENT_PRICE)}.
           </p>
         </Container>
       </Section>
@@ -172,9 +248,9 @@ export default function HomePage() {
               Tell me what you are trying to do.
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-ink-muted">
-              Describe the business and the problem. I will tell you what I would
-              build, roughly what it costs, and honestly whether you need me at
-              all.
+              Describe the business and the problem. I will tell you which
+              package fits, what it will do for you, and honestly whether you
+              need me at all.
             </p>
             <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <ButtonLink href="/contact" size="lg">
