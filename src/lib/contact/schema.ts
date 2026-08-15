@@ -1,0 +1,53 @@
+import { z } from 'zod'
+import { services } from '@/lib/services'
+
+export const projectTypes = [
+  ...services.map((service) => service.title),
+  'Something else',
+] as const
+
+export const budgetBands = [
+  'Not sure yet',
+  'Under £1,000',
+  '£1,000 – £2,500',
+  '£2,500 – £5,000',
+  '£5,000 – £10,000',
+  'Over £10,000',
+] as const
+
+/**
+ * Validated on the server, not just in the browser. A server action is a public
+ * POST endpoint, so anything the form promises has to be re-checked here.
+ */
+export const contactSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, 'Please enter your name.')
+    .max(100, 'That name is too long.'),
+  email: z
+    .string()
+    .trim()
+    .min(1, 'Please enter your email address.')
+    .max(200, 'That email address is too long.')
+    .email('Please enter a valid email address.'),
+  business: z.string().trim().max(120, 'That is too long.').optional(),
+  projectType: z.enum(projectTypes).optional(),
+  budget: z.enum(budgetBands).optional(),
+  message: z
+    .string()
+    .trim()
+    .min(20, 'Please give me a little more detail — 20 characters or more.')
+    .max(4000, 'Please keep this under 4,000 characters.'),
+})
+
+export type ContactInput = z.infer<typeof contactSchema>
+
+export type ContactState = {
+  status: 'idle' | 'success' | 'error'
+  message?: string
+  /** Field-level messages, keyed by input name. */
+  errors?: Partial<Record<keyof ContactInput, string>>
+}
+
+export const initialContactState: ContactState = { status: 'idle' }

@@ -1,0 +1,120 @@
+@import 'tailwindcss';
+
+/*
+  Palette: warm paper, near-black ink, one evergreen accent.
+  Deliberately no purple/indigo gradients — the aim is "designed studio",
+  not "generated template".
+*/
+:root {
+  --paper: #faf9f6;
+  --paper-raised: #ffffff;
+  --paper-sunk: #f2efe9;
+  --ink: #101619;
+  --ink-muted: #545f66;
+  --ink-faint: #7b858b;
+  --line: #e3dfd7;
+  --line-strong: #cfc9be;
+  --accent: #0b5f51;
+  --accent-hover: #084a3f;
+  --accent-ink: #ffffff;
+  --accent-wash: #eaf2ef;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0b1013;
+    --paper-raised: #121a1e;
+    --paper-sunk: #080d0f;
+    --ink: #edf0f0;
+    --ink-muted: #a1acb1;
+    --ink-faint: #7d878c;
+    --line: #1e292e;
+    --line-strong: #2c3a40;
+    --accent: #5fcfb4;
+    --accent-hover: #7fdcc5;
+    --accent-ink: #06120f;
+    --accent-wash: #10211d;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-paper-sunk: var(--paper-sunk);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-wash: var(--accent-wash);
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', sans-serif;
+  --font-serif: var(--font-display), ui-serif, Georgia, 'Times New Roman', serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Editorial headings: serif, tight, with proper optical sizing. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* One visible focus style everywhere, including keyboard-only users. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}

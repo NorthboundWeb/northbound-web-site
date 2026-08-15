@@ -1,0 +1,195 @@
+import Link from 'next/link'
+import {
+  Arrow,
+  ButtonLink,
+  Container,
+  Eyebrow,
+  Section,
+  SectionHeading,
+} from '@/components/ui'
+import { currency, site } from '@/lib/site'
+import { process, services, standards } from '@/lib/services'
+
+export default function HomePage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    name: site.name,
+    description: site.description,
+    url: site.url,
+    email: site.email,
+    areaServed: site.location,
+    serviceType: services.map((service) => service.title),
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* Hero — asymmetric and left-aligned, with the promise stated plainly. */}
+      <section className="relative overflow-hidden border-b border-line">
+        <Container className="py-24 sm:py-32 lg:py-40">
+          <div className="grid gap-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+            <div>
+              <Eyebrow>Web development · {site.location}</Eyebrow>
+              <h1 className="mt-7 text-[2.75rem] leading-[1.05] font-normal sm:text-6xl lg:text-[4.25rem]">
+                Websites that make small businesses look like{' '}
+                <em className="font-normal text-accent not-italic">
+                  serious ones
+                </em>
+                .
+              </h1>
+              <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted sm:text-xl">
+                I design and build fast, accessible, secure websites and web
+                applications — then look after them once they are live. No page
+                builders, no templates, no being locked into a platform you
+                cannot leave.
+              </p>
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+                <ButtonLink href="/contact" size="lg">
+                  Get a quote <Arrow />
+                </ButtonLink>
+                <ButtonLink href="/services" variant="secondary" size="lg">
+                  See services and prices
+                </ButtonLink>
+              </div>
+            </div>
+
+            {/* Supporting facts rather than invented testimonials or logos. */}
+            <dl className="grid grid-cols-2 gap-x-8 gap-y-10 border-t border-line pt-10 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12">
+              {[
+                { term: 'Quotes', detail: 'Fixed price, agreed before any work starts' },
+                { term: 'Replies', detail: 'Within one working day, every time' },
+                { term: 'Ownership', detail: 'Your code, your repository, your domain' },
+                { term: 'Aftercare', detail: 'Care plans from £45/month, cancel anytime' },
+              ].map((item) => (
+                <div key={item.term}>
+                  <dt className="eyebrow">{item.term}</dt>
+                  <dd className="mt-2.5 text-[15px] leading-relaxed text-ink-muted">
+                    {item.detail}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </Container>
+      </section>
+
+      {/* Services */}
+      <Section>
+        <Container>
+          <SectionHeading
+            eyebrow="What I do"
+            title="Six things, done properly."
+            lede="Most small businesses need one or two of these. If you are not sure which, that is exactly what the first conversation is for."
+          />
+
+          <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((service) => (
+              <li key={service.slug} className="bg-paper">
+                <Link
+                  href={`/services#${service.slug}`}
+                  className="group flex h-full flex-col p-8 transition-colors hover:bg-paper-sunk"
+                >
+                  <h3 className="text-xl">{service.title}</h3>
+                  <p className="mt-3 flex-1 text-[15px] leading-relaxed text-ink-muted">
+                    {service.summary}
+                  </p>
+                  <p className="mt-6 flex items-center gap-2 text-sm font-medium text-accent">
+                    From {currency.format(service.fromPrice)}
+                    <span className="transition-transform group-hover:translate-x-1">
+                      <Arrow />
+                    </span>
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-faint">
+            Those are example starting prices, shown so you can judge whether we
+            are in the same ballpark before spending time on a call. Your actual
+            price comes from a written quote — because the right thing to build
+            depends on your business, and I would rather quote for that than sell
+            you a package.
+          </p>
+        </Container>
+      </Section>
+
+      {/* Standards — the real differentiator */}
+      <Section className="border-y border-line bg-paper-sunk">
+        <Container>
+          <SectionHeading
+            eyebrow="How it is built"
+            title="The parts you cannot see are the parts that fail later."
+            lede="Anyone can produce something that looks acceptable on a laptop. These are the standards that decide whether it still works in two years."
+          />
+
+          <div className="mt-16 grid gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            {standards.map((standard) => (
+              <div key={standard.title}>
+                <h3 className="text-lg">{standard.title}</h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">
+                  {standard.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      {/* Process */}
+      <Section>
+        <Container>
+          <SectionHeading
+            eyebrow="How we work"
+            title="You always know what happens next."
+            lede="Every project runs through the same six steps. No silence for three weeks, no surprise invoice at the end."
+          />
+
+          <ol className="mt-16 grid gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            {process.map((item) => (
+              <li key={item.step} className="border-t border-line pt-6">
+                <p className="font-serif text-sm text-accent">{item.step}</p>
+                <h3 className="mt-3 text-lg">{item.title}</h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">
+                  {item.body}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </Container>
+      </Section>
+
+      {/* Closing CTA */}
+      <Section className="border-t border-line bg-paper-sunk">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl leading-tight sm:text-4xl">
+              Tell me what you are trying to do.
+            </h2>
+            <p className="mt-5 text-lg leading-relaxed text-ink-muted">
+              Describe the business and the problem. I will tell you what I would
+              build, roughly what it costs, and honestly whether you need me at
+              all.
+            </p>
+            <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <ButtonLink href="/contact" size="lg">
+                Start a project <Arrow />
+              </ButtonLink>
+              <a
+                href={`mailto:${site.email}`}
+                className="text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline"
+              >
+                or email {site.email}
+              </a>
+            </div>
+          </div>
+        </Container>
+      </Section>
+    </>
+  )
+}
