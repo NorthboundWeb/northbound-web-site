@@ -17,8 +17,15 @@ export const site = {
   location: 'United Kingdom',
   nav: [
     { href: '/services', label: 'Services' },
-    { href: '/approach', label: 'Approach' },
+    // Labelled "Process" but kept at /approach: the URL is in the sitemap and
+    // the page's canonical tag, so renaming the route would be an SEO change.
+    { href: '/approach', label: 'Process' },
     { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+  ],
+  socials: [
+    { label: 'TikTok', handle: 'northbound.web.uk', href: 'https://www.tiktok.com/@northbound.web.uk' },
+    { label: 'Instagram', handle: 'northboundwebuk', href: 'https://www.instagram.com/northboundwebuk' },
   ],
 } as const
 

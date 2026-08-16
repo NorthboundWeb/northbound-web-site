@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import type { ComponentProps, ReactNode } from 'react'
+import { ArrowRight } from '@/components/graphics'
 
 export function cn(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(' ')
 }
 
-/** Consistent page gutter and max measure. */
 export function Container({
   className,
   children,
@@ -14,7 +14,7 @@ export function Container({
   children: ReactNode
 }) {
   return (
-    <div className={cn('mx-auto w-full max-w-6xl px-6 lg:px-10', className)}>
+    <div className={cn('mx-auto w-full max-w-[88rem] px-6 lg:px-12', className)}>
       {children}
     </div>
   )
@@ -26,86 +26,132 @@ export function Section({
   ...props
 }: ComponentProps<'section'>) {
   return (
-    <section className={cn('py-20 sm:py-28', className)} {...props}>
+    <section className={cn('py-24 sm:py-32', className)} {...props}>
       {children}
     </section>
   )
 }
 
-/** Small-caps label with a rule — the recurring structural motif. */
-export function Eyebrow({ children }: { children: ReactNode }) {
+/** Technical annotation: a rule, an index number, a label. */
+export function Label({
+  index,
+  children,
+  className,
+}: {
+  index?: string
+  children?: ReactNode
+  className?: string
+}) {
   return (
-    <p className="eyebrow flex items-center gap-3">
-      <span aria-hidden className="h-px w-6 bg-line-strong" />
+    <p className={cn('label flex items-center gap-3 text-ink-faint', className)}>
+      {index ? <span className="text-accent">{index}</span> : null}
+      <span aria-hidden className="h-px w-8 bg-line-strong" />
       {children}
     </p>
   )
 }
 
-export function SectionHeading({
-  eyebrow,
-  title,
-  lede,
+/**
+ * Poster headline. Renders as one enormous condensed word with an orange full
+ * stop — the single most recognisable element of the system.
+ */
+export function Display({
+  children,
+  stop = true,
+  as: As = 'h2',
   className,
 }: {
-  eyebrow?: string
-  title: ReactNode
-  lede?: ReactNode
+  children: ReactNode
+  /** The orange full stop. Off for headlines that continue in a sentence. */
+  stop?: boolean
+  as?: 'h1' | 'h2' | 'p'
   className?: string
 }) {
   return (
-    <div className={cn('max-w-2xl', className)}>
-      {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-      <h2 className="mt-5 text-3xl leading-[1.15] font-normal sm:text-4xl">
-        {title}
-      </h2>
-      {lede ? (
-        <p className="mt-5 text-lg leading-relaxed text-ink-muted">{lede}</p>
-      ) : null}
-    </div>
+    <As
+      className={cn(
+        'display text-[clamp(3.5rem,15vw,13rem)] text-ink',
+        className
+      )}
+    >
+      {children}
+      {stop ? <span className="text-accent">.</span> : null}
+    </As>
   )
 }
 
-const buttonBase =
-  'inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60'
+const base =
+  'group/btn inline-flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-[0.12em] transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60'
 
-const buttonVariants = {
-  primary: 'bg-accent text-accent-ink hover:bg-accent-hover',
-  secondary:
-    'border border-line-strong text-ink hover:border-ink hover:bg-paper-sunk',
+const variants = {
+  /** Deep green block, cream text, orange arrow. */
+  primary: 'bg-ink text-paper hover:bg-accent hover:text-cream',
+  /** Outlined, for secondary weight. */
+  secondary: 'border border-line-strong text-ink hover:border-accent hover:text-accent',
+  /** Cream on green sections. */
+  inverse: 'bg-cream text-green hover:bg-accent hover:text-cream',
 } as const
 
-const buttonSizes = {
-  md: 'px-5 py-2.5',
-  lg: 'px-6 py-3 text-base',
+const sizes = {
+  md: 'px-6 py-3',
+  lg: 'px-8 py-4 text-[0.9375rem]',
 } as const
 
-type ButtonStyleProps = {
-  variant?: keyof typeof buttonVariants
-  size?: keyof typeof buttonSizes
-}
+type StyleProps = { variant?: keyof typeof variants; size?: keyof typeof sizes }
 
 export function buttonClass({
   variant = 'primary',
   size = 'md',
-}: ButtonStyleProps = {}) {
-  return cn(buttonBase, buttonVariants[variant], buttonSizes[size])
+}: StyleProps = {}) {
+  return cn(base, variants[variant], sizes[size])
 }
 
 export function ButtonLink({
   href,
-  variant,
+  variant = 'primary',
   size,
   className,
   children,
-}: ButtonStyleProps & {
-  href: string
-  className?: string
-  children: ReactNode
-}) {
+}: StyleProps & { href: string; className?: string; children: ReactNode }) {
   return (
     <Link href={href} className={cn(buttonClass({ variant, size }), className)}>
       {children}
+      <span
+        className={cn(
+          'transition-transform duration-200 group-hover/btn:translate-x-1',
+          variant === 'primary' || variant === 'inverse'
+            ? 'text-accent group-hover/btn:text-current'
+            : 'text-accent'
+        )}
+      >
+        <ArrowRight />
+      </span>
+    </Link>
+  )
+}
+
+/** Text link with the orange arrow — secondary actions. */
+export function ArrowLink({
+  href,
+  children,
+  className,
+}: {
+  href: string
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        'group/link label inline-flex items-center gap-2.5 text-ink hover:text-accent',
+        className
+      )}
+    >
+      {children}
+      <span className="text-accent transition-transform duration-200 group-hover/link:translate-x-1">
+        <ArrowRight />
+      </span>
     </Link>
   )
 }
@@ -116,11 +162,10 @@ export function ButtonLink({
  * The card is the positioned ancestor; this link's ::after stretches across it,
  * so a mouse or thumb can hit anywhere on the card. Screen readers and keyboard
  * users still get one short, meaningful link ("Choose Standard") rather than a
- * link whose name is every word in the card — which is what wrapping the whole
- * card in an anchor would produce.
+ * link whose name is every word in the card.
  *
- * The card needs `group relative`, and any other interactive element inside it
- * needs `relative z-10` to sit above the overlay.
+ * The card needs `group relative`; other interactive elements inside it need
+ * `relative z-10` to sit above the overlay.
  */
 export function CardCta({
   href,
@@ -135,31 +180,17 @@ export function CardCta({
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center gap-2 text-sm font-medium text-accent after:absolute after:inset-0 after:content-['']",
+        "label inline-flex items-center gap-2.5 text-ink after:absolute after:inset-0 after:content-[''] group-hover:text-accent",
         className
       )}
     >
       {children}
-      <span className="transition-transform group-hover:translate-x-1">
-        <Arrow />
+      <span className="text-accent transition-transform duration-200 group-hover:translate-x-1">
+        <ArrowRight />
       </span>
     </Link>
   )
 }
 
-export function Arrow() {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 16 16"
-      className="h-3.5 w-3.5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M3 8h10M9 4l4 4-4 4" />
-    </svg>
-  )
-}
+/** Back-compat alias — some pages still import Arrow. */
+export { ArrowRight as Arrow }

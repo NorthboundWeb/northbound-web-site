@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
+import { Crosshair } from '@/components/graphics'
 import {
-  Arrow,
+  ArrowLink,
   ButtonLink,
   Container,
-  Eyebrow,
+  Display,
+  Label,
   Section,
 } from '@/components/ui'
 import { site } from '@/lib/site'
@@ -16,11 +18,9 @@ export const metadata: Metadata = {
 
 /*
   NOTE FOR CHE: this page deliberately makes no claims that need verifying —
-  no invented years of experience, client counts, or past projects. Everything
-  here is about how you work, which is true today. Add the specifics (your
-  background, a photo, real client names once you have permission) when you
-  have them. Made-up credentials are the fastest way to lose a client who
-  checks.
+  no invented years of experience, client counts, or past projects. Add the
+  specifics when you have them. Made-up credentials are the fastest way to
+  lose a client who checks.
 */
 
 const beliefs = [
@@ -37,7 +37,7 @@ const beliefs = [
     body: 'You should never have to nod along to something you do not follow. I will explain what I am recommending and why, in language that does not require a computer science degree, and I will tell you when a decision genuinely does not matter.',
   },
   {
-    title: 'The honest answer, even when it costs me',
+    title: 'The honest answer',
     body: 'If the Basic package would do what you need, I will not sell you the Advanced one. If the thing you are describing does not need a developer at all, I will say so. Long-term relationships pay better than one oversold project.',
   },
 ]
@@ -47,12 +47,15 @@ export default function AboutPage() {
     <>
       <Section className="border-b border-line">
         <Container>
-          <div className="max-w-3xl">
-            <Eyebrow>About</Eyebrow>
-            <h1 className="mt-6 text-4xl leading-[1.1] font-normal sm:text-5xl">
-              A small studio, which is rather the point.
-            </h1>
-            <div className="mt-8 space-y-6 text-lg leading-relaxed text-ink-muted">
+          <div className="flex items-start justify-between">
+            <Label index="01">About</Label>
+            <span className="label text-ink-faint">{site.location}</span>
+          </div>
+          <Display as="h1" className="mt-6">
+            Small
+          </Display>
+          <div className="mt-10 grid gap-12 lg:grid-cols-[1.1fr_auto] lg:items-start">
+            <div className="max-w-2xl space-y-6 text-lg leading-relaxed text-ink-muted">
               <p>
                 Northbound Web is an independent web development studio working
                 with small businesses across the {site.location}. When you get in
@@ -75,52 +78,52 @@ export default function AboutPage() {
                 predictable monthly fee.
               </p>
             </div>
+            <Crosshair className="w-36 justify-self-start text-olive sm:w-48" />
+          </div>
+        </Container>
+      </Section>
+
+      <Section className="border-b border-line">
+        <Container>
+          <div className="reveal">
+            <Label index="02">How I work</Label>
+            <Display className="mt-6">Four</Display>
+            <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted">
+              Things I will not budge on.
+            </p>
+
+            <dl className="mt-16 grid border-t border-l border-line sm:grid-cols-2">
+              {beliefs.map((b, i) => (
+                <div key={b.title} className="border-r border-b border-line p-8">
+                  <span className="label text-accent">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <dt className="display mt-4 text-2xl text-ink sm:text-3xl">
+                    {b.title}
+                  </dt>
+                  <dd className="mt-4 text-[15px] leading-relaxed text-ink-muted">
+                    {b.body}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </Container>
       </Section>
 
       <Section>
         <Container>
-          <div className="max-w-2xl">
-            <Eyebrow>How I work</Eyebrow>
-            <h2 className="mt-6 text-3xl leading-tight sm:text-4xl">
-              Four things I will not budge on.
-            </h2>
-          </div>
-
-          <dl className="mt-16 grid gap-x-14 gap-y-12 sm:grid-cols-2">
-            {beliefs.map((belief) => (
-              <div key={belief.title} className="border-t border-line pt-6">
-                <dt className="text-lg">{belief.title}</dt>
-                <dd className="mt-3 text-[15px] leading-relaxed text-ink-muted">
-                  {belief.body}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </Container>
-      </Section>
-
-      <Section className="border-t border-line bg-paper-sunk">
-        <Container>
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl leading-tight sm:text-4xl">
-              Let us have a conversation.
-            </h2>
-            <p className="mt-5 text-lg leading-relaxed text-ink-muted">
+          <div className="max-w-3xl">
+            <Display>Talk</Display>
+            <p className="mt-8 text-lg leading-relaxed text-ink-muted">
               No obligation, no pitch, and no proposal written before I
               understand what your business actually needs.
             </p>
-            <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center">
               <ButtonLink href="/contact" size="lg">
-                Get in touch <Arrow />
+                Start a project
               </ButtonLink>
-              <a
-                href={`mailto:${site.email}`}
-                className="text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline"
-              >
-                or email {site.email}
-              </a>
+              <ArrowLink href="/services">See packages and prices</ArrowLink>
             </div>
           </div>
         </Container>

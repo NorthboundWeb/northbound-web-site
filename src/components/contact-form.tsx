@@ -11,7 +11,7 @@ import {
 } from '@/lib/contact/schema'
 
 const fieldClass =
-  'w-full rounded-lg border border-line bg-paper-raised px-4 py-3 text-[15px] text-ink transition-colors placeholder:text-ink-faint hover:border-line-strong focus:border-accent focus:outline-none'
+  'w-full border border-line bg-paper-raised px-4 py-3.5 text-[15px] text-ink transition-colors placeholder:text-ink-faint hover:border-line-strong focus:border-accent focus:outline-none'
 
 function Label({
   htmlFor,
@@ -23,10 +23,10 @@ function Label({
   optional?: boolean
 }) {
   return (
-    <label htmlFor={htmlFor} className="mb-2 block text-sm font-medium">
+    <label htmlFor={htmlFor} className="label mb-2.5 block text-ink">
       {children}
       {optional ? (
-        <span className="ml-1.5 font-normal text-ink-faint">(optional)</span>
+        <span className="ml-2 text-ink-faint normal-case">(optional)</span>
       ) : null}
     </label>
   )
@@ -50,10 +50,14 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className={cn(buttonClass({ size: 'lg' }), 'w-full sm:w-auto')}
+      className={cn(buttonClass({ size: 'lg' }), 'group/btn w-full sm:w-auto')}
     >
       {pending ? 'Sending…' : 'Send enquiry'}
-      {pending ? null : <Arrow />}
+      {pending ? null : (
+        <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
+          <Arrow />
+        </span>
+      )}
     </button>
   )
 }
@@ -97,9 +101,10 @@ export function ContactForm({
         ref={statusRef}
         tabIndex={-1}
         role="status"
-        className="rounded-2xl border border-accent/30 bg-accent-wash p-8 focus:outline-none"
+        className="border border-line bg-paper-sunk p-10 focus:outline-none"
       >
-        <h2 className="font-serif text-2xl">Message sent</h2>
+        <p className="label text-accent">Sent</p>
+        <h2 className="display mt-4 text-4xl text-ink">Message sent<span className="text-accent">.</span></h2>
         <p className="mt-3 leading-relaxed text-ink-muted">
           {state.message ??
             'Thanks — your message is with me. I normally reply within one working day.'}
@@ -118,7 +123,7 @@ export function ContactForm({
         className="focus:outline-none"
       >
         {state.status === 'error' && state.message ? (
-          <p className="rounded-lg border border-line-strong bg-paper-sunk px-4 py-3 text-sm">
+          <p className="border-l-2 border-accent bg-paper-sunk px-4 py-3 text-sm">
             {state.message}
           </p>
         ) : null}

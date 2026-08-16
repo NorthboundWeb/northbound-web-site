@@ -1,59 +1,89 @@
 @import 'tailwindcss';
 
 /*
-  Palette: warm paper, near-black ink, one evergreen accent.
-  Deliberately no purple/indigo gradients — the aim is "designed studio",
-  not "generated template".
+  Northbound print system.
+
+  Warm cream paper, deep bottle-green ink, burnt-orange as the one interaction
+  colour. Olive, mustard, cobalt and dusty pink are editorial accents used
+  sparingly — never as UI states. No purple, no gradients, no gloss.
 */
 :root {
-  --paper: #faf9f6;
-  --paper-raised: #ffffff;
-  --paper-sunk: #f2efe9;
-  --ink: #101619;
-  --ink-muted: #545f66;
-  --ink-faint: #7b858b;
-  --line: #e3dfd7;
-  --line-strong: #cfc9be;
-  --accent: #0b5f51;
-  --accent-hover: #084a3f;
-  --accent-ink: #ffffff;
-  --accent-wash: #eaf2ef;
+  /* Paper */
+  --cream: #f2ebdd;
+  --paper: #f2ebdd;
+  --paper-sunk: #ede5d6;
+  --paper-raised: #f7f2e7;
+
+  /* Ink — deep green carries the brand, not neutral black */
+  --green: #0d2a24;
+  --green-deep: #112f29;
+  --black: #111111;
+  --ink: #0d2a24;
+  --ink-muted: #3d564e;
+  --ink-faint: #6b8078;
+
+  /* Interaction */
+  --orange: #f04a0a;
+  --orange-lit: #f25a14;
+  --accent: #f04a0a;
+  --accent-ink: #f2ebdd;
+  --accent-wash: #f7e3d5;
+
+  /* Editorial accents — sparing, decorative only */
+  --olive: #7d8242;
+  --mustard: #d49a17;
+  --cobalt: #3047a8;
+  --pink: #e7b1aa;
+
+  --line: rgba(13, 42, 36, 0.2);
+  --line-strong: rgba(13, 42, 36, 0.42);
 }
 
+/* Dark mode is the same brand inverted: green paper, cream ink. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #0b1013;
-    --paper-raised: #121a1e;
-    --paper-sunk: #080d0f;
-    --ink: #edf0f0;
-    --ink-muted: #a1acb1;
-    --ink-faint: #7d878c;
-    --line: #1e292e;
-    --line-strong: #2c3a40;
-    --accent: #5fcfb4;
-    --accent-hover: #7fdcc5;
-    --accent-ink: #06120f;
-    --accent-wash: #10211d;
+    --paper: #0d2a24;
+    --paper-sunk: #0a211c;
+    --paper-raised: #112f29;
+
+    --ink: #f2ebdd;
+    --ink-muted: #c2cec7;
+    --ink-faint: #8ba095;
+
+    --accent: #f25a14;
+    --accent-ink: #0d2a24;
+    --accent-wash: #1b3a32;
+
+    --line: rgba(242, 235, 221, 0.2);
+    --line-strong: rgba(242, 235, 221, 0.4);
   }
 }
 
 @theme inline {
   --color-paper: var(--paper);
-  --color-paper-raised: var(--paper-raised);
   --color-paper-sunk: var(--paper-sunk);
+  --color-paper-raised: var(--paper-raised);
+  --color-cream: var(--cream);
+  --color-green: var(--green);
+  --color-green-deep: var(--green-deep);
+  --color-black: var(--black);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-ink-faint: var(--ink-faint);
-  --color-line: var(--line);
-  --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
   --color-accent-ink: var(--accent-ink);
   --color-accent-wash: var(--accent-wash);
+  --color-orange: var(--orange);
+  --color-olive: var(--olive);
+  --color-mustard: var(--mustard);
+  --color-cobalt: var(--cobalt);
+  --color-pink: var(--pink);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
 
   --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', sans-serif;
-  --font-serif: var(--font-display), ui-serif, Georgia, 'Times New Roman', serif;
+  --font-display: var(--font-display), 'Arial Narrow', sans-serif;
 }
 
 @layer base {
@@ -67,39 +97,35 @@
     color: var(--ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
   }
 
-  /* Editorial headings: serif, tight, with proper optical sizing. */
-  h1,
-  h2,
-  h3 {
-    font-family: var(--font-serif);
-    letter-spacing: -0.02em;
-    text-wrap: balance;
+  /* Display type is a graphic element: condensed, uppercase, tight. */
+  .display {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    line-height: 0.82;
+    letter-spacing: -0.015em;
+    font-weight: 400;
   }
 
   p {
     text-wrap: pretty;
   }
 
-  /* One visible focus style everywhere, including keyboard-only users. */
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
-    border-radius: 2px;
   }
 
   ::selection {
     background-color: var(--accent);
-    color: var(--accent-ink);
+    color: var(--cream);
   }
 
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
     }
-
     *,
     *::before,
     *::after {
@@ -110,11 +136,107 @@
   }
 }
 
-@utility eyebrow {
+/* Small technical label — the recurring print annotation. */
+@utility label {
   font-family: var(--font-sans);
   font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ink-faint);
+}
+
+/*
+  Paper grain. A single tiled 120×120 SVG turbulence, ~1.5KB inline, drawn
+  once into a fixed pseudo-element so it costs no layout and never repaints on
+  scroll. Kept faint enough to read as texture rather than dirt.
+*/
+@utility grain {
+  position: relative;
+}
+
+@utility grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  .grain-overlay {
+    mix-blend-mode: screen;
+    opacity: 0.28;
+  }
+}
+
+/* Faint technical grid, as on the reference sheets. */
+@utility gridlines {
+  background-image: linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: -1px -1px;
+}
+
+/* Dotted rule used between editorial blocks. */
+@utility dotted-rule {
+  background-image: radial-gradient(
+    circle,
+    var(--line-strong) 1px,
+    transparent 1px
+  );
+  background-size: 8px 2px;
+  background-repeat: repeat-x;
+  height: 2px;
+}
+
+/* An orange point travelling a line — the recurring motion motif. */
+@keyframes travel {
+  0% {
+    left: 0;
+  }
+  50% {
+    left: calc(100% - 8px);
+  }
+  100% {
+    left: 0;
+  }
+}
+
+@utility travelling-dot {
+  animation: travel 6s ease-in-out infinite;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility rise-in {
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/*
+  Scroll-driven reveal, CSS only.
+
+  Content is visible by default, so it is never hidden when JavaScript is off
+  or when the browser lacks scroll-timeline support — the animation is pure
+  enhancement layered on top. Chromium animates it on entry; Safari and Firefox
+  simply show the content. No observer, no client component, no hydration risk.
+*/
+@utility reveal {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+  }
 }

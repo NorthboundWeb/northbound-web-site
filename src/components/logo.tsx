@@ -1,42 +1,24 @@
 /**
- * Compass-rose mark: a north-pointing needle inside a ring.
- * Drawn with currentColor so it inherits ink or accent wherever it is used.
+ * Compass mark: a north-pointing needle in a ring. The north half is orange —
+ * the same "direction is the point" idea the arrows carry.
  */
-export function Logo({ className = 'h-7 w-7' }: { className?: string }) {
+export function Logo({ className = 'h-6 w-6' }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 32 32"
-      className={className}
-      fill="none"
-      aria-hidden
-      focusable="false"
-    >
-      <circle
-        cx="16"
-        cy="16"
-        r="14"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        opacity="0.35"
-      />
-      {/* North half — filled, the emphasis of the mark */}
-      <path d="M16 4.5 22 20 16 16.6 10 20Z" fill="currentColor" />
-      {/* South half — outlined, so the needle reads as pointing up */}
-      <path
-        d="M16 27.5 10 20l6 3.4 6-3.4Z"
-        fill="currentColor"
-        opacity="0.45"
-      />
+    <svg viewBox="0 0 32 32" className={className} fill="none" aria-hidden focusable="false">
+      <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="1.5" opacity="0.4" />
+      <path d="M16 4.5 22 20 16 16.6 10 20Z" fill="var(--orange)" />
+      <path d="M16 27.5 10 20l6 3.4 6-3.4Z" fill="currentColor" opacity="0.55" />
     </svg>
   )
 }
 
-export function Wordmark() {
+/** Set in the condensed display face, uppercase, tightly tracked. */
+export function Wordmark({ className = '' }: { className?: string }) {
   return (
-    <span className="flex items-center gap-2.5">
-      <Logo className="h-7 w-7 text-accent" />
-      <span className="font-serif text-lg tracking-tight">
-        Northbound<span className="text-ink-faint"> Web</span>
+    <span className={`flex items-center gap-2.5 ${className}`}>
+      <Logo className="h-6 w-6" />
+      <span className="display text-lg leading-none tracking-[0.02em]">
+        Northbound Web
       </span>
     </span>
   )

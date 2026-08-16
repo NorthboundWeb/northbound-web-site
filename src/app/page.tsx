@@ -1,12 +1,22 @@
 import Link from 'next/link'
 import {
-  Arrow,
+  BrowserFrame,
+  CompassDiagram,
+  Crosshair,
+  CursorArrow,
+  RouteMarker,
+  TravellingLine,
+  Wireframe,
+} from '@/components/graphics'
+import {
+  ArrowLink,
   ButtonLink,
   CardCta,
   Container,
-  Eyebrow,
+  Display,
+  Label,
   Section,
-  SectionHeading,
+  cn,
 } from '@/components/ui'
 import { currency, site } from '@/lib/site'
 import {
@@ -14,9 +24,39 @@ import {
   COMPLIMENTARY_MONTH_TERMS,
   buildPackages,
   managementPlans,
-  process,
-  standards,
 } from '@/lib/services'
+
+/** The editorial run: one idea, one word, one diagram per spread. */
+const spreads = [
+  {
+    index: '01',
+    word: 'Missed',
+    copy: 'If they do not understand what you do in five seconds, they leave.',
+    Graphic: CursorArrow,
+    tint: 'text-ink',
+  },
+  {
+    index: '02',
+    word: 'Seen',
+    copy: 'Social media gets attention. A website builds trust.',
+    Graphic: Crosshair,
+    tint: 'text-olive',
+  },
+  {
+    index: '03',
+    word: 'Clear',
+    copy: 'What do you offer? Who is it for? What is the next step?',
+    Graphic: Wireframe,
+    tint: 'text-cobalt',
+  },
+  {
+    index: '04',
+    word: 'Found',
+    copy: 'A good website works for you around the clock. Even when you do not.',
+    Graphic: RouteMarker,
+    tint: 'text-mustard',
+  },
+]
 
 export default function HomePage() {
   const jsonLd = {
@@ -47,87 +87,156 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero — asymmetric and left-aligned, with the promise stated plainly. */}
+      {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-line">
-        <Container className="py-24 sm:py-32 lg:py-40">
-          <div className="grid gap-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-            <div>
-              <Eyebrow>Web development · {site.location}</Eyebrow>
-              <h1 className="mt-7 text-[2.75rem] leading-[1.05] font-normal sm:text-6xl lg:text-[4.25rem]">
-                Websites that make small businesses look like{' '}
-                <em className="font-normal text-accent not-italic">
-                  serious ones
-                </em>
-                .
-              </h1>
-              <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted sm:text-xl">
-                I design and build fast, accessible, secure websites and web
-                applications — then look after them once they are live. No page
-                builders, no templates, no being locked into a platform you
-                cannot leave.
+        <Container className="pt-16 pb-20 sm:pt-20 sm:pb-28">
+          <div className="flex items-start justify-between">
+            <Label>Web development · {site.location}</Label>
+            <span className="label text-accent">01</span>
+          </div>
+
+          <div className="mt-10 grid gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+            <div className="rise-in">
+              <Display as="h1">Northbound</Display>
+              <p className="mt-8 max-w-lg text-lg leading-relaxed text-ink-muted sm:text-xl">
+                Your website is often your first impression. Make it a good one.
+                Websites built for small businesses that want to look the part.
               </p>
               <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
                 <ButtonLink href="/contact" size="lg">
-                  Get a quote <Arrow />
+                  Start a project
                 </ButtonLink>
-                <ButtonLink href="/services" variant="secondary" size="lg">
-                  See services and prices
-                </ButtonLink>
+                <ArrowLink href="/services">See packages and prices</ArrowLink>
               </div>
             </div>
 
-            {/* Supporting facts rather than invented testimonials or logos. */}
-            <dl className="grid grid-cols-2 gap-x-8 gap-y-10 border-t border-line pt-10 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12">
-              {[
-                { term: 'Pricing', detail: 'Fixed package prices, £199 to £399' },
-                { term: 'Replies', detail: 'Usually within one working day' },
-                { term: 'Ownership', detail: 'Your code, your repository, your domain' },
-                { term: 'Aftercare', detail: 'Optional plans, £39 to £149/month' },
-              ].map((item) => (
-                <div key={item.term}>
-                  <dt className="eyebrow">{item.term}</dt>
-                  <dd className="mt-2.5 text-[15px] leading-relaxed text-ink-muted">
-                    {item.detail}
-                  </dd>
+            <div className="lg:pb-4">
+              <BrowserFrame className="w-full text-ink" />
+              <TravellingLine className="mt-6" />
+            </div>
+          </div>
+
+          <dl className="mt-16 grid grid-cols-2 gap-x-8 gap-y-10 border-t border-line pt-10 lg:grid-cols-4">
+            {[
+              { t: 'Pricing', d: 'Fixed package prices, £199 to £399' },
+              { t: 'Replies', d: 'Usually within one working day' },
+              { t: 'Ownership', d: 'Your code, your repository, your domain' },
+              { t: 'Aftercare', d: 'Optional plans, £39 to £149/month' },
+            ].map((item) => (
+              <div key={item.t}>
+                <dt className="label text-accent">{item.t}</dt>
+                <dd className="mt-3 text-[15px] leading-relaxed text-ink-muted">
+                  {item.d}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </Container>
+      </section>
+
+      {/* ── Editorial spreads ────────────────────────────────── */}
+      {spreads.map((s, i) => (
+        <section
+          key={s.word}
+          className={cn(
+            'border-b border-line',
+            i % 2 === 1 && 'bg-paper-sunk'
+          )}
+        >
+          <Container className="py-20 sm:py-28">
+            <div className="reveal">
+              <div
+                className={cn(
+                  'grid items-center gap-12 lg:grid-cols-[1fr_auto]',
+                  i % 2 === 1 && 'lg:grid-flow-dense'
+                )}
+              >
+                <div className={cn(i % 2 === 1 && 'lg:col-start-2')}>
+                  <Label index={s.index} />
+                  <Display className="mt-6">{s.word}</Display>
+                  <p className="mt-8 max-w-md text-lg leading-relaxed text-ink-muted">
+                    {s.copy}
+                  </p>
                 </div>
-              ))}
-            </dl>
+                <div
+                  className={cn(
+                    'w-44 justify-self-start sm:w-56 lg:w-72',
+                    i % 2 === 1 && 'lg:col-start-1 lg:justify-self-end',
+                    s.tint
+                  )}
+                >
+                  <s.Graphic />
+                </div>
+              </div>
+            </div>
+          </Container>
+        </section>
+      ))}
+
+      {/* ── Judged ───────────────────────────────────────────── */}
+      <section className="border-b border-line bg-green text-cream">
+        <Container className="py-24 sm:py-32">
+          <div className="reveal">
+            <div className="flex items-start justify-between">
+              <Label index="05" className="text-cream/50" />
+              <span className="label text-accent">Northbound</span>
+            </div>
+            <p className="display mt-8 text-[clamp(3.5rem,15vw,13rem)] text-cream">
+              Judged<span className="text-accent">.</span>
+            </p>
+            <p className="mt-10 max-w-xl text-lg leading-relaxed text-cream/80 sm:text-xl">
+              People decide whether to trust a business before they read a word
+              of it. A site that looks considered says the business is.
+            </p>
+            <div className="mt-12">
+              <ButtonLink href="/contact" variant="inverse" size="lg">
+                Start a project
+              </ButtonLink>
+            </div>
           </div>
         </Container>
       </section>
 
-      {/* Services */}
-      <Section>
+      {/* ── Packages ─────────────────────────────────────────── */}
+      <Section id="packages" className="scroll-mt-20 border-b border-line">
         <Container>
-          <SectionHeading
-            eyebrow="Packages"
-            title="Four packages. Prices on the page."
-            lede="You should not have to sit through a sales call to find out what a website costs. Pick the size that fits, or ask me which one does."
-          />
+          <div className="flex items-start justify-between">
+            <Label index="06">Packages</Label>
+            <span className="label text-ink-faint">Fixed prices</span>
+          </div>
 
-          <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+          <Display className="mt-6">Built</Display>
+
+          <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted">
+            You should not have to sit through a sales call to find out what a
+            website costs. Pick the size that fits, or ask me which one does.
+          </p>
+
+          <ul className="mt-16 grid border-t border-l border-line sm:grid-cols-2 lg:grid-cols-4">
             {buildPackages.map((pkg) => (
               <li
                 key={pkg.slug}
-                className="group relative flex flex-col bg-paper p-8 transition-colors hover:bg-paper-sunk focus-within:bg-paper-sunk"
+                className="group relative flex flex-col border-r border-b border-line p-7 transition-colors hover:bg-paper-raised focus-within:bg-paper-raised"
               >
-                {/* Reserved row so the badge never pushes one card's title
-                    onto a second line and knocks its price out of alignment
-                    with the others. */}
-                <div className="mb-3 flex h-5 items-center">
+                {/* Reserved row so the badge never knocks one price out of
+                    alignment with the others. */}
+                <div className="mb-4 flex h-5 items-center">
                   {pkg.badge ? (
-                    <span className="rounded-full bg-accent-wash px-2.5 py-1 text-[10px] font-medium tracking-wide text-accent uppercase">
+                    <span className="label flex items-center gap-2 text-accent">
+                      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
                       {pkg.badge}
                     </span>
                   ) : null}
                 </div>
 
-                <h3 className="text-xl">{pkg.name}</h3>
+                <h3 className="label text-ink-faint">{pkg.name}</h3>
 
-                <p className="mt-4 font-serif text-3xl text-accent">
+                <p className="display mt-3 text-[clamp(2.75rem,6vw,4rem)] text-ink">
                   {pkg.variable ? (
                     <>
-                      <span className="text-lg text-ink-faint">from </span>
+                      <span className="block text-sm tracking-[0.16em] text-ink-faint">
+                        From
+                      </span>
                       {currency.format(pkg.price)}
                     </>
                   ) : (
@@ -135,7 +244,7 @@ export default function HomePage() {
                   )}
                 </p>
 
-                <p className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-muted">
+                <p className="mt-5 flex-1 text-[15px] leading-relaxed text-ink-muted">
                   {pkg.summary}
                 </p>
 
@@ -148,7 +257,7 @@ export default function HomePage() {
 
                 <CardCta
                   href={`/contact?package=${pkg.enquiryParam}`}
-                  className="mt-6"
+                  className="mt-7"
                 >
                   {pkg.cta}
                 </CardCta>
@@ -157,10 +266,7 @@ export default function HomePage() {
           </ul>
 
           <p className="mt-8 text-sm text-ink-muted">
-            <Link
-              href="/services"
-              className="text-accent underline-offset-4 hover:underline"
-            >
+            <Link href="/services" className="text-accent underline-offset-4 hover:underline">
               See what each package includes
             </Link>{' '}
             — page limits, revision rounds and timescales.
@@ -168,37 +274,47 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* Management plans */}
-      <Section className="border-t border-line pt-0">
-        <Container>
-          <SectionHeading
-            eyebrow="After launch"
-            title="Keep it looked after."
-            lede="Optional, and not a condition of the build. Plans are rolling — cancel before your next billing date and future renewals stop."
-          />
+      {/* ── Management ───────────────────────────────────────── */}
+      <section className="border-b border-line bg-green text-cream">
+        <Container className="py-24 sm:py-32">
+          <div className="flex items-start justify-between">
+            <Label index="07" className="text-cream/50">
+              <span className="text-cream/50">After launch</span>
+            </Label>
+            <span className="label text-accent">Optional</span>
+          </div>
 
-          <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
+          <p className="display mt-6 text-[clamp(3rem,11vw,9rem)] text-cream">
+            Kept<span className="text-accent">.</span>
+          </p>
+
+          <p className="mt-8 max-w-xl text-lg leading-relaxed text-cream/80">
+            Optional, and not a condition of the build. Plans are rolling —
+            cancel before your next billing date and future renewals stop.
+          </p>
+
+          <ul className="mt-16 grid border-t border-l border-cream/20 sm:grid-cols-3">
             {managementPlans.map((plan) => (
               <li
                 key={plan.slug}
-                className="group relative flex flex-col bg-paper p-8 transition-colors hover:bg-paper-sunk focus-within:bg-paper-sunk"
+                className="group relative flex flex-col border-r border-b border-cream/20 p-7 transition-colors hover:bg-cream/5 focus-within:bg-cream/5"
               >
-                <h3 className="text-xl">{plan.name}</h3>
-                <p className="mt-4 font-serif text-3xl text-accent">
+                <h3 className="label text-cream/50">{plan.name}</h3>
+                <p className="display mt-3 text-[clamp(2.5rem,5.5vw,3.5rem)] text-cream">
                   {currency.format(plan.price)}
-                  <span className="font-sans text-base text-ink-faint">
-                    /month
+                  <span className="label ml-1 align-middle text-cream/50">
+                    /mo
                   </span>
                 </p>
-                <p className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-muted">
+                <p className="mt-5 flex-1 text-[15px] leading-relaxed text-cream/80">
                   {plan.summary}
                 </p>
-                <p className="mt-6 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
+                <p className="mt-6 border-t border-cream/20 pt-5 text-sm leading-relaxed text-cream/60">
                   {plan.changeTime}
                 </p>
                 <CardCta
                   href={`/contact?package=${plan.enquiryParam}`}
-                  className="mt-5"
+                  className="mt-6 text-cream group-hover:text-accent"
                 >
                   {plan.cta}
                 </CardCta>
@@ -206,82 +322,44 @@ export default function HomePage() {
             ))}
           </ul>
 
-          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-faint">
+          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-cream/60">
             The Advanced and Custom builds each include one complimentary month
             of Advanced Management, worth{' '}
             {currency.format(ADVANCED_MANAGEMENT_PRICE)}.{' '}
             {COMPLIMENTARY_MONTH_TERMS}
           </p>
         </Container>
-      </Section>
+      </section>
 
-      {/* Standards — the real differentiator */}
-      <Section className="border-y border-line bg-paper-sunk">
-        <Container>
-          <SectionHeading
-            eyebrow="How it is built"
-            title="The parts you cannot see are the parts that fail later."
-            lede="Anyone can produce something that looks acceptable on a laptop. These are the standards that decide whether it still works in two years."
-          />
-
-          <div className="mt-16 grid gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {standards.map((standard) => (
-              <div key={standard.title}>
-                <h3 className="text-lg">{standard.title}</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">
-                  {standard.body}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </Section>
-
-      {/* Process */}
+      {/* ── Closing ──────────────────────────────────────────── */}
       <Section>
         <Container>
-          <SectionHeading
-            eyebrow="How we work"
-            title="You always know what happens next."
-            lede="Every project runs through the same six steps. No silence for three weeks, no surprise invoice at the end."
-          />
-
-          <ol className="mt-16 grid gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {process.map((item) => (
-              <li key={item.step} className="border-t border-line pt-6">
-                <p className="font-serif text-sm text-accent">{item.step}</p>
-                <h3 className="mt-3 text-lg">{item.title}</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">
-                  {item.body}
+          <div className="reveal">
+            <div className="grid items-end gap-12 lg:grid-cols-[1fr_auto]">
+              <div>
+                <Label index="08" />
+                <Display className="mt-6">Northbound</Display>
+                <p className="display mt-8 text-2xl leading-tight text-ink-muted sm:text-3xl">
+                  Rebuild. Rebrand. Relaunch.
                 </p>
-              </li>
-            ))}
-          </ol>
-        </Container>
-      </Section>
-
-      {/* Closing CTA */}
-      <Section className="border-t border-line bg-paper-sunk">
-        <Container>
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl leading-tight sm:text-4xl">
-              Tell me what you are trying to do.
-            </h2>
-            <p className="mt-5 text-lg leading-relaxed text-ink-muted">
-              Describe the business and the problem. I will tell you which
-              package fits, what it will do for you, and honestly whether you
-              need me at all.
-            </p>
-            <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <ButtonLink href="/contact" size="lg">
-                Start a project <Arrow />
-              </ButtonLink>
-              <a
-                href={`mailto:${site.email}`}
-                className="text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline"
-              >
-                or email {site.email}
-              </a>
+                <p className="mt-8 max-w-lg text-lg leading-relaxed text-ink-muted">
+                  Websites for small businesses that want to look the part. Tell
+                  me what you are trying to do and I will tell you which package
+                  fits.
+                </p>
+                <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+                  <ButtonLink href="/contact" size="lg">
+                    Start a project
+                  </ButtonLink>
+                  <a
+                    href={`mailto:${site.email}`}
+                    className="label text-ink-muted underline-offset-4 hover:text-accent hover:underline"
+                  >
+                    {site.email}
+                  </a>
+                </div>
+              </div>
+              <CompassDiagram className="w-40 justify-self-start text-ink sm:w-56 lg:w-64" />
             </div>
           </div>
         </Container>

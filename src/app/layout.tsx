@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Newsreader } from 'next/font/google'
+import { Anton, Inter } from 'next/font/google'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { site } from '@/lib/site'
@@ -11,11 +11,12 @@ const body = Inter({
   display: 'swap',
 })
 
-const display = Newsreader({
+// Condensed, heavy, uppercase — the poster voice.
+const display = Anton({
   subsets: ['latin'],
+  weight: '400',
   variable: '--font-display',
   display: 'swap',
-  style: ['normal', 'italic'],
 })
 
 export const metadata: Metadata = {
@@ -63,7 +64,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en-GB" className={`${body.variable} ${display.variable}`}>
-      <body className="flex min-h-dvh flex-col bg-paper text-ink">
+      <body className="relative flex min-h-dvh flex-col bg-paper text-ink">
+        {/* Print grain, drawn once over the whole page. */}
+        <div aria-hidden className="grain-overlay" />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-ink"
@@ -71,7 +74,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main" className="flex-1">
+        <main id="main" className="relative z-10 flex-1">
           {children}
         </main>
         <SiteFooter />

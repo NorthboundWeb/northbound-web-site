@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
+import { CompassDiagram, TravellingLine } from '@/components/graphics'
 import {
-  Arrow,
   ButtonLink,
   Container,
-  Eyebrow,
+  Display,
+  Label,
   Section,
-  SectionHeading,
 } from '@/components/ui'
 import { process, standards } from '@/lib/services'
 
 export const metadata: Metadata = {
-  title: 'Approach',
+  title: 'Process',
   description:
     'How a Northbound Web project runs, from first conversation to aftercare — and the standards applied to performance, accessibility, security and ownership on every build.',
   alternates: { canonical: '/approach' },
@@ -48,114 +48,124 @@ export default function ApproachPage() {
     <>
       <Section className="border-b border-line">
         <Container>
-          <div className="max-w-3xl">
-            <Eyebrow>Approach</Eyebrow>
-            <h1 className="mt-6 text-4xl leading-[1.1] font-normal sm:text-5xl">
-              A website is not a deliverable. It is something that has to keep
-              working.
-            </h1>
-            <p className="mt-7 text-lg leading-relaxed text-ink-muted">
-              Plenty of sites look fine the week they launch and quietly rot
-              afterwards — slow on a phone, invisible to search, impossible to
-              edit, or sitting on a platform that puts the rent up every year.
-              Most of that is decided by choices made before anyone opens a
-              design tool. Here is how I make them.
-            </p>
+          <div className="flex items-start justify-between">
+            <Label index="01">Process</Label>
+            <span className="label text-ink-faint">Six steps</span>
           </div>
+          <Display as="h1" className="mt-6">
+            Ordered
+          </Display>
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-ink-muted">
+            Plenty of sites look fine the week they launch and quietly rot
+            afterwards — slow on a phone, invisible to search, impossible to
+            edit. Most of that is decided by choices made before anyone opens a
+            design tool. Here is how I make them.
+          </p>
+          <TravellingLine className="mt-14 max-w-xl" />
         </Container>
       </Section>
 
-      <Section>
+      <Section className="border-b border-line">
         <Container>
-          <SectionHeading
-            eyebrow="The process"
-            title="Six steps, every project."
-            lede="You know what stage we are at, what happens next, and what it costs — from the first call onwards."
-          />
-
-          <ol className="mt-16 space-y-px overflow-hidden rounded-2xl border border-line bg-line">
+          <ol className="grid border-t border-l border-line sm:grid-cols-2 lg:grid-cols-3">
             {process.map((item) => (
               <li
                 key={item.step}
-                className="grid gap-4 bg-paper p-8 sm:grid-cols-[auto_1fr] sm:gap-10 sm:p-10"
+                className="border-r border-b border-line p-8 transition-colors hover:bg-paper-sunk"
               >
-                <p className="font-serif text-2xl text-accent sm:w-16">
-                  {item.step}
+                <p className="display text-5xl text-accent">{item.step}</p>
+                <h2 className="display mt-5 text-2xl text-ink sm:text-3xl">
+                  {item.title}
+                </h2>
+                <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
+                  {item.body}
                 </p>
-                <div>
-                  <h3 className="text-xl">{item.title}</h3>
-                  <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-muted">
-                    {item.body}
-                  </p>
-                </div>
               </li>
             ))}
           </ol>
         </Container>
       </Section>
 
-      <Section className="border-y border-line bg-paper-sunk">
-        <Container>
-          <SectionHeading
-            eyebrow="Standards"
-            title="Non-negotiables."
-            lede="These apply whether you are spending six hundred pounds or six thousand. They are the difference between a site that lasts and one that has to be rebuilt in eighteen months."
-          />
+      <section className="border-b border-line bg-green text-cream">
+        <Container className="py-24 sm:py-32">
+          <div className="reveal">
+            <Label index="02" className="text-cream/50">
+              <span className="text-cream/50">Standards</span>
+            </Label>
+            <p className="display mt-6 text-[clamp(3rem,11vw,9rem)] text-cream">
+              Solid<span className="text-accent">.</span>
+            </p>
+            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-cream/80">
+              These apply whether you are spending £199 or £499. They are the
+              difference between a site that lasts and one that has to be
+              rebuilt in eighteen months.
+            </p>
 
-          <div className="mt-16 grid gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {standards.map((standard) => (
-              <div key={standard.title}>
-                <h3 className="text-lg">{standard.title}</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">
-                  {standard.body}
+            <div className="mt-16 grid border-t border-l border-cream/20 sm:grid-cols-2 lg:grid-cols-3">
+              {standards.map((s) => (
+                <div
+                  key={s.title}
+                  className="border-r border-b border-cream/20 p-8"
+                >
+                  <h3 className="display text-2xl text-cream">{s.title}</h3>
+                  <p className="mt-4 text-[15px] leading-relaxed text-cream/75">
+                    {s.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <Section className="border-b border-line">
+        <Container>
+          <div className="reveal">
+            <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div>
+                <Label index="03">The stack</Label>
+                <Display className="mt-6">Boring</Display>
+                <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted">
+                  Nothing here is used because it is fashionable. Each one is
+                  proven, well documented, and something another developer could
+                  pick up if you ever needed them to.
                 </p>
               </div>
-            ))}
+              <CompassDiagram className="w-36 justify-self-start text-ink sm:w-48" />
+            </div>
+
+            <dl className="mt-16 grid border-t border-l border-line sm:grid-cols-2">
+              {stack.map((item) => (
+                <div key={item.name} className="border-r border-b border-line p-8">
+                  <dt className="display text-2xl text-ink">{item.name}</dt>
+                  <dd className="mt-4 text-[15px] leading-relaxed text-ink-muted">
+                    {item.why}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <p className="mt-10 max-w-2xl text-sm leading-relaxed text-ink-faint">
+              Small projects do not get all of this. A brochure site does not
+              need a database or a payment system, and adding one would mean
+              charging you for complexity you will never use. Each project gets
+              only the pieces it genuinely needs.
+            </p>
           </div>
         </Container>
       </Section>
 
       <Section>
         <Container>
-          <SectionHeading
-            eyebrow="The stack"
-            title="Boring tools, chosen on purpose."
-            lede="Nothing here is used because it is fashionable. Each one is proven, well documented, and something another developer could pick up if you ever needed them to."
-          />
-
-          <dl className="mt-16 grid gap-x-12 gap-y-10 sm:grid-cols-2">
-            {stack.map((item) => (
-              <div key={item.name} className="border-t border-line pt-6">
-                <dt className="text-lg">{item.name}</dt>
-                <dd className="mt-3 text-[15px] leading-relaxed text-ink-muted">
-                  {item.why}
-                </dd>
-              </div>
-            ))}
-          </dl>
-
-          <p className="mt-12 max-w-2xl text-sm leading-relaxed text-ink-faint">
-            Small projects do not get all of this. A brochure site does not need
-            a database or a payment system, and adding one would mean charging
-            you for complexity you will never use. Each project gets only the
-            pieces it genuinely needs.
-          </p>
-        </Container>
-      </Section>
-
-      <Section className="border-t border-line bg-paper-sunk">
-        <Container>
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl leading-tight sm:text-4xl">
-              Sound like the right fit?
-            </h2>
-            <p className="mt-5 text-lg leading-relaxed text-ink-muted">
+          <div className="max-w-3xl">
+            <Display>Begin</Display>
+            <p className="mt-8 text-lg leading-relaxed text-ink-muted">
               The first conversation is free and there is no pitch at the end of
               it — just an honest read on what you need.
             </p>
-            <div className="mt-9 flex justify-center">
+            <div className="mt-10">
               <ButtonLink href="/contact" size="lg">
-                Start a conversation <Arrow />
+                Start a project
               </ButtonLink>
             </div>
           </div>

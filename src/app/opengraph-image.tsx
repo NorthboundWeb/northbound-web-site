@@ -19,7 +19,7 @@ export default function OpengraphImage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          backgroundColor: '#0b1013',
+          backgroundColor: '#0D2A24',
           padding: '80px',
         }}
       >
@@ -29,15 +29,15 @@ export default function OpengraphImage() {
               cx="16"
               cy="16"
               r="14"
-              stroke="#5fcfb4"
+              stroke="#F2EBDD"
               strokeWidth="1.5"
               fill="none"
               opacity="0.4"
             />
-            <path d="M16 4.5 22 20 16 16.6 10 20Z" fill="#5fcfb4" />
-            <path d="M16 27.5 10 20l6 3.4 6-3.4Z" fill="#5fcfb4" opacity="0.45" />
+            <path d="M16 4.5 22 20 16 16.6 10 20Z" fill="#F04A0A" />
+            <path d="M16 27.5 10 20l6 3.4 6-3.4Z" fill="#F04A0A" opacity="0.45" />
           </svg>
-          <div style={{ color: '#edf0f0', fontSize: 34, letterSpacing: '-0.02em' }}>
+          <div style={{ color: '#F2EBDD', fontSize: 34, letterSpacing: '-0.02em' }}>
             Northbound Web
           </div>
         </div>
@@ -45,17 +45,17 @@ export default function OpengraphImage() {
         <div
           style={{
             display: 'flex',
-            fontSize: 76,
+            fontSize: 82, textTransform: 'uppercase',
             lineHeight: 1.1,
-            color: '#edf0f0',
+            color: '#F2EBDD',
             letterSpacing: '-0.03em',
             maxWidth: 900,
           }}
         >
-          Websites that make small businesses look like serious ones.
+          Websites for small businesses that want to look the part.
         </div>
 
-        <div style={{ display: 'flex', fontSize: 28, color: '#a1acb1' }}>
+        <div style={{ display: 'flex', fontSize: 28, color: 'rgba(242,235,221,0.65)' }}>
           Design · Development · Management · {site.location}
         </div>
       </div>
