@@ -217,7 +217,8 @@ export default function ServicesPage() {
 
                 <CardCta
                   href={`/contact?package=${plan.enquiryParam}`}
-                  className="mt-6 text-cream group-hover:text-accent"
+                  tone="light"
+                  className="mt-6"
                 >
                   {plan.cta}
                 </CardCta>

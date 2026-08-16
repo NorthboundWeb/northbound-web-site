@@ -171,16 +171,25 @@ export function CardCta({
   href,
   children,
   className,
+  tone = 'dark',
 }: {
   href: string
   children: ReactNode
   className?: string
+  /**
+   * Which surface the card sits on. Passed as a prop rather than overridden
+   * through className: two text colour utilities have equal specificity, so
+   * the stylesheet's order decides the winner, not the class attribute's —
+   * which silently rendered cream CTAs in near-invisible green.
+   */
+  tone?: 'dark' | 'light'
 }) {
   return (
     <Link
       href={href}
       className={cn(
-        "label inline-flex items-center gap-2.5 text-ink after:absolute after:inset-0 after:content-[''] group-hover:text-accent",
+        "label inline-flex items-center gap-2.5 after:absolute after:inset-0 after:content-[''] group-hover:text-accent",
+        tone === 'light' ? 'text-cream' : 'text-ink',
         className
       )}
     >
