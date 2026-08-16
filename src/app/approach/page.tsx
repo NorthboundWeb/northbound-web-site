@@ -6,6 +6,7 @@ import {
   Display,
   Label,
   Section,
+  StatementBand,
 } from '@/components/ui'
 import { process, standards } from '@/lib/services'
 
@@ -86,37 +87,27 @@ export default function ApproachPage() {
         </Container>
       </Section>
 
-      <section className="border-b border-line bg-green text-cream">
-        <Container className="py-24 sm:py-32">
-          <div className="reveal">
-            <Label index="02" className="text-cream/50">
-              <span className="text-cream/50">Standards</span>
-            </Label>
-            <p className="display mt-6 text-[clamp(3rem,11vw,9rem)] text-cream">
-              Solid<span className="text-accent">.</span>
-            </p>
-            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-cream/80">
-              These apply whether you are spending £199 or £499. They are the
-              difference between a site that lasts and one that has to be
-              rebuilt in eighteen months.
-            </p>
+      <StatementBand
+        index="02"
+        eyebrow="Standards"
+        word="Solid"
+        lede="These apply whether you are spending £199 or £499. They are the difference between a site that lasts and one that has to be rebuilt in eighteen months."
+      />
 
-            <div className="mt-16 grid border-t border-l border-cream/20 sm:grid-cols-2 lg:grid-cols-3">
-              {standards.map((s) => (
-                <div
-                  key={s.title}
-                  className="border-r border-b border-cream/20 p-8"
-                >
-                  <h3 className="display text-2xl text-cream">{s.title}</h3>
-                  <p className="mt-4 text-[15px] leading-relaxed text-cream/75">
-                    {s.body}
-                  </p>
-                </div>
-              ))}
-            </div>
+      <Section className="border-b border-line">
+        <Container>
+          <div className="grid border-t border-l border-line sm:grid-cols-2 lg:grid-cols-3">
+            {standards.map((s) => (
+              <div key={s.title} className="border-r border-b border-line p-8">
+                <h3 className="display text-2xl text-ink">{s.title}</h3>
+                <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
+                  {s.body}
+                </p>
+              </div>
+            ))}
           </div>
         </Container>
-      </section>
+      </Section>
 
       <Section className="border-b border-line">
         <Container>

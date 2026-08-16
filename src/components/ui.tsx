@@ -37,17 +37,84 @@ export function Label({
   index,
   children,
   className,
+  tone = 'dark',
 }: {
   index?: string
   children?: ReactNode
   className?: string
+  /** Same reason as CardCta's tone: colour utilities of equal specificity are
+   *  resolved by stylesheet order, so the surface is declared, not overridden. */
+  tone?: 'dark' | 'light'
 }) {
   return (
-    <p className={cn('label flex items-center gap-3 text-ink-faint', className)}>
+    <p
+      className={cn(
+        'label flex items-center gap-3',
+        tone === 'light' ? 'text-cream/60' : 'text-ink-faint',
+        className
+      )}
+    >
       {index ? <span className="text-accent">{index}</span> : null}
-      <span aria-hidden className="h-px w-8 bg-line-strong" />
+      <span
+        aria-hidden
+        className={cn(
+          'h-px w-8',
+          tone === 'light' ? 'bg-cream/40' : 'bg-line-strong'
+        )}
+      />
       {children}
     </p>
+  )
+}
+
+/**
+ * A compact full-bleed green band carrying one statement.
+ *
+ * Green is used as punctuation between cream sections rather than as a field
+ * behind dense content: the band states the idea, and the grid that follows
+ * sits on paper. That keeps the page light while preserving a hard
+ * cream → green → cream rhythm.
+ */
+export function StatementBand({
+  index,
+  eyebrow,
+  word,
+  lede,
+  aside,
+  children,
+  id,
+  className,
+}: {
+  index?: string
+  eyebrow?: string
+  word: string
+  lede?: ReactNode
+  aside?: string
+  children?: ReactNode
+  id?: string
+  className?: string
+}) {
+  return (
+    <section id={id} className={cn('bg-green text-cream', className)}>
+      <Container className="py-16 sm:py-20">
+        <div className="flex items-start justify-between gap-6">
+          <Label index={index} tone="light">
+            {eyebrow}
+          </Label>
+          {aside ? <span className="label text-accent">{aside}</span> : null}
+        </div>
+        <p className="display mt-6 text-[clamp(3rem,11vw,8.5rem)] text-cream">
+          {word}
+          <span className="text-accent">.</span>
+        </p>
+        {lede ? (
+          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-cream/80">
+            {lede}
+          </p>
+        ) : null}
+        {children}
+      </Container>
+    </section>
   )
 }
 

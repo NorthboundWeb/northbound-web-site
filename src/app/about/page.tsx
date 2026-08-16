@@ -7,6 +7,7 @@ import {
   Display,
   Label,
   Section,
+  StatementBand,
 } from '@/components/ui'
 import { site } from '@/lib/site'
 
@@ -83,16 +84,17 @@ export default function AboutPage() {
         </Container>
       </Section>
 
+      <StatementBand
+        index="02"
+        eyebrow="How I work"
+        word="Four"
+        lede="Things I will not budge on."
+      />
+
       <Section className="border-b border-line">
         <Container>
           <div className="reveal">
-            <Label index="02">How I work</Label>
-            <Display className="mt-6">Four</Display>
-            <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted">
-              Things I will not budge on.
-            </p>
-
-            <dl className="mt-16 grid border-t border-l border-line sm:grid-cols-2">
+            <dl className="grid border-t border-l border-line sm:grid-cols-2">
               {beliefs.map((b, i) => (
                 <div key={b.title} className="border-r border-b border-line p-8">
                   <span className="label text-accent">

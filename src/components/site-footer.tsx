@@ -34,7 +34,7 @@ export function SiteFooter() {
 
         <div className="mt-12 grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h2 className="label text-cream/50">What I do</h2>
+            <h2 className="label text-cream/70">What I do</h2>
             <ul className="mt-5 space-y-2.5">
               {services.map((s) => (
                 <li key={s} className="text-[15px] text-cream/85">
@@ -45,7 +45,7 @@ export function SiteFooter() {
           </div>
 
           <nav aria-label="Packages">
-            <h2 className="label text-cream/50">Packages</h2>
+            <h2 className="label text-cream/70">Packages</h2>
             <ul className="mt-5 space-y-2.5">
               {buildPackages.map((pkg) => (
                 <li key={pkg.slug}>
@@ -69,7 +69,7 @@ export function SiteFooter() {
           </nav>
 
           <nav aria-label="Site">
-            <h2 className="label text-cream/50">Northbound Web</h2>
+            <h2 className="label text-cream/70">Northbound Web</h2>
             <ul className="mt-5 space-y-2.5">
               {site.nav.map((item) => (
                 <li key={item.href}>
@@ -85,7 +85,7 @@ export function SiteFooter() {
           </nav>
 
           <div>
-            <h2 className="label text-cream/50">Elsewhere</h2>
+            <h2 className="label text-cream/70">Elsewhere</h2>
             <ul className="mt-5 space-y-2.5">
               {site.socials.map((s) => (
                 <li key={s.label}>
@@ -111,7 +111,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="label mt-16 flex flex-col gap-3 border-t border-cream/20 pt-8 text-cream/50 sm:flex-row sm:items-center sm:justify-between">
+        <div className="label mt-16 flex flex-col gap-3 border-t border-cream/20 pt-8 text-cream/70 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {site.name}
           </p>

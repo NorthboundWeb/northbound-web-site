@@ -16,6 +16,7 @@ import {
   Display,
   Label,
   Section,
+  StatementBand,
   cn,
 } from '@/components/ui'
 import { currency, site } from '@/lib/site'
@@ -174,28 +175,18 @@ export default function HomePage() {
       ))}
 
       {/* ── Judged ───────────────────────────────────────────── */}
-      <section className="border-b border-line bg-green text-cream">
-        <Container className="py-24 sm:py-32">
-          <div className="reveal">
-            <div className="flex items-start justify-between">
-              <Label index="05" className="text-cream/50" />
-              <span className="label text-accent">Northbound</span>
-            </div>
-            <p className="display mt-8 text-[clamp(3.5rem,15vw,13rem)] text-cream">
-              Judged<span className="text-accent">.</span>
-            </p>
-            <p className="mt-10 max-w-xl text-lg leading-relaxed text-cream/80 sm:text-xl">
-              People decide whether to trust a business before they read a word
-              of it. A site that looks considered says the business is.
-            </p>
-            <div className="mt-12">
-              <ButtonLink href="/contact" variant="inverse" size="lg">
-                Start a project
-              </ButtonLink>
-            </div>
-          </div>
-        </Container>
-      </section>
+      <StatementBand
+        index="05"
+        aside="Northbound"
+        word="Judged"
+        lede="People decide whether to trust a business before they read a word of it. A site that looks considered says the business is."
+      >
+        <div className="mt-10">
+          <ButtonLink href="/contact" variant="inverse" size="lg">
+            Start a project
+          </ButtonLink>
+        </div>
+      </StatementBand>
 
       {/* ── Packages ─────────────────────────────────────────── */}
       <Section id="packages" className="scroll-mt-20 border-b border-line">
@@ -274,47 +265,38 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* ── Management ───────────────────────────────────────── */}
-      <section className="border-b border-line bg-green text-cream">
-        <Container className="py-24 sm:py-32">
-          <div className="flex items-start justify-between">
-            <Label index="07" className="text-cream/50">
-              <span className="text-cream/50">After launch</span>
-            </Label>
-            <span className="label text-accent">Optional</span>
-          </div>
+      {/* ── Management: green band, then the plans on paper ──── */}
+      <StatementBand
+        index="07"
+        eyebrow="After launch"
+        aside="Optional"
+        word="Kept"
+        lede="Optional, and not a condition of the build. Plans are rolling — cancel before your next billing date and future renewals stop."
+      />
 
-          <p className="display mt-6 text-[clamp(3rem,11vw,9rem)] text-cream">
-            Kept<span className="text-accent">.</span>
-          </p>
-
-          <p className="mt-8 max-w-xl text-lg leading-relaxed text-cream/80">
-            Optional, and not a condition of the build. Plans are rolling —
-            cancel before your next billing date and future renewals stop.
-          </p>
-
-          <ul className="mt-16 grid border-t border-l border-cream/20 sm:grid-cols-3">
+      <Section className="border-b border-line">
+        <Container>
+          <ul className="grid border-t border-l border-line sm:grid-cols-3">
             {managementPlans.map((plan) => (
               <li
                 key={plan.slug}
-                className="group relative flex flex-col border-r border-b border-cream/20 p-7 transition-colors hover:bg-cream/5 focus-within:bg-cream/5"
+                className="group relative flex flex-col border-r border-b border-line p-7 transition-colors hover:bg-paper-raised focus-within:bg-paper-raised"
               >
-                <h3 className="label text-cream/50">{plan.name}</h3>
-                <p className="display mt-3 text-[clamp(2.5rem,5.5vw,3.5rem)] text-cream">
+                <h3 className="label text-ink-faint">{plan.name}</h3>
+                <p className="display mt-3 text-[clamp(2.5rem,5.5vw,3.5rem)] text-ink">
                   {currency.format(plan.price)}
-                  <span className="label ml-1 align-middle text-cream/50">
+                  <span className="label ml-1 align-middle text-ink-faint">
                     /mo
                   </span>
                 </p>
-                <p className="mt-5 flex-1 text-[15px] leading-relaxed text-cream/80">
+                <p className="mt-5 flex-1 text-[15px] leading-relaxed text-ink-muted">
                   {plan.summary}
                 </p>
-                <p className="mt-6 border-t border-cream/20 pt-5 text-sm leading-relaxed text-cream/60">
+                <p className="mt-6 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
                   {plan.changeTime}
                 </p>
                 <CardCta
                   href={`/contact?package=${plan.enquiryParam}`}
-                  tone="light"
                   className="mt-6"
                 >
                   {plan.cta}
@@ -323,14 +305,14 @@ export default function HomePage() {
             ))}
           </ul>
 
-          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-cream/60">
+          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-faint">
             The Advanced and Custom builds each include one complimentary month
             of Advanced Management, worth{' '}
             {currency.format(ADVANCED_MANAGEMENT_PRICE)}.{' '}
             {COMPLIMENTARY_MONTH_TERMS}
           </p>
         </Container>
-      </section>
+      </Section>
 
       {/* ── Closing ──────────────────────────────────────────── */}
       <Section>

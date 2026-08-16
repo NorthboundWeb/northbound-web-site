@@ -20,7 +20,8 @@
   --black: #111111;
   --ink: #0d2a24;
   --ink-muted: #3d564e;
-  --ink-faint: #6b8078;
+  /* Darkened from #6B8078 (3.55:1) to clear WCAG AA at small sizes on cream. */
+  --ink-faint: #55675f;
 
   /* Interaction */
   --orange: #f04a0a;

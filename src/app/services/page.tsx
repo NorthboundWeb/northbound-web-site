@@ -8,6 +8,7 @@ import {
   Display,
   Label,
   Section,
+  StatementBand,
   cn,
 } from '@/components/ui'
 import {
@@ -158,41 +159,40 @@ export default function ServicesPage() {
         </section>
       ))}
 
-      {/* Management — deep green block */}
-      <section id="management" className="scroll-mt-20 bg-green text-cream">
-        <Container className="py-24 sm:py-32">
-          <div className="flex items-start justify-between">
-            <Label index="05" className="text-cream/50">
-              <span className="text-cream/50">Management plans</span>
-            </Label>
-            <span className="label text-accent">Optional</span>
-          </div>
-
-          <p className="display mt-6 text-[clamp(3rem,11vw,9rem)] text-cream">
-            Kept<span className="text-accent">.</span>
-          </p>
-
-          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-cream/80">
+      {/* Management: green band, then the plans on paper */}
+      <StatementBand
+        id="management"
+        index="05"
+        eyebrow="Management plans"
+        aside="Optional"
+        word="Kept"
+        className="scroll-mt-20"
+        lede={
+          <>
             The Advanced and Custom builds include one complimentary month of
             Advanced Management, worth{' '}
             {currency.format(ADVANCED_MANAGEMENT_PRICE)}.{' '}
             {COMPLIMENTARY_MONTH_TERMS}
-          </p>
+          </>
+        }
+      />
 
-          <div className="mt-16 grid border-t border-l border-cream/20 lg:grid-cols-3">
+      <Section className="border-b border-line">
+        <Container>
+          <div className="grid border-t border-l border-line lg:grid-cols-3">
             {managementPlans.map((plan) => (
               <div
                 key={plan.slug}
-                className="group relative flex flex-col border-r border-b border-cream/20 p-8 transition-colors hover:bg-cream/5 focus-within:bg-cream/5"
+                className="group relative flex flex-col border-r border-b border-line p-8 transition-colors hover:bg-paper-raised focus-within:bg-paper-raised"
               >
-                <h3 className="label text-cream/50">{plan.name}</h3>
-                <p className="display mt-3 text-[clamp(2.75rem,6vw,4rem)] text-cream">
+                <h3 className="label text-ink-faint">{plan.name}</h3>
+                <p className="display mt-3 text-[clamp(2.75rem,6vw,4rem)] text-ink">
                   {currency.format(plan.price)}
-                  <span className="label ml-1.5 align-middle text-cream/50">
+                  <span className="label ml-1.5 align-middle text-ink-faint">
                     /mo
                   </span>
                 </p>
-                <p className="mt-5 text-[15px] leading-relaxed text-cream/80">
+                <p className="mt-5 text-[15px] leading-relaxed text-ink-muted">
                   {plan.summary}
                 </p>
                 <ul className="mt-7 flex-1 space-y-3.5">
@@ -202,7 +202,7 @@ export default function ServicesPage() {
                         aria-hidden
                         className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
                       />
-                      <span className="text-[15px] leading-relaxed text-cream/80">
+                      <span className="text-[15px] leading-relaxed text-ink-muted">
                         {item}
                       </span>
                     </li>
@@ -211,13 +211,12 @@ export default function ServicesPage() {
 
                 {/* Change time sits below the benefits on purpose — a plan is
                     the site being looked after, not hours sold by the month. */}
-                <p className="mt-7 border-t border-cream/20 pt-5 text-sm leading-relaxed text-cream/60">
+                <p className="mt-7 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
                   {plan.changeTime}
                 </p>
 
                 <CardCta
                   href={`/contact?package=${plan.enquiryParam}`}
-                  tone="light"
                   className="mt-6"
                 >
                   {plan.cta}
@@ -226,16 +225,16 @@ export default function ServicesPage() {
             ))}
           </div>
 
-          <div className="mt-12 border border-cream/20 p-8">
-            <h3 className="label text-cream/50">How the plans work</h3>
+          <div className="mt-12 border border-line bg-paper-sunk p-8">
+            <h3 className="label text-ink-faint">How the plans work</h3>
             <ul className="mt-6 space-y-3.5">
               {managementTerms.map((term) => (
                 <li key={term} className="flex gap-4">
                   <span
                     aria-hidden
-                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cream/40"
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
                   />
-                  <span className="text-[15px] leading-relaxed text-cream/80">
+                  <span className="text-[15px] leading-relaxed text-ink-muted">
                     {term}
                   </span>
                 </li>
@@ -243,7 +242,7 @@ export default function ServicesPage() {
             </ul>
           </div>
         </Container>
-      </section>
+      </Section>
 
       {/* Practical terms */}
       <Section id="terms" className="scroll-mt-20 border-b border-line">
