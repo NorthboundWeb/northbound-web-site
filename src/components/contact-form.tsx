@@ -58,7 +58,12 @@ function SubmitButton() {
   )
 }
 
-export function ContactForm() {
+export function ContactForm({
+  defaultProjectType,
+}: {
+  /** Preselected from /contact?package=… — the visitor can still change it. */
+  defaultProjectType?: string
+}) {
   const [state, formAction] = useActionState(submitEnquiry, initialContactState)
   const formRef = useRef<HTMLFormElement>(null)
   const statusRef = useRef<HTMLDivElement>(null)
@@ -172,7 +177,7 @@ export function ContactForm() {
           <select
             id="projectType"
             name="projectType"
-            defaultValue=""
+            defaultValue={defaultProjectType ?? ''}
             className={fieldClass}
           >
             <option value="">Choose one…</option>

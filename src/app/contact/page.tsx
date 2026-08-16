@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { ContactForm } from '@/components/contact-form'
 import { Container, Eyebrow, Section } from '@/components/ui'
+import { projectTypeFromParam } from '@/lib/contact/schema'
 import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -42,7 +43,15 @@ const answers = [
   },
 ]
 
-export default function ContactPage() {
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ package?: string | string[] }>
+}) {
+  // Resolved on the server so the right option is already selected in the HTML
+  // — no flash of an empty select, and it still works without JavaScript.
+  const preselected = projectTypeFromParam((await searchParams).package)
+
   return (
     <Section>
       <Container>
@@ -65,7 +74,7 @@ export default function ContactPage() {
             </p>
 
             <div className="mt-12">
-              <ContactForm />
+              <ContactForm defaultProjectType={preselected} />
             </div>
           </div>
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import {
   Arrow,
   ButtonLink,
+  CardCta,
   Container,
   Eyebrow,
   Section,
@@ -108,6 +109,14 @@ export default function ServicesPage() {
                     {pkg.note}
                   </p>
                 ) : null}
+
+                <ButtonLink
+                  href={`/contact?package=${pkg.enquiryParam}`}
+                  size="lg"
+                  className="mt-8"
+                >
+                  {pkg.cta} <Arrow />
+                </ButtonLink>
               </div>
 
               <div className="lg:pt-2">
@@ -150,7 +159,10 @@ export default function ServicesPage() {
 
           <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-3">
             {managementPlans.map((plan) => (
-              <div key={plan.slug} className="flex flex-col bg-paper p-8">
+              <div
+                key={plan.slug}
+                className="group relative flex flex-col bg-paper p-8 transition-colors hover:bg-paper-sunk focus-within:bg-paper-sunk"
+              >
                 <h3 className="text-2xl">{plan.name}</h3>
                 <p className="mt-4 font-serif text-4xl text-accent">
                   {currency.format(plan.price)}
@@ -180,6 +192,13 @@ export default function ServicesPage() {
                 <p className="mt-7 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
                   {plan.changeTime}
                 </p>
+
+                <CardCta
+                  href={`/contact?package=${plan.enquiryParam}`}
+                  className="mt-5"
+                >
+                  {plan.cta}
+                </CardCta>
               </div>
             ))}
           </div>

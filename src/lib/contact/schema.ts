@@ -14,6 +14,38 @@ export const projectTypes = [
 ] as const
 
 /**
+ * Maps the `?package=` value used by the pricing cards to the matching option
+ * in this form. Built from the same data the cards render from, so a link and
+ * its target option cannot drift apart.
+ */
+const packageParamToProjectType: Record<string, string> = {
+  ...Object.fromEntries(
+    buildPackages.map((pkg) => [pkg.enquiryParam, `${pkg.name} build`])
+  ),
+  ...Object.fromEntries(
+    managementPlans.map((plan) => [
+      plan.enquiryParam,
+      `${plan.name} management`,
+    ])
+  ),
+}
+
+/**
+ * Resolves a `?package=` query value to a form option. Returns undefined for
+ * anything unrecognised, so a hand-edited or stale URL just leaves the select
+ * on its placeholder rather than preselecting something wrong.
+ */
+export function projectTypeFromParam(
+  param: string | string[] | undefined
+): string | undefined {
+  if (typeof param !== 'string') return undefined
+  const match = packageParamToProjectType[param]
+  return match && (projectTypes as readonly string[]).includes(match)
+    ? match
+    : undefined
+}
+
+/**
  * Only asked about for a Custom build, where the price genuinely varies.
  * The packaged builds have published prices, so a budget question would be
  * asking something the visitor can already read off the page.

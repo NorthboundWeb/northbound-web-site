@@ -110,6 +110,43 @@ export function ButtonLink({
   )
 }
 
+/**
+ * Call to action that also makes its whole card clickable.
+ *
+ * The card is the positioned ancestor; this link's ::after stretches across it,
+ * so a mouse or thumb can hit anywhere on the card. Screen readers and keyboard
+ * users still get one short, meaningful link ("Choose Standard") rather than a
+ * link whose name is every word in the card — which is what wrapping the whole
+ * card in an anchor would produce.
+ *
+ * The card needs `group relative`, and any other interactive element inside it
+ * needs `relative z-10` to sit above the overlay.
+ */
+export function CardCta({
+  href,
+  children,
+  className,
+}: {
+  href: string
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "inline-flex items-center gap-2 text-sm font-medium text-accent after:absolute after:inset-0 after:content-['']",
+        className
+      )}
+    >
+      {children}
+      <span className="transition-transform group-hover:translate-x-1">
+        <Arrow />
+      </span>
+    </Link>
+  )
+}
+
 export function Arrow() {
   return (
     <svg

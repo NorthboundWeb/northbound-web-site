@@ -2,6 +2,7 @@ import Link from 'next/link'
 import {
   Arrow,
   ButtonLink,
+  CardCta,
   Container,
   Eyebrow,
   Section,
@@ -106,56 +107,64 @@ export default function HomePage() {
 
           <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
             {buildPackages.map((pkg) => (
-              <li key={pkg.slug} className="bg-paper">
-                <Link
-                  href={`/services#${pkg.slug}`}
-                  className="group flex h-full flex-col p-8 transition-colors hover:bg-paper-sunk"
-                >
-                  {/* Reserved row so the badge never pushes one card's title
-                      onto a second line and knocks its price out of alignment
-                      with the others. */}
-                  <div className="mb-3 flex h-5 items-center">
-                    {pkg.badge ? (
-                      <span className="rounded-full bg-accent-wash px-2.5 py-1 text-[10px] font-medium tracking-wide text-accent uppercase">
-                        {pkg.badge}
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <h3 className="text-xl">{pkg.name}</h3>
-
-                  <p className="mt-4 font-serif text-3xl text-accent">
-                    {pkg.variable ? (
-                      <>
-                        <span className="text-lg text-ink-faint">from </span>
-                        {currency.format(pkg.price)}
-                      </>
-                    ) : (
-                      currency.format(pkg.price)
-                    )}
-                  </p>
-
-                  <p className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-muted">
-                    {pkg.summary}
-                  </p>
-
-                  {pkg.freeAdvancedMonth ? (
-                    <p className="mt-5 text-[13px] leading-relaxed text-ink-faint">
-                      Includes 1 complimentary month of Advanced Management,
-                      worth {currency.format(ADVANCED_MANAGEMENT_PRICE)}.
-                    </p>
-                  ) : null}
-
-                  <p className="mt-6 flex items-center gap-2 text-sm font-medium text-accent">
-                    What is included
-                    <span className="transition-transform group-hover:translate-x-1">
-                      <Arrow />
+              <li
+                key={pkg.slug}
+                className="group relative flex flex-col bg-paper p-8 transition-colors hover:bg-paper-sunk focus-within:bg-paper-sunk"
+              >
+                {/* Reserved row so the badge never pushes one card's title
+                    onto a second line and knocks its price out of alignment
+                    with the others. */}
+                <div className="mb-3 flex h-5 items-center">
+                  {pkg.badge ? (
+                    <span className="rounded-full bg-accent-wash px-2.5 py-1 text-[10px] font-medium tracking-wide text-accent uppercase">
+                      {pkg.badge}
                     </span>
+                  ) : null}
+                </div>
+
+                <h3 className="text-xl">{pkg.name}</h3>
+
+                <p className="mt-4 font-serif text-3xl text-accent">
+                  {pkg.variable ? (
+                    <>
+                      <span className="text-lg text-ink-faint">from </span>
+                      {currency.format(pkg.price)}
+                    </>
+                  ) : (
+                    currency.format(pkg.price)
+                  )}
+                </p>
+
+                <p className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-muted">
+                  {pkg.summary}
+                </p>
+
+                {pkg.freeAdvancedMonth ? (
+                  <p className="mt-5 text-[13px] leading-relaxed text-ink-faint">
+                    Includes 1 complimentary month of Advanced Management, worth{' '}
+                    {currency.format(ADVANCED_MANAGEMENT_PRICE)}.
                   </p>
-                </Link>
+                ) : null}
+
+                <CardCta
+                  href={`/contact?package=${pkg.enquiryParam}`}
+                  className="mt-6"
+                >
+                  {pkg.cta}
+                </CardCta>
               </li>
             ))}
           </ul>
+
+          <p className="mt-8 text-sm text-ink-muted">
+            <Link
+              href="/services"
+              className="text-accent underline-offset-4 hover:underline"
+            >
+              See what each package includes
+            </Link>{' '}
+            — page limits, revision rounds and timescales.
+          </p>
         </Container>
       </Section>
 
@@ -170,7 +179,10 @@ export default function HomePage() {
 
           <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
             {managementPlans.map((plan) => (
-              <li key={plan.slug} className="flex flex-col bg-paper p-8">
+              <li
+                key={plan.slug}
+                className="group relative flex flex-col bg-paper p-8 transition-colors hover:bg-paper-sunk focus-within:bg-paper-sunk"
+              >
                 <h3 className="text-xl">{plan.name}</h3>
                 <p className="mt-4 font-serif text-3xl text-accent">
                   {currency.format(plan.price)}
@@ -184,6 +196,12 @@ export default function HomePage() {
                 <p className="mt-6 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
                   {plan.changeTime}
                 </p>
+                <CardCta
+                  href={`/contact?package=${plan.enquiryParam}`}
+                  className="mt-5"
+                >
+                  {plan.cta}
+                </CardCta>
               </li>
             ))}
           </ul>

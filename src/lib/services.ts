@@ -30,6 +30,14 @@ export type BuildPackage = {
    * the conditions the estimate depends on are never separated from it.
    */
   timeline: string
+  /**
+   * Query-string value used by /contact?package=… to preselect this package in
+   * the enquiry form. Deliberately separate from `slug`, which is a live page
+   * anchor (/services#advanced) and must not change.
+   */
+  enquiryParam: string
+  /** Label for the card's call to action. */
+  cta: string
   /** Shown as small print under the package — used to bound what is included. */
   note?: string
   /** Whether the package bundles a complimentary month of Advanced Management. */
@@ -53,6 +61,8 @@ export const buildPackages: BuildPackage[] = [
       '1 revision round',
     ],
     timeline: 'Approximately 5–7 working days',
+    enquiryParam: 'basic',
+    cta: 'Choose Basic',
   },
   {
     slug: 'standard',
@@ -71,6 +81,8 @@ export const buildPackages: BuildPackage[] = [
       '2 revision rounds',
     ],
     timeline: 'Approximately 7–10 working days',
+    enquiryParam: 'standard',
+    cta: 'Choose Standard',
   },
   {
     slug: 'advanced',
@@ -89,6 +101,8 @@ export const buildPackages: BuildPackage[] = [
       `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
     ],
     timeline: 'Approximately 10–15 working days',
+    enquiryParam: 'advanced-build',
+    cta: 'Choose Advanced',
     note: 'The booking integration means connecting or embedding a suitable booking service you already use, or one we pick together. Building a booking system from scratch — complex availability rules, custom payment flows, customer accounts or automated booking workflows — is a bigger job, so that gets scoped and quoted separately.',
   },
   {
@@ -108,6 +122,8 @@ export const buildPackages: BuildPackage[] = [
       `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
     ],
     timeline: 'Agreed individually in your written quote',
+    enquiryParam: 'custom',
+    cta: 'Discuss a Custom Build',
     note: '£499 is where a custom project starts, not what every custom project costs. Substantial functionality — user accounts, databases, payments, customer portals, ecommerce and the like — is not included in that starting price. Anything of that kind is scoped and quoted separately before any work begins.',
   },
 ]
@@ -124,6 +140,10 @@ export type ManagementPlan = {
    */
   includes: string[]
   changeTime: string
+  /** See BuildPackage.enquiryParam. */
+  enquiryParam: string
+  /** Label for the card's call to action. */
+  cta: string
 }
 
 export const managementPlans: ManagementPlan[] = [
@@ -140,6 +160,8 @@ export const managementPlans: ManagementPlan[] = [
     ],
     changeTime:
       'Includes up to 30 minutes of requested website changes per billing month.',
+    enquiryParam: 'essential-management',
+    cta: 'Choose Essential',
   },
   {
     slug: 'advanced-management',
@@ -154,6 +176,8 @@ export const managementPlans: ManagementPlan[] = [
     ],
     changeTime:
       'Includes up to 1 hour of requested website changes per billing month.',
+    enquiryParam: 'advanced-management',
+    cta: 'Choose Advanced Management',
   },
   {
     slug: 'complete',
@@ -168,6 +192,8 @@ export const managementPlans: ManagementPlan[] = [
     ],
     changeTime:
       'Includes up to 2 hours of requested website changes per billing month.',
+    enquiryParam: 'complete-management',
+    cta: 'Choose Complete',
   },
 ]
 
