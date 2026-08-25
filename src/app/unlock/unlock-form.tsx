@@ -5,7 +5,8 @@ import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 import { ArrowRight } from '@/components/graphics'
 import { buttonClass, cn } from '@/components/ui'
-import { checkUnlock, initialUnlockState } from './actions'
+import { checkUnlock } from './actions'
+import { initialUnlockState } from './state'
 
 function Submit() {
   const { pending } = useFormStatus()
@@ -17,7 +18,7 @@ function Submit() {
     >
       {pending ? 'Checking…' : 'Unlock'}
       {pending ? null : (
-        <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
+        <span className="text-accent-on-ink transition-transform duration-200 group-hover/btn:translate-x-1">
           <ArrowRight />
         </span>
       )}
@@ -42,7 +43,7 @@ export function UnlockForm() {
           className={cn(buttonClass({ size: 'lg' }), 'group/btn mt-8')}
         >
           Start a project
-          <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
+          <span className="text-accent-on-ink transition-transform duration-200 group-hover/btn:translate-x-1">
             <ArrowRight />
           </span>
         </Link>
@@ -72,7 +73,7 @@ export function UnlockForm() {
 
       {state.status === 'invalid' ? (
         <p className="rise-in mt-5 text-sm text-ink" role="alert">
-          <span aria-hidden className="mr-2 text-accent">
+          <span aria-hidden className="mr-2 text-accent-deep">
             ▲
           </span>
           That code is not recognised. Check it and try again.
@@ -80,7 +81,7 @@ export function UnlockForm() {
       ) : null}
       {state.status === 'throttled' ? (
         <p className="rise-in mt-5 text-sm text-ink" role="alert">
-          <span aria-hidden className="mr-2 text-accent">
+          <span aria-hidden className="mr-2 text-accent-deep">
             ▲
           </span>
           Too many attempts. Try again shortly.

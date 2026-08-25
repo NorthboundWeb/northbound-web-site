@@ -3,14 +3,7 @@
 import { headers } from 'next/headers'
 import { rateLimit } from '@/lib/rate-limit'
 import { normaliseCode, redeem } from '@/lib/unlock'
-
-export type UnlockState = {
-  status: 'idle' | 'valid' | 'invalid' | 'throttled'
-  code?: string
-  reward?: string
-}
-
-export const initialUnlockState: UnlockState = { status: 'idle' }
+import type { UnlockState } from './state'
 
 export async function checkUnlock(
   _previous: UnlockState,

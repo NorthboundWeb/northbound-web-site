@@ -147,8 +147,12 @@ export default function ServicesPage() {
                       </p>
                     ) : null}
 
+                    {/* Named per scope: four links reading "Start a project" would
+                        be four identical entries in a screen reader's link list. */}
                     <ButtonLink href={`/contact?package=${s.slug}`} size="lg" className="mt-10">
-                      Start a project
+                      {s.pricing === 'from'
+                        ? `Start a ${s.name} project`
+                        : `Get a quote for ${s.name}`}
                     </ButtonLink>
                   </div>
 

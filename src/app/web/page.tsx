@@ -29,7 +29,8 @@ import {
 import { currency, site } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Northbound Web — websites built, hosted and managed',
+  // Absolute — see the note on /ai.
+  title: { absolute: 'Northbound Web — websites built, hosted and managed' },
   description: `Northbound Web designs, builds, hosts and manages websites for businesses across the ${site.location}. Builds from ${currency.format(ENTRY_PRICE)}, with a fixed price agreed in writing before anything starts.`,
   alternates: { canonical: '/web' },
 }
@@ -223,7 +224,7 @@ export default function WebPage() {
           </div>
           <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center">
             <ButtonLink href="/contact?type=help" size="lg">
-              Start a project
+              Get help with your site
             </ButtonLink>
             <p className="max-w-md text-sm leading-relaxed text-ink-faint">{existingSiteHelp.note}</p>
           </div>

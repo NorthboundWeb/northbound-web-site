@@ -79,7 +79,7 @@ export function SiteHeader() {
             ))}
             <Link href={cta.href} className={cn(buttonClass(), 'group/btn')}>
               {cta.label}
-              <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
+              <span className="text-accent-on-ink transition-transform duration-200 group-hover/btn:translate-x-1">
                 <ArrowRight />
               </span>
             </Link>

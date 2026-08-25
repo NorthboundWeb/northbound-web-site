@@ -12,7 +12,10 @@ import {
 import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Northbound AI — Jarvis',
+  // Absolute: this is a division landing page, so it carries the full brand
+  // itself rather than having ' — Northbound' appended to a name that
+  // already contains it.
+  title: { absolute: 'Northbound AI — Jarvis, and what it can do' },
   description:
     'Northbound AI builds Jarvis: a business assistant that actually does the work — reads your inbox and calendar, runs automations on a schedule, and asks before it acts. Currently in private preview.',
   alternates: { canonical: '/ai' },

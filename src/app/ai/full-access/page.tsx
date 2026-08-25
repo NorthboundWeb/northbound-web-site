@@ -93,7 +93,7 @@ export default function FullAccessPage() {
                   </span>
                   <span
                     aria-hidden
-                    className="label shrink-0 pt-2 text-accent transition-transform duration-300 group-open:rotate-90"
+                    className="label shrink-0 pt-2 text-accent-deep transition-transform duration-300 group-open:rotate-90"
                   >
                     →
                   </span>

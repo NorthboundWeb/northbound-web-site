@@ -108,7 +108,7 @@ export function SiteFooter() {
           {/* UNLOCK lives here on purpose: findable, never shouted. */}
           <Link
             href="/unlock"
-            className="tracking-[0.35em] text-cream/50 transition-colors hover:text-accent-lit"
+            className="tracking-[0.35em] text-cream/60 transition-colors hover:text-accent-lit"
           >
             UNLOCK
           </Link>

@@ -40,7 +40,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null
   return (
     <p id={id} className="mt-2 flex gap-2 text-sm text-ink" role="alert">
-      <span aria-hidden className="text-accent">
+      <span aria-hidden className="text-accent-deep">
         ▲
       </span>
       {message}
@@ -58,7 +58,7 @@ function SubmitButton() {
     >
       {pending ? 'Sending…' : 'Send enquiry'}
       {pending ? null : (
-        <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
+        <span className="text-accent-on-ink transition-transform duration-200 group-hover/btn:translate-x-1">
           <ArrowRight />
         </span>
       )}
@@ -133,7 +133,7 @@ export function ContactForm({
                 className={cn(buttonClass({ size: 'md' }), 'group/btn mt-4')}
               >
                 Send it from your email app
-                <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
+                <span className="text-accent-on-ink transition-transform duration-200 group-hover/btn:translate-x-1">
                   <ArrowRight />
                 </span>
               </a>
@@ -175,6 +175,10 @@ export function ContactForm({
               </label>
             </div>
           ))}
+          {/* The grid is drawn by its own background showing through 1px gaps,
+              so an unfilled cell would render as a solid block of rule colour.
+              Five options never fill a row of two or three. */}
+          <div aria-hidden className="hidden bg-paper sm:block" />
         </div>
       </fieldset>
 
@@ -330,7 +334,7 @@ export function ContactForm({
 
         <details className="group border border-line bg-paper-sunk">
           <summary className="label flex cursor-pointer items-center gap-2.5 p-4 text-ink-faint transition-colors hover:text-accent-deep">
-            <span aria-hidden className="text-accent transition-transform group-open:rotate-90">
+            <span aria-hidden className="text-accent-deep transition-transform group-open:rotate-90">
               →
             </span>
             Have an UNLOCK code?

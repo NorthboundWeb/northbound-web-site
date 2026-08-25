@@ -192,8 +192,8 @@ export function ButtonLink({
         className={cn(
           'transition-transform duration-200 group-hover/btn:translate-x-1',
           variant === 'primary' || variant === 'inverse'
-            ? 'text-accent group-hover/btn:text-current'
-            : 'text-accent'
+            ? 'text-accent-on-ink group-hover/btn:text-current'
+            : 'text-accent-deep'
         )}
       >
         <ArrowRight />
@@ -221,7 +221,7 @@ export function ArrowLink({
       )}
     >
       {children}
-      <span className="text-accent transition-transform duration-200 group-hover/link:translate-x-1">
+      <span className="text-accent-deep transition-transform duration-200 group-hover/link:translate-x-1">
         <ArrowRight />
       </span>
     </Link>
@@ -268,7 +268,12 @@ export function CardCta({
       )}
     >
       {children}
-      <span className="text-accent transition-transform duration-200 group-hover:translate-x-1">
+      <span
+        className={cn(
+          'transition-transform duration-200 group-hover:translate-x-1',
+          tone === 'light' ? 'text-accent-lit' : 'text-accent-deep'
+        )}
+      >
         <ArrowRight />
       </span>
     </Link>

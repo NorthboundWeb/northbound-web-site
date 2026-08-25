@@ -94,7 +94,7 @@ export default function GatewayPage() {
                 </p>
                 <span className="label mt-8 inline-flex items-center gap-2.5 text-ink">
                   Enter Northbound {d.name}
-                  <span className="text-accent transition-transform duration-300 group-hover:translate-x-2">
+                  <span className="text-accent-deep transition-transform duration-300 group-hover:translate-x-2">
                     →
                   </span>
                 </span>
