@@ -17,7 +17,7 @@ These are placeholders. Each has exactly one home.
 | What | Where | Currently |
 |---|---|---|
 | Domain | `NEXT_PUBLIC_SITE_URL` env var, and the fallback in `src/lib/site.ts` | `northboundweb.co.uk` |
-| Contact email | `site.email` in `src/lib/site.ts` | `hello@northboundweb.co.uk` |
+| Contact email | `site.email` in `src/lib/site.ts` | `che@northboundweb.co.uk` — the address already published on the live domain |
 | Resend keys | Vercel env vars | **Not set** — the form cannot deliver until they are |
 
 ## Pricing

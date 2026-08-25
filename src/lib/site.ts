@@ -5,9 +5,10 @@
  * navigation, the homepage gateway and the footer all derive from one list.
  * Adding a third division later means adding one entry, not a rebuild.
  *
- * PLACEHOLDERS: `url` and `email` are best guesses. Replace with the real
- * domain and business inbox before launch — they feed metadata, the sitemap,
- * structured data, the footer and the enquiry fallback.
+ * `email` is the address already published on northboundweb.co.uk, so it is
+ * the one a visitor would find anyway. It feeds the footer, the contact page
+ * and the enquiry fallback — change it in this one place if the business inbox
+ * moves. `CONTACT_TO_EMAIL` is separate and governs where the form delivers.
  */
 
 export const site = {
@@ -17,7 +18,7 @@ export const site = {
   tagline: 'A technology company. Choose your direction.',
   description:
     'Northbound builds digital infrastructure for small businesses. Northbound Web designs, builds and manages websites. Northbound AI builds tools and automation.',
-  email: 'hello@northboundweb.co.uk',
+  email: 'che@northboundweb.co.uk',
   location: 'United Kingdom',
   socials: [
     {
