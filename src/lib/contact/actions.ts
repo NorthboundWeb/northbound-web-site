@@ -3,20 +3,14 @@
 import { headers } from 'next/headers'
 import { Resend } from 'resend'
 import { rateLimit } from '@/lib/rate-limit'
+import { isValidCode, normaliseCode } from '@/lib/unlock'
 import { site } from '@/lib/site'
-import {
-  contactSchema,
-  type ContactInput,
-  type ContactState,
-} from './schema'
+import { contactSchema, type ContactInput, type ContactState } from './schema'
 
 /** Bots fill every field they find, including ones a human never sees. */
-const HONEYPOT_FIELD = 'website'
+const HONEYPOT_FIELD = 'subject'
 /** A genuine person does not read, think and type in under this many ms. */
 const MIN_FILL_MS = 3_000
-
-const GENERIC_ERROR =
-  'Something went wrong sending your message. Please email me directly and I will pick it up.'
 
 function escapeHtml(value: string) {
   return value
@@ -27,10 +21,7 @@ function escapeHtml(value: string) {
     .replace(/'/g, '&#39;')
 }
 
-/**
- * Strip CR/LF from anything interpolated into a mail header. Without this a
- * crafted name could inject extra headers into the outgoing message.
- */
+/** Strip CR/LF from anything interpolated into a mail header. */
 function headerSafe(value: string) {
   return value.replace(/[\r\n]+/g, ' ').trim()
 }
@@ -38,26 +29,63 @@ function headerSafe(value: string) {
 async function clientKey() {
   const headerList = await headers()
   const forwarded = headerList.get('x-forwarded-for')
-  // The left-most entry is the original client on Vercel's proxy chain.
   const ip = forwarded?.split(',')[0]?.trim() || headerList.get('x-real-ip')
   return ip || 'unknown'
+}
+
+const TYPE_LABELS: Record<string, string> = {
+  build: 'New website',
+  management: 'Website management',
+  help: 'Help with an existing site',
+  jarvis: 'Jarvis Full Access request',
+  other: 'Something else',
+}
+
+function summarise(enquiry: ContactInput) {
+  return [
+    ['Enquiry', TYPE_LABELS[enquiry.enquiryType] ?? enquiry.enquiryType],
+    ['Name', enquiry.name],
+    ['Email', enquiry.email],
+    ['Phone', enquiry.phone || '—'],
+    ['Business', enquiry.business || '—'],
+    ['Existing site', enquiry.existingUrl || '—'],
+    ['Scope', enquiry.scope || '—'],
+    ['Plan', enquiry.plan || '—'],
+    ['Size', enquiry.size || '—'],
+    [
+      'UNLOCK',
+      enquiry.unlock
+        ? `${normaliseCode(enquiry.unlock)}${isValidCode(enquiry.unlock) ? ' (valid)' : ' (NOT RECOGNISED)'}`
+        : '—',
+    ],
+  ] as const
+}
+
+/**
+ * Builds a mailto: containing the whole enquiry, so a delivery failure costs
+ * the visitor one click rather than costing Northbound the lead entirely.
+ */
+function fallbackMailto(enquiry: ContactInput) {
+  const body = [
+    ...summarise(enquiry).map(([k, v]) => `${k}: ${v}`),
+    '',
+    enquiry.message,
+  ].join('\n')
+  const subject = `Website enquiry — ${enquiry.name}`
+  return `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 }
 
 export async function submitEnquiry(
   _previous: ContactState,
   formData: FormData
 ): Promise<ContactState> {
-  // 1. Spam traps. Both fail silently as a "success" so a bot gets no signal
-  //    about which check caught it.
+  // 1. Spam traps. Both return a fake success so a bot learns nothing.
   if (String(formData.get(HONEYPOT_FIELD) ?? '') !== '') {
     return { status: 'success' }
   }
-
   const startedAt = Number(formData.get('startedAt') ?? 0)
-  if (Number.isFinite(startedAt) && startedAt > 0) {
-    if (Date.now() - startedAt < MIN_FILL_MS) {
-      return { status: 'success' }
-    }
+  if (Number.isFinite(startedAt) && startedAt > 0 && Date.now() - startedAt < MIN_FILL_MS) {
+    return { status: 'success' }
   }
 
   // 2. Rate limit before doing any work.
@@ -72,13 +100,18 @@ export async function submitEnquiry(
     }
   }
 
-  // 3. Validate.
+  // 3. Validate on the server — a server action is a public POST endpoint.
   const parsed = contactSchema.safeParse({
+    enquiryType: formData.get('enquiryType'),
     name: formData.get('name'),
     email: formData.get('email'),
+    phone: formData.get('phone') || undefined,
     business: formData.get('business') || undefined,
-    projectType: formData.get('projectType') || undefined,
-    budget: formData.get('budget') || undefined,
+    existingUrl: formData.get('existingUrl') || undefined,
+    scope: formData.get('scope') || undefined,
+    plan: formData.get('plan') || undefined,
+    size: formData.get('size') || undefined,
+    unlock: formData.get('unlock') || undefined,
     message: formData.get('message'),
   })
 
@@ -88,39 +121,38 @@ export async function submitEnquiry(
       const field = issue.path[0] as keyof ContactInput | undefined
       if (field && !errors[field]) errors[field] = issue.message
     }
-    return {
-      status: 'error',
-      message: 'Please check the highlighted fields.',
-      errors,
-    }
+    return { status: 'error', message: 'Please check the highlighted fields.', errors }
   }
 
   const enquiry = parsed.data
+  const mailto = fallbackMailto(enquiry)
 
-  // 4. Send. Configuration problems are logged server-side but never described
-  //    to the visitor — an error page is not the place to leak setup detail.
   const apiKey = process.env.RESEND_API_KEY
   const to = process.env.CONTACT_TO_EMAIL
   const from = process.env.CONTACT_FROM_EMAIL
 
-  if (!apiKey || !to || !from) {
+  /**
+   * Recovery log. Deliberately minimal — name, email and type only, never the
+   * message body — so a failed enquiry can still be followed up without
+   * writing the whole conversation into server logs.
+   */
+  const logRecovery = (reason: string) =>
     console.error(
-      'Enquiry not sent: RESEND_API_KEY, CONTACT_TO_EMAIL or CONTACT_FROM_EMAIL is missing.'
+      `[enquiry-undelivered] ${reason} | ${enquiry.name} <${enquiry.email}> | ${enquiry.enquiryType}`
     )
-    return { status: 'error', message: GENERIC_ERROR }
+
+  const DELIVERY_FAILED =
+    'I could not send that automatically. Your message is not lost — use the button below to send it straight from your email app, and it will reach me.'
+
+  if (!apiKey || !to || !from) {
+    logRecovery('email not configured')
+    return { status: 'error', message: DELIVERY_FAILED, fallbackMailto: mailto }
   }
 
-  const subject = `New enquiry — ${headerSafe(enquiry.name)}${
+  const lines = summarise(enquiry)
+  const subject = `${TYPE_LABELS[enquiry.enquiryType] ?? 'Enquiry'} — ${headerSafe(enquiry.name)}${
     enquiry.business ? ` (${headerSafe(enquiry.business)})` : ''
   }`
-
-  const lines = [
-    ['Name', enquiry.name],
-    ['Email', enquiry.email],
-    ['Business', enquiry.business ?? '—'],
-    ['Project type', enquiry.projectType ?? '—'],
-    ['Budget', enquiry.budget ?? '—'],
-  ] as const
 
   try {
     const resend = new Resend(apiKey)
@@ -129,11 +161,7 @@ export async function submitEnquiry(
       to,
       replyTo: enquiry.email,
       subject,
-      text: [
-        ...lines.map(([label, value]) => `${label}: ${value}`),
-        '',
-        enquiry.message,
-      ].join('\n'),
+      text: [...lines.map(([k, v]) => `${k}: ${v}`), '', enquiry.message].join('\n'),
       html: `
         <table style="font-family:system-ui,sans-serif;font-size:14px;border-collapse:collapse">
           ${lines
@@ -153,16 +181,16 @@ export async function submitEnquiry(
     })
 
     if (error) {
-      console.error('Resend rejected the enquiry:', error)
-      return { status: 'error', message: GENERIC_ERROR }
+      logRecovery(`resend rejected: ${error.name ?? 'unknown'}`)
+      return { status: 'error', message: DELIVERY_FAILED, fallbackMailto: mailto }
     }
   } catch (error) {
-    console.error('Failed to send enquiry:', error)
-    return { status: 'error', message: GENERIC_ERROR }
+    logRecovery(`send threw: ${error instanceof Error ? error.name : 'unknown'}`)
+    return { status: 'error', message: DELIVERY_FAILED, fallbackMailto: mailto }
   }
 
   return {
     status: 'success',
-    message: 'Thanks — your message is with me. I normally reply within one working day.',
+    message: 'Thanks — your enquiry is with me. I normally reply within one working day.',
   }
 }

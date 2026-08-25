@@ -38,7 +38,7 @@ export default function OpengraphImage() {
             <path d="M16 27.5 10 20l6 3.4 6-3.4Z" fill="#F04A0A" opacity="0.45" />
           </svg>
           <div style={{ color: '#F2EBDD', fontSize: 34, letterSpacing: '-0.02em' }}>
-            Northbound Web
+            Northbound
           </div>
         </div>
 
@@ -52,11 +52,11 @@ export default function OpengraphImage() {
             maxWidth: 900,
           }}
         >
-          Websites for small businesses that want to look the part.
+          A technology company for small businesses.
         </div>
 
         <div style={{ display: 'flex', fontSize: 28, color: 'rgba(242,235,221,0.65)' }}>
-          Design · Development · Management · {site.location}
+          Northbound Web · Northbound AI · {site.location}
         </div>
       </div>
     ),

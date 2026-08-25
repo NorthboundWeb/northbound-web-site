@@ -2,6 +2,19 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  /**
+   * The site moved from a single-division layout to Northbound the parent
+   * brand, so the old top-level URLs now live under /web. These are permanent
+   * so search engines transfer the old pages rather than indexing both.
+   */
+  async redirects() {
+    return [
+      { source: '/services', destination: '/web/services', permanent: true },
+      { source: '/approach', destination: '/web/process', permanent: true },
+      { source: '/work', destination: '/web/work', permanent: true },
+      { source: '/jarvis', destination: '/ai', permanent: true },
+    ]
+  },
   async headers() {
     return [
       {

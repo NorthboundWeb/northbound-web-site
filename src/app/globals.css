@@ -29,6 +29,14 @@
   --accent: #f04a0a;
   --accent-ink: #f2ebdd;
   --accent-wash: #f7e3d5;
+  /* Small orange text on cream fails AA at #F04A0A (3.11:1). This darker burnt
+     orange reads as the same colour and clears 4.5:1. Used ONLY for small text;
+     fills, arrows, full stops and large display type keep the brand orange. */
+  --accent-deep: #b83605;
+  /* The mirror of --accent-deep for the deep-green bands. Brand orange on
+     green is 3.7:1, so small text there lifts to this (5.6:1). Fixed against
+     green in both colour schemes, so it is not redefined for dark mode. */
+  --accent-lit: #f9782f;
 
   /* Editorial accents — sparing, decorative only */
   --olive: #7d8242;
@@ -54,6 +62,7 @@
     --accent: #f25a14;
     --accent-ink: #0d2a24;
     --accent-wash: #1b3a32;
+    --accent-deep: #ff7a3d;
 
     --line: rgba(242, 235, 221, 0.2);
     --line-strong: rgba(242, 235, 221, 0.4);
@@ -74,6 +83,8 @@
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-accent-wash: var(--accent-wash);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-lit: var(--accent-lit);
   --color-orange: var(--orange);
   --color-olive: var(--olive);
   --color-mustard: var(--mustard);
@@ -240,4 +251,85 @@
       animation-range: entry 0% entry 45%;
     }
   }
+}
+
+
+/* ── Enquiry form: CSS-driven branching ─────────────────────────────
+   The visible fields follow the chosen enquiry type with no JavaScript, so
+   the form still adapts when scripts fail. Groups declare the types they
+   belong to via data-when="build management". */
+[data-when] { display: none; }
+.enquiry:has(#type-build:checked) [data-when~='build'],
+.enquiry:has(#type-management:checked) [data-when~='management'],
+.enquiry:has(#type-help:checked) [data-when~='help'],
+.enquiry:has(#type-jarvis:checked) [data-when~='jarvis'],
+.enquiry:has(#type-other:checked) [data-when~='other'] {
+  display: block;
+}
+.enquiry:has(#type-build:checked) .grid[data-when~='build'] { display: grid; }
+span[data-when] { display: none; }
+.enquiry:has(#type-build:checked) span[data-when~='build'],
+.enquiry:has(#type-management:checked) span[data-when~='management'],
+.enquiry:has(#type-help:checked) span[data-when~='help'],
+.enquiry:has(#type-jarvis:checked) span[data-when~='jarvis'],
+.enquiry:has(#type-other:checked) span[data-when~='other'] {
+  display: inline;
+}
+
+/* Selected-state dot on the enquiry type cards. */
+.enquiry input[type='radio']:checked + label .dot {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── Scroll storytelling ───────────────────────────────────────────
+   A pinned column that holds while its sibling content scrolls past. Used
+   sparingly; normal scrolling is never hijacked. */
+@utility pin-column {
+  position: sticky;
+  top: 6rem;
+  align-self: start;
+}
+
+/* Progressive reveal driven by scroll position where supported. Content is
+   visible by default, so nothing is ever hidden without scroll-timeline. */
+@utility step-in {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+/* A word that lifts as it enters. Staggered by inline animation-delay. */
+@keyframes lift {
+  from { opacity: 0; transform: translateY(0.4em); }
+  to { opacity: 1; transform: none; }
+}
+@utility lift-in {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: lift 0.65s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  }
+}
+
+/* ── Interactive scope comparator ──────────────────────────────────
+   Tabs that swap a detail panel with no JavaScript, so the pricing stays
+   interactive even when scripts fail. */
+.scopes [data-scope] { display: none; }
+.scopes:has(#scope-starter:checked) [data-scope='starter'],
+.scopes:has(#scope-business:checked) [data-scope='business'],
+.scopes:has(#scope-extended:checked) [data-scope='extended'],
+.scopes:has(#scope-custom:checked) [data-scope='custom'] {
+  display: block;
+}
+.scopes input[type='radio']:checked + label {
+  background-color: var(--ink);
+  color: var(--paper);
+}
+.scopes input[type='radio']:checked + label .tab-price { color: var(--accent); }
+.scopes input[type='radio']:focus-visible + label {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }

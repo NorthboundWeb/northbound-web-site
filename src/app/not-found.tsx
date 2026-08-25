@@ -27,13 +27,13 @@ export default function NotFound() {
               <ButtonLink href="/" size="lg">
                 Back to the homepage
               </ButtonLink>
-              <ArrowLink href="/services">See packages</ArrowLink>
+              <ArrowLink href="/web/services">See what a build includes</ArrowLink>
             </div>
             <p className="mt-8 text-sm text-ink-faint">
               Or tell me about the broken link —{' '}
               <a
                 href={`mailto:${site.email}`}
-                className="text-accent underline-offset-4 hover:underline"
+                className="text-accent-deep underline-offset-4 hover:underline"
               >
                 {site.email}
               </a>

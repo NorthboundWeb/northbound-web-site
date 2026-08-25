@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: 'Process',
   description:
     'How a Northbound Web project runs, from first conversation to aftercare — and the standards applied to performance, accessibility, security and ownership on every build.',
-  alternates: { canonical: '/approach' },
+  alternates: { canonical: '/web/process' },
 }
 
 const stack = [
@@ -91,7 +91,7 @@ export default function ApproachPage() {
         index="02"
         eyebrow="Standards"
         word="Solid"
-        lede="These apply whether you are spending £199 or £499. They are the difference between a site that lasts and one that has to be rebuilt in eighteen months."
+        lede="They apply to every build, whatever it costs. They are the difference between a site that lasts and one that has to be rebuilt in eighteen months."
       />
 
       <Section className="border-b border-line">

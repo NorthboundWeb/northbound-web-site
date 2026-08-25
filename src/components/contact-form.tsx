@@ -2,15 +2,19 @@
 
 import { useActionState, useEffect, useRef } from 'react'
 import { useFormStatus } from 'react-dom'
-import { Arrow, buttonClass, cn } from '@/components/ui'
+import { ArrowRight } from '@/components/graphics'
+import { buttonClass, cn } from '@/components/ui'
 import { submitEnquiry } from '@/lib/contact/actions'
 import {
-  budgetBands,
+  buildScopeOptions,
+  enquiryTypes,
   initialContactState,
-  projectTypes,
+  managementPlanOptions,
+  projectSizes,
+  type EnquiryTypeId,
 } from '@/lib/contact/schema'
 
-const fieldClass =
+const field =
   'w-full border border-line bg-paper-raised px-4 py-3.5 text-[15px] text-ink transition-colors placeholder:text-ink-faint hover:border-line-strong focus:border-accent focus:outline-none'
 
 function Label({
@@ -26,7 +30,7 @@ function Label({
     <label htmlFor={htmlFor} className="label mb-2.5 block text-ink">
       {children}
       {optional ? (
-        <span className="ml-2 text-ink-faint normal-case">(optional)</span>
+        <span className="ml-2 normal-case text-ink-faint">(optional)</span>
       ) : null}
     </label>
   )
@@ -35,8 +39,8 @@ function Label({
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null
   return (
-    <p id={id} className="mt-2 text-sm text-ink" role="alert">
-      <span aria-hidden className="mr-1.5 text-accent">
+    <p id={id} className="mt-2 flex gap-2 text-sm text-ink" role="alert">
+      <span aria-hidden className="text-accent">
         ▲
       </span>
       {message}
@@ -55,7 +59,7 @@ function SubmitButton() {
       {pending ? 'Sending…' : 'Send enquiry'}
       {pending ? null : (
         <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
-          <Arrow />
+          <ArrowRight />
         </span>
       )}
     </button>
@@ -63,36 +67,32 @@ function SubmitButton() {
 }
 
 export function ContactForm({
-  defaultProjectType,
+  defaultType = 'build',
+  defaultScope,
+  defaultPlan,
+  defaultUnlock,
 }: {
-  /** Preselected from /contact?package=… — the visitor can still change it. */
-  defaultProjectType?: string
+  defaultType?: EnquiryTypeId
+  defaultScope?: string
+  defaultPlan?: string
+  defaultUnlock?: string
 }) {
   const [state, formAction] = useActionState(submitEnquiry, initialContactState)
   const formRef = useRef<HTMLFormElement>(null)
   const statusRef = useRef<HTMLDivElement>(null)
 
-  // Stamped when the form mounts, so the server can reject submissions that
-  // arrive impossibly fast. Written straight to the DOM rather than held in
-  // state: it never affects what React renders, and keeping it out of the
-  // server-rendered HTML avoids a hydration mismatch on the timestamp.
-  //
-  // With JavaScript disabled the field stays empty, which the action treats as
-  // "no signal" rather than a failure — so the form still works without JS.
+  // Stamped on mount so the server can reject impossibly fast submissions.
+  // Written straight to the DOM: it never affects render, and keeping it out
+  // of the server HTML avoids a hydration mismatch. Without JS it stays empty,
+  // which the action treats as "no signal" rather than a failure.
   const startedAtRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
-    if (startedAtRef.current) {
-      startedAtRef.current.value = String(Date.now())
-    }
+    if (startedAtRef.current) startedAtRef.current.value = String(Date.now())
   }, [])
 
   useEffect(() => {
-    if (state.status === 'success') {
-      formRef.current?.reset()
-    }
-    if (state.status !== 'idle') {
-      statusRef.current?.focus()
-    }
+    if (state.status === 'success') formRef.current?.reset()
+    if (state.status !== 'idle') statusRef.current?.focus()
   }, [state])
 
   if (state.status === 'success') {
@@ -101,20 +101,22 @@ export function ContactForm({
         ref={statusRef}
         tabIndex={-1}
         role="status"
-        className="border border-line bg-paper-sunk p-10 focus:outline-none"
+        className="rise-in border border-line bg-paper-sunk p-10 focus:outline-none"
       >
-        <p className="label text-accent">Sent</p>
-        <h2 className="display mt-4 text-4xl text-ink">Message sent<span className="text-accent">.</span></h2>
-        <p className="mt-3 leading-relaxed text-ink-muted">
+        <p className="label text-accent-deep">Received</p>
+        <h2 className="display mt-4 text-4xl text-ink">
+          Enquiry sent<span className="text-accent">.</span>
+        </h2>
+        <p className="mt-4 leading-relaxed text-ink-muted">
           {state.message ??
-            'Thanks — your message is with me. I normally reply within one working day.'}
+            'Thanks — your enquiry is with me. I normally reply within one working day.'}
         </p>
       </div>
     )
   }
 
   return (
-    <form ref={formRef} action={formAction} noValidate className="space-y-6">
+    <form ref={formRef} action={formAction} noValidate className="enquiry space-y-10">
       <div
         ref={statusRef}
         tabIndex={-1}
@@ -123,125 +125,247 @@ export function ContactForm({
         className="focus:outline-none"
       >
         {state.status === 'error' && state.message ? (
-          <p className="border-l-2 border-accent bg-paper-sunk px-4 py-3 text-sm">
-            {state.message}
-          </p>
+          <div className="rise-in border-l-2 border-accent bg-paper-sunk px-5 py-4">
+            <p className="text-sm leading-relaxed text-ink">{state.message}</p>
+            {state.fallbackMailto ? (
+              <a
+                href={state.fallbackMailto}
+                className={cn(buttonClass({ size: 'md' }), 'group/btn mt-4')}
+              >
+                Send it from your email app
+                <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
+                  <ArrowRight />
+                </span>
+              </a>
+            ) : null}
+          </div>
         ) : null}
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div>
-          <Label htmlFor="name">Your name</Label>
+      {/* 01 — what they need. Drives every conditional field below via CSS. */}
+      <fieldset>
+        <legend className="label mb-4 text-ink-faint">
+          <span className="mr-3 text-accent-deep">01</span> What do you need?
+        </legend>
+        <div className="grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+          {enquiryTypes.map((t) => (
+            <div key={t.id} className="bg-paper">
+              <input
+                type="radio"
+                name="enquiryType"
+                id={`type-${t.id}`}
+                value={t.id}
+                defaultChecked={t.id === defaultType}
+                className="peer sr-only"
+              />
+              <label
+                htmlFor={`type-${t.id}`}
+                className="flex h-full cursor-pointer flex-col p-6 transition-colors hover:bg-paper-raised peer-checked:bg-accent-wash peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-accent"
+              >
+                <span className="label flex items-center gap-2.5 text-ink">
+                  <span
+                    aria-hidden
+                    className="dot inline-block h-2 w-2 shrink-0 rounded-full border border-line-strong transition-colors"
+                  />
+                  {t.label}
+                </span>
+                <span className="mt-2 text-[15px] leading-relaxed text-ink-muted">
+                  {t.blurb}
+                </span>
+              </label>
+            </div>
+          ))}
+        </div>
+      </fieldset>
+
+      {/* 02 — who they are. Always shown. */}
+      <fieldset className="space-y-6">
+        <legend className="label mb-4 text-ink-faint">
+          <span className="mr-3 text-accent-deep">02</span> About you
+        </legend>
+
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <Label htmlFor="name">Your name</Label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              autoComplete="name"
+              required
+              aria-invalid={Boolean(state.errors?.name)}
+              aria-describedby={state.errors?.name ? 'name-error' : undefined}
+              className={field}
+            />
+            <FieldError id="name-error" message={state.errors?.name} />
+          </div>
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              aria-invalid={Boolean(state.errors?.email)}
+              aria-describedby={state.errors?.email ? 'email-error' : undefined}
+              className={field}
+            />
+            <FieldError id="email-error" message={state.errors?.email} />
+          </div>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <Label htmlFor="business" optional>
+              Business name
+            </Label>
+            <input
+              id="business"
+              name="business"
+              type="text"
+              autoComplete="organization"
+              className={field}
+            />
+          </div>
+          <div>
+            <Label htmlFor="phone" optional>
+              Phone
+            </Label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              inputMode="tel"
+              className={field}
+            />
+          </div>
+        </div>
+      </fieldset>
+
+      {/* 03 — branching. Hidden groups are display:none via CSS :has(). */}
+      <fieldset className="space-y-6">
+        <legend className="label mb-4 text-ink-faint">
+          <span className="mr-3 text-accent-deep">03</span> About the project
+        </legend>
+
+        <div data-when="build" className="rise-in grid gap-6 sm:grid-cols-2">
+          <div>
+            <Label htmlFor="scope" optional>
+              Which scope looks right?
+            </Label>
+            <select id="scope" name="scope" defaultValue={defaultScope ?? ''} className={field}>
+              <option value="">Choose one…</option>
+              {buildScopeOptions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="size" optional>
+              Roughly how big?
+            </Label>
+            <select id="size" name="size" defaultValue="" className={field}>
+              <option value="">Choose one…</option>
+              {projectSizes.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div data-when="management" className="rise-in">
+          <Label htmlFor="plan" optional>
+            Which plan looks right?
+          </Label>
+          <select id="plan" name="plan" defaultValue={defaultPlan ?? ''} className={field}>
+            <option value="">Choose one…</option>
+            {managementPlanOptions.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div data-when="management help" className="rise-in">
+          <Label htmlFor="existingUrl" optional>
+            Your current website
+          </Label>
           <input
-            id="name"
-            name="name"
+            id="existingUrl"
+            name="existingUrl"
             type="text"
-            autoComplete="name"
-            required
-            aria-invalid={Boolean(state.errors?.name)}
-            aria-describedby={state.errors?.name ? 'name-error' : undefined}
-            className={fieldClass}
+            inputMode="url"
+            placeholder="yourbusiness.co.uk"
+            className={field}
           />
-          <FieldError id="name-error" message={state.errors?.name} />
         </div>
 
         <div>
-          <Label htmlFor="email">Email</Label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
+          <Label htmlFor="message">
+            <span data-when="build">What does your business do, and what is the site for?</span>
+            <span data-when="management">What would you want looking after?</span>
+            <span data-when="help">What is going wrong?</span>
+            <span data-when="jarvis">What would you want Jarvis to do for you?</span>
+            <span data-when="other">What do you need?</span>
+          </Label>
+          <textarea
+            id="message"
+            name="message"
+            rows={6}
             required
-            aria-invalid={Boolean(state.errors?.email)}
-            aria-describedby={state.errors?.email ? 'email-error' : undefined}
-            className={fieldClass}
+            placeholder="A few sentences is plenty. Include a deadline if you have one."
+            aria-invalid={Boolean(state.errors?.message)}
+            aria-describedby={state.errors?.message ? 'message-error' : undefined}
+            className={cn(field, 'resize-y')}
           />
-          <FieldError id="email-error" message={state.errors?.email} />
-        </div>
-      </div>
-
-      <div>
-        <Label htmlFor="business" optional>
-          Business name
-        </Label>
-        <input
-          id="business"
-          name="business"
-          type="text"
-          autoComplete="organization"
-          className={fieldClass}
-        />
-      </div>
-
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div>
-          <Label htmlFor="projectType" optional>
-            What do you need?
-          </Label>
-          <select
-            id="projectType"
-            name="projectType"
-            defaultValue={defaultProjectType ?? ''}
-            className={fieldClass}
-          >
-            <option value="">Choose one…</option>
-            {projectTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
+          <FieldError id="message-error" message={state.errors?.message} />
         </div>
 
-        <div>
-          <Label htmlFor="budget" optional>
-            Rough budget
-          </Label>
-          <select
-            id="budget"
-            name="budget"
-            defaultValue=""
-            className={fieldClass}
-          >
-            <option value="">Choose one…</option>
-            {budgetBands.map((band) => (
-              <option key={band} value={band}>
-                {band}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+        <details className="group border border-line bg-paper-sunk">
+          <summary className="label flex cursor-pointer items-center gap-2.5 p-4 text-ink-faint transition-colors hover:text-accent-deep">
+            <span aria-hidden className="text-accent transition-transform group-open:rotate-90">
+              →
+            </span>
+            Have an UNLOCK code?
+          </summary>
+          <div className="px-4 pb-4">
+            <input
+              id="unlock"
+              name="unlock"
+              type="text"
+              defaultValue={defaultUnlock ?? ''}
+              placeholder="UNLOCK"
+              autoComplete="off"
+              spellCheck={false}
+              className={cn(field, 'uppercase tracking-[0.2em]')}
+              aria-label="UNLOCK code"
+            />
+            <p className="mt-2.5 text-xs leading-relaxed text-ink-faint">
+              Applied to your written quote. Codes are checked when I read your enquiry.
+            </p>
+          </div>
+        </details>
+      </fieldset>
 
-      <div>
-        <Label htmlFor="message">About the project</Label>
-        <textarea
-          id="message"
-          name="message"
-          rows={6}
-          required
-          placeholder="What does your business do, what is the site or system for, and is there a date you need it by?"
-          aria-invalid={Boolean(state.errors?.message)}
-          aria-describedby={state.errors?.message ? 'message-error' : undefined}
-          className={cn(fieldClass, 'resize-y')}
-        />
-        <FieldError id="message-error" message={state.errors?.message} />
-      </div>
-
-      {/* Honeypot. Hidden from sight and from assistive tech, but present in
-          the DOM for anything that fills fields indiscriminately. */}
+      {/* Honeypot. Named so no password manager or browser autofill targets it. */}
       <div aria-hidden className="absolute left-[-9999px] h-px w-px overflow-hidden">
-        <label htmlFor="website">Do not fill this in</label>
-        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+        <label htmlFor="subject">Do not fill this in</label>
+        <input id="subject" name="subject" type="text" tabIndex={-1} autoComplete="off" />
       </div>
       <input ref={startedAtRef} type="hidden" name="startedAt" defaultValue="" />
 
-      <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-5 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
         <SubmitButton />
         <p className="max-w-xs text-xs leading-relaxed text-ink-faint">
-          Your details are used only to reply to this enquiry. Nothing is added
-          to a mailing list and nothing is passed on.
+          Your details are used only to reply to this enquiry. Nothing is added to a
+          mailing list and nothing is passed on.
         </p>
       </div>
     </form>

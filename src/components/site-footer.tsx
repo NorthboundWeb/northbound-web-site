@@ -1,20 +1,13 @@
 import Link from 'next/link'
 import { CompassDiagram } from '@/components/graphics'
 import { Container } from '@/components/ui'
-import { buildPackages } from '@/lib/services'
-import { site } from '@/lib/site'
-
-const services = [
-  'Website design',
-  'Website builds',
-  'Website management',
-]
+import { buildScopes, managementPlans } from '@/lib/services'
+import { divisions, parentNav, site } from '@/lib/site'
 
 export function SiteFooter() {
   return (
     <footer className="relative z-10 bg-green text-cream">
       <Container className="pt-20 pb-12">
-        {/* The graphic statement — the footer is a poster, not a sitemap. */}
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
           <p className="display text-[clamp(3.25rem,13vw,11rem)] text-cream">
             Always
@@ -33,51 +26,51 @@ export function SiteFooter() {
         />
 
         <div className="mt-12 grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <h2 className="label text-cream/70">What I do</h2>
+          <nav aria-label="Divisions">
+            <h2 className="label text-cream/70">Northbound</h2>
             <ul className="mt-5 space-y-2.5">
-              {services.map((s) => (
-                <li key={s} className="text-[15px] text-cream/85">
-                  {s}
+              {divisions.map((d) => (
+                <li key={d.id}>
+                  <Link href={d.href} className="text-[15px] text-cream/85 transition-colors hover:text-accent-lit">
+                    Northbound {d.name}
+                  </Link>
+                </li>
+              ))}
+              {parentNav.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="text-[15px] text-cream/85 transition-colors hover:text-accent-lit">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
-          <nav aria-label="Packages">
-            <h2 className="label text-cream/70">Packages</h2>
+          <nav aria-label="Website builds">
+            <h2 className="label text-cream/70">Builds</h2>
             <ul className="mt-5 space-y-2.5">
-              {buildPackages.map((pkg) => (
-                <li key={pkg.slug}>
-                  <Link
-                    href={`/services#${pkg.slug}`}
-                    className="text-[15px] text-cream/85 transition-colors hover:text-accent"
-                  >
-                    {pkg.name}
+              {buildScopes.map((s) => (
+                <li key={s.slug}>
+                  <Link href={`/web/services#${s.slug}`} className="text-[15px] text-cream/85 transition-colors hover:text-accent-lit">
+                    {s.name}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link
-                  href="/services#management"
-                  className="text-[15px] text-cream/85 transition-colors hover:text-accent"
-                >
-                  Management plans
+                <Link href="/web/services#existing" className="text-[15px] text-cream/85 transition-colors hover:text-accent-lit">
+                  Existing website help
                 </Link>
               </li>
             </ul>
           </nav>
 
-          <nav aria-label="Site">
-            <h2 className="label text-cream/70">Northbound Web</h2>
+          <nav aria-label="Management">
+            <h2 className="label text-cream/70">Management</h2>
             <ul className="mt-5 space-y-2.5">
-              {site.nav.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-[15px] text-cream/85 transition-colors hover:text-accent"
-                  >
-                    {item.label}
+              {managementPlans.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/web/services#management`} className="text-[15px] text-cream/85 transition-colors hover:text-accent-lit">
+                    {p.name}
                   </Link>
                 </li>
               ))}
@@ -91,7 +84,7 @@ export function SiteFooter() {
                 <li key={s.label}>
                   <a
                     href={s.href}
-                    className="text-[15px] text-cream/85 transition-colors hover:text-accent"
+                    className="text-[15px] text-cream/85 transition-colors hover:text-accent-lit"
                     rel="me noopener noreferrer"
                     target="_blank"
                   >
@@ -100,10 +93,7 @@ export function SiteFooter() {
                 </li>
               ))}
               <li>
-                <a
-                  href={`mailto:${site.email}`}
-                  className="text-[15px] text-accent transition-colors hover:text-cream"
-                >
+                <a href={`mailto:${site.email}`} className="text-[15px] text-accent-lit transition-colors hover:text-cream">
                   {site.email}
                 </a>
               </li>
@@ -115,6 +105,13 @@ export function SiteFooter() {
           <p>
             © {new Date().getFullYear()} {site.name}
           </p>
+          {/* UNLOCK lives here on purpose: findable, never shouted. */}
+          <Link
+            href="/unlock"
+            className="tracking-[0.35em] text-cream/50 transition-colors hover:text-accent-lit"
+          >
+            UNLOCK
+          </Link>
           <p>Built and hosted in the {site.location}</p>
         </div>
       </Container>

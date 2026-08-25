@@ -54,7 +54,11 @@ export function Label({
         className
       )}
     >
-      {index ? <span className="text-accent">{index}</span> : null}
+      {index ? (
+        <span className={tone === 'light' ? 'text-accent-lit' : 'text-accent-deep'}>
+          {index}
+        </span>
+      ) : null}
       <span
         aria-hidden
         className={cn(
@@ -101,7 +105,7 @@ export function StatementBand({
           <Label index={index} tone="light">
             {eyebrow}
           </Label>
-          {aside ? <span className="label text-accent">{aside}</span> : null}
+          {aside ? <span className="label text-accent-lit">{aside}</span> : null}
         </div>
         <p className="display mt-6 text-[clamp(3rem,11vw,8.5rem)] text-cream">
           {word}
@@ -154,7 +158,8 @@ const variants = {
   /** Deep green block, cream text, orange arrow. */
   primary: 'bg-ink text-paper hover:bg-accent hover:text-cream',
   /** Outlined, for secondary weight. */
-  secondary: 'border border-line-strong text-ink hover:border-accent hover:text-accent',
+  secondary:
+    'border border-line-strong text-ink hover:border-accent hover:text-accent-deep',
   /** Cream on green sections. */
   inverse: 'bg-cream text-green hover:bg-accent hover:text-cream',
 } as const
@@ -211,7 +216,7 @@ export function ArrowLink({
     <Link
       href={href}
       className={cn(
-        'group/link label inline-flex items-center gap-2.5 text-ink hover:text-accent',
+        'group/link label inline-flex items-center gap-2.5 text-ink hover:text-accent-deep',
         className
       )}
     >
@@ -255,8 +260,10 @@ export function CardCta({
     <Link
       href={href}
       className={cn(
-        "label inline-flex items-center gap-2.5 after:absolute after:inset-0 after:content-[''] group-hover:text-accent",
-        tone === 'light' ? 'text-cream' : 'text-ink',
+        "label inline-flex items-center gap-2.5 after:absolute after:inset-0 after:content-['']",
+        tone === 'light'
+          ? 'text-cream group-hover:text-accent-lit'
+          : 'text-ink group-hover:text-accent-deep',
         className
       )}
     >
