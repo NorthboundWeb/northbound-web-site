@@ -15,9 +15,9 @@ export const site = {
   name: 'Northbound',
   legalName: 'Northbound',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://northboundweb.co.uk',
-  tagline: 'A technology company. Choose your direction.',
+  tagline: 'Two divisions. One technology company.',
   description:
-    'Northbound builds digital infrastructure for small businesses. Northbound Web designs, builds and manages websites. Northbound AI builds tools and automation.',
+    'Northbound builds digital infrastructure for small businesses. Northbound.Web designs, builds and manages websites. Northbound.AI builds AI employees — workers that do a real job in your business.',
   email: 'che@northboundweb.co.uk',
   location: 'United Kingdom',
   socials: [
@@ -38,8 +38,12 @@ export type DivisionId = 'web' | 'ai'
 
 export type Division = {
   id: DivisionId
-  /** Shown as "Northbound {name}". */
+  /** The short form: "Web", "AI". Shown after the wordmark in the header. */
   name: string
+  /** The full lockup, as written in running copy and on the gateway. */
+  wordmark: string
+  /** The gateway's call to action. */
+  enter: string
   href: string
   /** One line on the gateway. */
   summary: string
@@ -55,10 +59,12 @@ export const divisions: Division[] = [
   {
     id: 'web',
     name: 'Web',
+    wordmark: 'Northbound.Web',
+    enter: 'Explore Web',
     href: '/web',
     word: 'Build',
     summary:
-      'Websites, hosting and ongoing management for businesses that need to look the part.',
+      'Website design and build, ecommerce and web services, hosting and ongoing management — including sites you already have.',
     state: 'live',
     stateLabel: 'Taking projects',
     nav: [
@@ -71,12 +77,14 @@ export const divisions: Division[] = [
   {
     id: 'ai',
     name: 'AI',
+    wordmark: 'Northbound.AI',
+    enter: 'Explore AI',
     href: '/ai',
-    word: 'Think',
+    word: 'Work',
     summary:
-      'Jarvis and the automation tools that do the repetitive parts of running a business.',
+      'AI employees: workers that do a real job in your business rather than sitting in a chat window waiting to be asked.',
     state: 'preview',
-    stateLabel: 'In private preview',
+    stateLabel: 'In development',
     nav: [
       { href: '/ai', label: 'Overview' },
       { href: '/ai/full-access', label: 'Full Access' },

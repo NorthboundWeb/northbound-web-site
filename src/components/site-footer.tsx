@@ -32,7 +32,7 @@ export function SiteFooter() {
               {divisions.map((d) => (
                 <li key={d.id}>
                   <Link href={d.href} className="text-[15px] text-cream/85 transition-colors hover:text-accent-lit">
-                    Northbound {d.name}
+                    {d.wordmark}
                   </Link>
                 </li>
               ))}

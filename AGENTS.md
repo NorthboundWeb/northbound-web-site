@@ -22,20 +22,31 @@ nav, the footer and the About page. Adding a third division is one entry there.
 process steps and the build standards are in `src/lib/services.ts`; the brand
 name, URL and contact email are in `src/lib/site.ts`. Edit copy there.
 
-**Pricing — read `src/lib/services.ts`'s header comment before touching any
-number.** £119 (`ENTRY_PRICE`) is the **only** confirmed, published build
-price, and it is published as a *from* price on the Starter scope. The old
-ladder (£199 / £299 / £399 / £499) has been **withdrawn by the owner** — do not
-reinstate it, and do not invent replacement figures and present them as
-approved. Business, Extended and Custom carry `pricing: 'quoted'` and publish
-no number. Management prices (£39 / £80 / £149) were approved separately and
-are unchanged. Use `ADVANCED_MANAGEMENT_PRICE` wherever the complimentary
-month's value is quoted so it cannot drift.
+**Pricing — `src/lib/services.ts` is the single source of truth.** Every page,
+the Stripe session and every enquiry link read from it. Never write a price
+anywhere else. The ladder is Starter £249, Advanced £299, Pro £389 (all
+one-off, all purchasable) and Custom from £499 (quoted, not purchasable).
+Management is a separate monthly subscription: Pro £60, Ultimate £69, with the
+gap derived as `MANAGEMENT_STEP_UP` so the "£9 more" claim cannot drift.
 
-**Scope was approved; only the money is open.** Page caps, revision rounds and
-timescales on each tier are settled — leave them alone. When CJ confirms the
-ladder, set `price` and flip `pricing` to `'fixed'`; nothing else needs
-touching, because every surface reads from that array.
+**Withdrawn, do not reinstate:** the £119 entry point, the
+£199/£299/£399/£499 ladder, and Business/Extended as tier names. Do not invent
+a price that is not in `services.ts`.
+
+**A build price is a one-off total.** Never render one as weekly or monthly,
+never derive an instalment from one, and never let a management price read as
+part of a build.
+
+**Klarna:** Stripe decides who is eligible and displays the options itself.
+`payment_method_types` is deliberately not sent. Never calculate an instalment,
+name a plan ("Pay in 3", "Pay Later"), or state APR or terms. `KLARNA_NOTE` is
+the entire permitted wording.
+
+**Payments:** the amount comes from `services.ts`, never from the request — the
+browser sends only a slug. Secrets stay server-side; a `sk_live_` key outside
+production throws. A payment is real only when Stripe says so: the success page
+re-reads the session, and the webhook verifies its signature and fails closed
+without `STRIPE_WEBHOOK_SECRET`.
 
 **Promises are bounded on purpose.** Never write unlimited fixes, updates or
 support. No absolutes ("every time"), no guaranteed same-day response. Included
@@ -55,8 +66,8 @@ logo/brand design and paid stock are not in the fixed scopes. Add **no VAT
 wording** in either direction.
 
 "Priority support" is a **place in the queue, not an SLA** — Advanced and
-Complete requests go ahead of Essential ones. Never attach a response time to
-it. Extended's booking integration means **connecting or embedding an existing
+Ultimate requests go ahead of Pro ones. Never attach a response time to
+it. Pro's booking integration means **connecting or embedding an existing
 third-party service**; bespoke booking systems, availability logic, custom
 payment flows, accounts or automated workflows are quoted separately. Revision
 feedback is asked for within **10 working days** of a preview, after which the
@@ -65,15 +76,18 @@ approval**.
 
 These constraints are encoded in `managementTerms`, `commercialTerms`,
 `TIMELINE_TERMS`, `COMPLIMENTARY_MONTH_TERMS`, each plan's `changeTime`, and
-the `note` fields on the Extended and Custom scopes.
+the `note` fields on the Pro and Custom scopes.
 
 **`roadmapServices` must never render.** It is a private list of ideas. Nothing
 in it is a product yet, and putting it on a page would advertise something
 Northbound cannot deliver.
 
-**Northbound AI is in preview, not on sale.** `/ai` and `/ai/full-access`
-describe capability and an approval-based request route. Do not attach a price
-or a delivery date to anything there.
+**Northbound.AI is in development, not on sale.** The division builds **AI
+employees** — workers that hold a role and do a job end to end, not chatbots.
+The roster lives in `src/lib/ai-employees.ts`; adding one is a single entry.
+Each carries a `state` (`live` / `building` / `planned`) and **only `live` may
+be described as usable today** — nothing is `live` yet. Attach no price and no
+delivery date to anything in that division.
 
 **Do not invent social proof.** No testimonials, client logos, case studies,
 review counts or years-of-experience claims unless Che supplies real ones.

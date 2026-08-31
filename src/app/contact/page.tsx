@@ -2,12 +2,12 @@ import type { Metadata } from 'next'
 import { ContactForm } from '@/components/contact-form'
 import { Container, Display, Label, Section } from '@/components/ui'
 import { prefillFromParams } from '@/lib/contact/schema'
-import { ENTRY_PRICE } from '@/lib/services'
+import { KLARNA_NOTE, buildScopes } from '@/lib/services'
 import { currency, site } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Start a project',
-  description: `Tell ${site.name} what you need. Website builds from ${currency.format(ENTRY_PRICE)}, with a fixed price agreed in writing before anything starts. Replies usually within one working day.`,
+  description: `Tell ${site.name} what you need. One-off website builds from ${currency.format(buildScopes[0].price)}, with a fixed price agreed in writing before anything starts. Replies usually within one working day.`,
   alternates: { canonical: '/contact' },
 }
 
@@ -19,17 +19,16 @@ const answers = [
   },
   {
     question: 'How much will it cost?',
-    answer: `Builds start at ${currency.format(ENTRY_PRICE)}. Above that the price follows the amount of work involved, and you get a fixed figure in writing before you commit to anything.`,
+    answer: `Starter is ${currency.format(buildScopes[0].price)}, Advanced ${currency.format(buildScopes[1].price)} and Pro ${currency.format(buildScopes[2].price)} — each a one-off total for the website, never a weekly or monthly charge. Custom starts at ${currency.format(buildScopes[3].price)} and is quoted on what you need.`,
   },
   {
     question: 'How does payment work?',
-    answer:
-      'A 50% deposit secures the project and lets work begin. The remaining 50% is payable once the site is complete and approved, before it goes live.',
+    answer: `You can pay for Starter, Advanced or Pro in full online and work begins straight away. ${KLARNA_NOTE}, and which methods you see is decided by our payment provider rather than by me. Prefer to split it? Ask, and I will send a 50% deposit invoice with the balance due once the site is complete and approved, before it goes live.`,
   },
   {
     question: 'How long does a build take?',
     answer:
-      'Roughly 5–7 working days for a Starter, 7–10 for Business and 10–15 for Extended. Custom is agreed in your quote. The clock starts once the deposit and your content have arrived.',
+      'Roughly 5–7 working days for a Starter, 7–10 for Advanced and 10–15 for Pro. Custom is agreed in your quote. The clock starts once payment and your content have arrived.',
   },
   {
     question: 'I already have a website — can you help?',
@@ -39,7 +38,7 @@ const answers = [
   {
     question: 'Do I have to take a management plan?',
     answer:
-      'No. Plans are optional and rolling, and the build price does not depend on taking one. The Extended and Custom builds include a complimentary month that does not turn into a paid subscription on its own.',
+      'No. Plans are optional and rolling, and the build price does not depend on taking one. The Pro and Custom builds include a complimentary month of Pro Management that does not turn into a paid subscription on its own.',
   },
 ]
 

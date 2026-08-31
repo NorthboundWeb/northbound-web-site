@@ -51,7 +51,8 @@ export default function GatewayPage() {
           <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
             <p className="max-w-xl text-lg leading-relaxed text-ink-muted sm:text-xl">
               A technology company building the digital infrastructure small
-              businesses actually run on. Two directions so far.
+              businesses actually run on. Two divisions: one builds your
+              website, the other builds the workers behind it.
             </p>
             <TravellingLine className="w-full max-w-xs lg:w-64" />
           </div>
@@ -61,7 +62,7 @@ export default function GatewayPage() {
       {/* ── Choose your direction ─────────────────────────────── */}
       <section className="border-b border-line">
         <Container className="py-10">
-          <Label index="01">Choose your direction</Label>
+          <Label index="01">Two divisions</Label>
         </Container>
 
         <div className="grid border-t border-line lg:grid-cols-2">
@@ -75,8 +76,8 @@ export default function GatewayPage() {
                   : 'bg-paper-sunk hover:bg-paper'
               }`}
             >
-              <div className="flex items-start justify-between">
-                <span className="label text-ink-faint">Northbound {d.name}</span>
+              <div className="flex items-start justify-between gap-4">
+                <span className="label text-ink">{d.wordmark}</span>
                 <span
                   className={`label ${d.state === 'live' ? 'text-accent-deep' : 'text-ink-faint'}`}
                 >
@@ -93,7 +94,7 @@ export default function GatewayPage() {
                   {d.summary}
                 </p>
                 <span className="label mt-8 inline-flex items-center gap-2.5 text-ink">
-                  Enter Northbound {d.name}
+                  {d.enter}
                   <span className="text-accent-deep transition-transform duration-300 group-hover:translate-x-2">
                     →
                   </span>
@@ -125,8 +126,8 @@ export default function GatewayPage() {
                 priced so you know the number before you commit.
               </p>
               <div className="mt-10 flex flex-wrap gap-6">
-                <ArrowLink href="/web">Websites and management</ArrowLink>
-                <ArrowLink href="/ai">Tools and automation</ArrowLink>
+                <ArrowLink href="/web">Websites, ecommerce and management</ArrowLink>
+                <ArrowLink href="/ai">AI employees</ArrowLink>
               </div>
             </div>
             <CompassDiagram className="w-40 justify-self-start text-ink sm:w-56" />

@@ -64,7 +64,10 @@
 
     --accent: #f25a14;
     --accent-ink: #0d2a24;
-    --accent-wash: #1b3a32;
+    /* Slightly darker than the raised surface it derives from: --ink-faint on
+       the old #1B3A32 measured 4.45:1, a hair under AA, and this wash sits
+       behind the selected pricing card's supporting text. */
+    --accent-wash: #19372f;
     --accent-deep: #ff7a3d;
     /* --ink is cream here, so the orange has to go darker, not lighter. */
     --accent-on-ink: #b83605;
@@ -323,24 +326,3 @@ span[data-when] { display: none; }
 /* ── Interactive scope comparator ──────────────────────────────────
    Tabs that swap a detail panel with no JavaScript, so the pricing stays
    interactive even when scripts fail. */
-.scopes [data-scope] { display: none; }
-.scopes:has(#scope-starter:checked) [data-scope='starter'],
-.scopes:has(#scope-business:checked) [data-scope='business'],
-.scopes:has(#scope-extended:checked) [data-scope='extended'],
-.scopes:has(#scope-custom:checked) [data-scope='custom'] {
-  display: block;
-}
-.scopes input[type='radio']:checked + label {
-  background-color: var(--ink);
-  color: var(--paper);
-}
-/* The children carry their own Tailwind colours, which were picked for the
-   paper surface. On the inverted tab they have to follow the label. */
-.scopes input[type='radio']:checked + label * { color: var(--paper); }
-.scopes input[type='radio']:checked + label .tab-price {
-  color: var(--accent-on-ink);
-}
-.scopes input[type='radio']:focus-visible + label {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-}

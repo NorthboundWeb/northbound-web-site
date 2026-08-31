@@ -105,11 +105,30 @@ const paramToPlan: Record<string, string> = Object.fromEntries(
   managementPlans.map((p) => [p.enquiryParam, p.name])
 )
 
+/**
+ * Links that existed under the previous package names, so an old bookmark or
+ * an email sent last month still lands on the right thing rather than the
+ * default. Mapping only preselects a dropdown — it promises nothing about
+ * price.
+ */
+const RETIRED_PARAMS: Record<string, string> = {
+  business: 'advanced',
+  extended: 'pro',
+  basic: 'starter',
+  'basic-build': 'starter',
+  'standard-build': 'advanced',
+  'advanced-build': 'pro',
+  'essential-management': 'pro-management',
+  'advanced-management': 'pro-management',
+  'complete-management': 'ultimate-management',
+}
+
 export function prefillFromParams(params: {
   package?: string | string[]
   type?: string | string[]
 }): { enquiryType: EnquiryTypeId; scope?: string; plan?: string } {
-  const pkg = typeof params.package === 'string' ? params.package : undefined
+  const raw = typeof params.package === 'string' ? params.package : undefined
+  const pkg = raw ? (RETIRED_PARAMS[raw] ?? raw) : undefined
   const type = typeof params.type === 'string' ? params.type : undefined
 
   if (pkg && paramToPlan[pkg]) {

@@ -23,40 +23,42 @@ These are placeholders. Each has exactly one home.
 ## Pricing
 
 Read the header comment in `src/lib/services.ts` before changing any number.
+**That file is the only place a price is written down** — every page, the
+Stripe session and every enquiry link read from it, so two surfaces cannot
+disagree about what something costs.
 
-**£119 is the only confirmed build price.** It is published as a *from* price on
-the Starter scope. The previous ladder (£199 / £299 / £399 / £499) has been
-**withdrawn**. It must not be reinstated, and replacement figures must not be
-invented and presented as approved.
+Build prices are **one-off totals for the website**. Never render one as
+weekly or monthly, and never derive an instalment figure from one.
 
 | Build scope | Price | Pages | Revisions | Timescale |
 |---|---|---|---|---|
-| Starter | **from £119** | Up to 3 | 1 round | ~5–7 working days |
-| Business (*Most chosen*) | Quoted | Up to 5 | 2 rounds | ~7–10 working days |
-| Extended | Quoted, + complimentary month | Up to 8 | 3 rounds | ~10–15 working days |
-| Custom | Quoted, + complimentary month | No cap | Agreed in the quote | Agreed in the quote |
+| Starter | **£249** one-off | Up to 3 | 1 round | ~5–7 working days |
+| Advanced (*Most chosen*) | **£299** one-off | Up to 5 | 2 rounds | ~7–10 working days |
+| Pro | **£389** one-off, + complimentary month | Up to 8 | 3 rounds | ~10–15 working days |
+| Custom | **From £499**, quoted | No cap | Agreed in the quote | Agreed in the quote |
 
-Scope was approved and is settled — only the money above the entry point is
-open. When the ladder is confirmed, set `price` on each scope and flip
-`pricing` from `'quoted'` to `'fixed'`. Every surface reads from that array, so
-nothing else needs editing.
+Starter, Advanced and Pro are purchasable through Stripe Checkout
+(`checkout: true`). Custom is not: its CTA is **Get a custom quote**, because
+£499 is a starting figure rather than a price you can pay today.
+
+Withdrawn and not to be reinstated: the £119 entry point, the
+£199/£299/£399/£499 ladder, and Business/Extended as tier names.
 
 | Management plan | Price | Included change time |
 |---|---|---|
-| Essential | £39/month | Up to 30 minutes per billing month |
-| Advanced | £80/month | Up to 1 hour per billing month |
-| Complete | £149/month | Up to 2 hours per billing month |
+| Pro Management | £60/month | Up to 1 hour per billing month |
+| Ultimate Management | £69/month | Up to 2 hours per billing month |
 
-Payment is **50% deposit to begin, 50% once complete and approved, before go-live**.
-
-Prices are shown as plain figures — **no VAT wording either way**, by decision.
+Management is a **separate recurring subscription**, never part of a build
+price. The £9 gap is quoted from `MANAGEMENT_STEP_UP`, which is derived from
+the two prices, so the "£9 more" claim cannot drift away from them.
 
 **Rules that the copy must keep honouring:**
 
 - Included change time does **not** roll over; work beyond it is quoted first.
 - Change time covers content, copy and small adjustments — **not** new
   features, redesigns or development work.
-- Never promise unlimited fixes, updates or support.
+- Never promise unlimited fixes, updates, development or support.
 - No absolute promises ("every time") and no guaranteed same-day response.
 - The complimentary month must **not** auto-convert into a paid subscription —
   the customer chooses at the end of it.
@@ -65,34 +67,56 @@ Prices are shown as plain figures — **no VAT wording either way**, by decision
 - Custom must not imply that accounts, databases, payments, portals or
   ecommerce are included; those are quoted separately.
 - Timelines are **estimates, never guarantees**, and must always render
-  alongside `TIMELINE_TERMS` so the conditions travel with the number.
+  alongside `TIMELINE_TERMS`.
 - Cancelling a plan stops future renewals; the current billing period is not
   part-refunded. Never say cancelling takes the site offline.
-- Management cards lead with benefits. Change time renders **below** them, so a
-  plan does not read as hours sold by the month.
 - Copywriting, photography, logo/brand design and paid stock are **not** in the
   fixed scopes.
 - "Priority support" is a queue position, **not** a response-time promise.
-- Extended's booking integration is **connecting/embedding an existing
-  service**. Bespoke booking systems are scoped and quoted separately.
-- Revision feedback is requested within **10 working days** of a preview; later
-  feedback can pause the project. **Silence is never treated as approval.**
+- Pro's booking integration is **connecting/embedding an existing service**.
+  Bespoke booking systems are scoped and quoted separately.
+- Revision feedback is requested within **10 working days** of a preview.
+- Prices are shown as plain figures — **no VAT wording either way**, by decision.
 
 These live in `managementTerms`, `commercialTerms`, `TIMELINE_TERMS`,
 `COMPLIMENTARY_MONTH_TERMS`, each plan's `changeTime`, and the `note` fields on
-the Extended and Custom scopes — all in `src/lib/services.ts`.
+the Pro and Custom scopes — all in `src/lib/services.ts`.
 
-`ADVANCED_MANAGEMENT_PRICE` is exported from the same file and used wherever
-the complimentary month is mentioned, so its stated value cannot drift out of
-sync with the plan's own price.
-
-`roadmapServices` is a **private list of ideas**. It is never rendered. Putting
-it on a page would advertise services Northbound cannot currently deliver.
+`roadmapServices` is a **private list of ideas**. It is never rendered.
 
 The About page and `/web/work` deliberately contain no claims that could be
-checked and found false — no invented years of experience, client counts or
-case studies. `/web/work` holds an empty `projects` array and sets its own
-`noindex` until there is real work to show.
+checked and found false. `/web/work` holds an empty `projects` array and sets
+its own `noindex` until there is real work to show.
+
+---
+
+## Payments
+
+Stripe Checkout, entirely optional. With no `STRIPE_SECRET_KEY` the site works
+exactly as before — the selector's button becomes an enquiry instead.
+
+The one rule the integration exists to enforce: **the amount is read from
+`services.ts`, never from the request.** The browser sends a package slug; the
+worst it can do is name a package that does not exist or is not purchasable.
+It can never name a price.
+
+- `src/lib/checkout/stripe.ts` — session creation, session read-back, webhook
+  verification. Server-only.
+- `src/lib/checkout/actions.ts` — the server action behind the button, so
+  checkout works without JavaScript.
+- `src/app/api/stripe/webhook/route.ts` — signature-verified receiver. Fails
+  closed without `STRIPE_WEBHOOK_SECRET`.
+- `src/app/web/checkout/success/page.tsx` — re-reads the session from Stripe.
+  **A payment is never treated as successful on the strength of a redirect.**
+
+**Klarna is not implemented here and must not be.** `payment_method_types` is
+deliberately not sent, so Stripe shows each customer the methods they are
+actually eligible for, configured under Stripe → Settings → Payment methods.
+Northbound never calculates an instalment, names a plan, or promises terms it
+does not set. The only permitted wording is `KLARNA_NOTE`.
+
+A live key (`sk_live_…`) outside production throws rather than warns, so a
+branch deploy cannot charge a real card.
 
 ---
 

@@ -19,7 +19,7 @@ import {
   cn,
 } from '@/components/ui'
 import {
-  ENTRY_PRICE,
+  ONE_OFF_LABEL,
   PRICING_PROMISE,
   buildScopes,
   existingSiteHelp,
@@ -31,7 +31,7 @@ import { currency, site } from '@/lib/site'
 export const metadata: Metadata = {
   // Absolute — see the note on /ai.
   title: { absolute: 'Northbound Web — websites built, hosted and managed' },
-  description: `Northbound Web designs, builds, hosts and manages websites for businesses across the ${site.location}. Builds from ${currency.format(ENTRY_PRICE)}, with a fixed price agreed in writing before anything starts.`,
+  description: `Northbound Web designs, builds, hosts and manages websites for businesses across the ${site.location}. One-off builds from ${currency.format(buildScopes[0].price)}, with a fixed price agreed in writing before anything starts.`,
   alternates: { canonical: '/web' },
 }
 
@@ -110,10 +110,10 @@ export default function WebPage() {
 
               <p className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span className="display text-4xl text-accent">
-                  From {currency.format(ENTRY_PRICE)}
+                  From {currency.format(buildScopes[0].price)}
                 </span>
                 <span className="text-[15px] text-ink-muted">
-                  · fixed price agreed in writing first
+                  · {ONE_OFF_LABEL.toLowerCase()}, fixed price agreed first
                 </span>
               </p>
             </div>
@@ -129,7 +129,7 @@ export default function WebPage() {
             {[
               { t: 'Who it is for', d: 'Small businesses that need to look established' },
               { t: 'What you get', d: 'A site built, hosted and looked after' },
-              { t: 'What it costs', d: `From ${currency.format(ENTRY_PRICE)}, quoted before you commit` },
+              { t: 'What it costs', d: `From ${currency.format(buildScopes[0].price)} one-off, agreed before you commit` },
               { t: 'What happens next', d: 'A free call, then a fixed written quote' },
             ].map((item) => (
               <div key={item.t}>
@@ -188,9 +188,12 @@ export default function WebPage() {
                   <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-ink-muted">{s.summary}</p>
                   <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
                     <span className="display text-3xl text-accent">
-                      {s.pricing === 'from' && s.price
+                      {s.from
                         ? `From ${currency.format(s.price)}`
-                        : 'Quoted'}
+                        : currency.format(s.price)}
+                    </span>
+                    <span className="label text-ink-faint">
+                      {s.checkout ? 'One-off' : 'Quoted'}
                     </span>
                     <span className="label text-ink-faint">{s.pages}</span>
                     <span className="label text-ink-faint">{s.revisions}</span>

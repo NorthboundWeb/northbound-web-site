@@ -3,32 +3,42 @@
  *
  * PRICING RULES (read before editing):
  *
- * 1. £119 is the ONLY confirmed build price. It is the entry point.
- * 2. The previous ladder (£199 / £299 / £399 / £499) has been withdrawn by the
- *    owner. Do not reinstate it. Do not invent replacement figures and present
- *    them as approved — tiers above the entry point are quoted until CJ
- *    confirms numbers.
- * 3. The scope of each tier (page caps, revision rounds, timescales) WAS
- *    approved and is unchanged. Only the money is undecided.
- * 4. Management prices were approved separately and are unchanged.
- *
- * When CJ confirms the ladder, set `price` on each scope and flip `pricing`
- * to 'fixed'. Nothing else needs touching — every surface reads from here.
+ * 1. This file is the ONLY place a price is written down. Every page, every
+ *    checkout session and every enquiry link reads from here, so two surfaces
+ *    cannot disagree about what something costs.
+ * 2. The confirmed ladder is Starter £249, Advanced £299, Pro £389 and Custom
+ *    from £499. Earlier ladders (£119 entry; £199/£299/£399/£499; Business and
+ *    Extended as tier names) have been withdrawn. Do not reinstate them.
+ * 3. Build prices are ONE-OFF. Never render a build price as weekly or
+ *    monthly, and never derive an instalment figure from one — see
+ *    KLARNA_NOTE below.
+ * 4. Management is a separate recurring subscription: Pro £60/month and
+ *    Ultimate £69/month. It is never a condition of having a site built.
+ * 5. Do not invent a price that is not in this file.
  */
 
-/** The one confirmed, published build price. */
-export const ENTRY_PRICE = 119
+/** Build prices are one-off. This label renders beside every one of them. */
+export const ONE_OFF_LABEL = 'One-off website build'
 
-/** Advanced Management's monthly price, quoted wherever the free month is mentioned. */
-export const ADVANCED_MANAGEMENT_PRICE = 80
+/**
+ * Klarna is offered by Stripe at checkout, to whoever Stripe finds eligible.
+ * Northbound must not calculate instalments, name a plan ("Pay in 3"), or
+ * promise terms — we do not decide any of it and eligibility varies per
+ * customer. This sentence is the most we are allowed to say.
+ */
+export const KLARNA_NOTE = 'Klarna available at checkout'
+
+/** Pro Management's monthly price, quoted wherever the free month is mentioned. */
+export const PRO_MANAGEMENT_PRICE = 60
 
 export type BuildScope = {
   slug: string
   name: string
-  /** 'from' publishes a price; 'quoted' publishes none until confirmed. */
-  pricing: 'from' | 'quoted'
-  /** Only set when pricing is 'from'. */
-  price?: number
+  /** 'fixed' is payable now through Stripe; 'quoted' is scoped first. */
+  pricing: 'fixed' | 'quoted'
+  price: number
+  /** True when `price` is a starting figure rather than the whole cost. */
+  from?: boolean
   badge?: string
   summary: string
   bestFor: string
@@ -38,21 +48,27 @@ export type BuildScope = {
   timeline: string
   includes: string[]
   note?: string
-  freeAdvancedMonth?: boolean
+  freeProManagementMonth?: boolean
+  /**
+   * Stripe reads the amount from this file, never from the browser. Only
+   * 'fixed' scopes are purchasable; Custom is quoted and has no checkout.
+   */
+  checkout: boolean
 }
 
 export const buildScopes: BuildScope[] = [
   {
     slug: 'starter',
     name: 'Starter',
-    pricing: 'from',
-    price: ENTRY_PRICE,
+    pricing: 'fixed',
+    price: 249,
+    checkout: true,
     summary:
       'A small, sharp site that tells people who you are, what you do and how to reach you.',
     bestFor: 'Sole traders and new businesses who need to look established, fast.',
     pages: 'Up to 3 pages',
     revisions: '1 revision round',
-    timeline: 'Approximately 5–7 working days',
+    timeline: 'Approximately 5-7 working days',
     includes: [
       'Up to 3 pages',
       'Mobile responsive',
@@ -62,16 +78,18 @@ export const buildScopes: BuildScope[] = [
     ],
   },
   {
-    slug: 'business',
-    name: 'Business',
-    pricing: 'quoted',
+    slug: 'advanced',
+    name: 'Advanced',
+    pricing: 'fixed',
+    price: 299,
+    checkout: true,
     badge: 'Most chosen',
     summary:
       'Room to explain each of your services properly, with analytics so you can see what visitors actually do.',
     bestFor: 'Established businesses with a few distinct services or locations.',
     pages: 'Up to 5 pages',
     revisions: '2 revision rounds',
-    timeline: 'Approximately 7–10 working days',
+    timeline: 'Approximately 7-10 working days',
     includes: [
       'Everything in Starter',
       'Up to 5 pages',
@@ -82,23 +100,25 @@ export const buildScopes: BuildScope[] = [
     ],
   },
   {
-    slug: 'extended',
-    name: 'Extended',
-    pricing: 'quoted',
-    freeAdvancedMonth: true,
+    slug: 'pro',
+    name: 'Pro',
+    pricing: 'fixed',
+    price: 389,
+    checkout: true,
+    freeProManagementMonth: true,
     summary:
       'A larger site with something working behind it — booking, enquiry routing, or a connection to a tool you already use.',
     bestFor: 'Businesses taking bookings or enquiries regularly, or with more to say.',
     pages: 'Up to 8 pages',
     revisions: '3 revision rounds',
-    timeline: 'Approximately 10–15 working days',
+    timeline: 'Approximately 10-15 working days',
     includes: [
-      'Everything in Business',
+      'Everything in Advanced',
       'Up to 8 pages',
       'One standard third-party booking integration, where compatible',
       'Structured data for richer search results',
       '3 revision rounds',
-      `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
+      `1 complimentary month of Pro Management, worth \u00a3${PRO_MANAGEMENT_PRICE}`,
     ],
     note: 'The booking integration means connecting or embedding a suitable booking service you already use, or one we pick together. Building a booking system from scratch — availability rules, custom payment flows, customer accounts — is a bigger job and is scoped and quoted separately.',
   },
@@ -106,7 +126,10 @@ export const buildScopes: BuildScope[] = [
     slug: 'custom',
     name: 'Custom',
     pricing: 'quoted',
-    freeAdvancedMonth: true,
+    price: 499,
+    from: true,
+    checkout: false,
+    freeProManagementMonth: true,
     summary:
       'For work that does not fit a scope. We agree the requirements together and the price is quoted from that.',
     bestFor: 'Businesses whose requirements do not fit one of the fixed scopes.',
@@ -117,11 +140,18 @@ export const buildScopes: BuildScope[] = [
       'Requirements and scope agreed individually',
       'No fixed page cap',
       'Revision allowance agreed in the quote',
-      `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
+      `1 complimentary month of Pro Management, worth \u00a3${PRO_MANAGEMENT_PRICE}`,
     ],
     note: 'Substantial functionality — user accounts, databases, payments, customer portals, ecommerce and the like — is scoped and quoted separately before any work begins.',
   },
 ]
+
+/** Only these can reach Stripe. Custom has no purchasable amount. */
+export const purchasableScopes = buildScopes.filter((s) => s.checkout)
+
+export function scopeBySlug(slug: string): BuildScope | undefined {
+  return buildScopes.find((s) => s.slug === slug)
+}
 
 /** What the site is allowed to say about money above the entry price. */
 export const PRICING_PROMISE =
@@ -130,64 +160,67 @@ export const PRICING_PROMISE =
 export type ManagementPlan = {
   slug: string
   name: string
+  /** Per month, recurring. Never conflate with a one-off build price. */
   price: number
   summary: string
   includes: string[]
   changeTime: string
   enquiryParam: string
   cta: string
+  badge?: string
 }
 
+/**
+ * Two plans, £9 apart. The gap is deliberately small so Ultimate is the
+ * obvious choice — but the difference has to be stated accurately, because a
+ * plan that oversells itself gets cancelled in month two. Neither plan
+ * promises unlimited anything; the change-time allowance is the boundary.
+ */
 export const managementPlans: ManagementPlan[] = [
   {
-    slug: 'essential',
-    name: 'Essential',
-    price: 39,
+    slug: 'pro-management',
+    name: 'Pro Management',
+    price: PRO_MANAGEMENT_PRICE,
     summary:
-      'Keeps the site online, secure and up to date, without you having to think about it.',
+      'Your site hosted, maintained and watched, with an hour of changes a month so it never goes stale.',
     includes: [
       'Hosting and technical maintenance',
       'Security and dependency maintenance, where applicable',
       'Uptime monitoring',
-    ],
-    changeTime:
-      'Includes up to 30 minutes of requested website changes per billing month.',
-    enquiryParam: 'essential-management',
-    cta: 'Choose Essential',
-  },
-  {
-    slug: 'advanced-management',
-    name: 'Advanced',
-    price: ADVANCED_MANAGEMENT_PRICE,
-    summary:
-      'Adds a regular check on how the site is actually performing, and moves your requests up the queue.',
-    includes: [
-      'Everything in Essential',
       'Analytics and performance check',
-      'Priority support — your requests go ahead of Essential ones in the queue',
     ],
     changeTime:
       'Includes up to 1 hour of requested website changes per billing month.',
-    enquiryParam: 'advanced-management',
-    cta: 'Choose Advanced',
+    enquiryParam: 'pro-management',
+    cta: 'Choose Pro Management',
   },
   {
-    slug: 'complete',
-    name: 'Complete',
-    price: 149,
+    slug: 'ultimate-management',
+    name: 'Ultimate Management',
+    price: 69,
+    badge: 'Best value',
     summary:
-      'The site reviewed and reported on properly, so you can see how it is doing rather than guess.',
+      'Everything in Pro, with double the change time, your requests moved up the queue, and a monthly report you can actually read.',
     includes: [
-      'Everything in Advanced',
+      'Everything in Pro Management',
+      'Double the included change time',
+      'Priority support — your requests go ahead of Pro ones in the queue',
       'Performance and SEO review',
       'Simple monthly performance report',
     ],
     changeTime:
       'Includes up to 2 hours of requested website changes per billing month.',
-    enquiryParam: 'complete-management',
-    cta: 'Choose Complete',
+    enquiryParam: 'ultimate-management',
+    cta: 'Choose Ultimate Management',
   },
 ]
+
+/**
+ * The gap between the two plans, quoted wherever the comparison is made, so
+ * the "£9 more" claim can never drift away from the actual prices.
+ */
+export const MANAGEMENT_STEP_UP =
+  managementPlans[1].price - managementPlans[0].price
 
 /**
  * Bounded on purpose. Never promise unlimited fixes, updates, development or
@@ -200,6 +233,7 @@ export const managementTerms = [
   'You can cancel before your next billing date, which stops future renewals. Amounts already charged for the current billing period are not partially refunded if you cancel part-way through it.',
   'If you end a plan, I will set out your options — either continuing hosting separately, where that is available, or transferring the website to another suitable hosting provider.',
   'A management plan is optional. It is not a condition of having a website built.',
+  'A management subscription is a separate monthly charge. It is not part of the one-off build price, and a build is never billed weekly or monthly.',
 ]
 
 /** For businesses who already have a site — discoverable without competing with builds. */
@@ -239,16 +273,18 @@ export const commercialTerms: { title: string; points: string[] }[] = [
   {
     title: 'Payment',
     points: [
-      'A 50% deposit secures your project and allows work to begin.',
-      'The remaining 50% is payable once the website is complete and approved, before it goes live.',
+      'Starter, Advanced and Pro are one-off prices you can pay in full online. Payment secures your project and allows work to begin.',
+      'Prefer to split it? A 50% deposit secures the project and the remaining 50% is payable once the site is complete and approved, before it goes live. Ask and I will send that instead.',
+      'Klarna and other payment methods are offered by our payment provider at checkout, to whoever they find eligible. Northbound does not set or guarantee those terms.',
+      'Custom projects are quoted first and invoiced against the agreed quote.',
     ],
   },
   {
     title: 'Timescales',
     points: [
       'Starter — approximately 5–7 working days.',
-      'Business — approximately 7–10 working days.',
-      'Extended — approximately 10–15 working days.',
+      'Advanced — approximately 7–10 working days.',
+      'Pro — approximately 10–15 working days.',
       'Custom — agreed individually in your written quote.',
       TIMELINE_TERMS,
     ],
@@ -256,7 +292,7 @@ export const commercialTerms: { title: string; points: string[] }[] = [
   {
     title: 'Revisions and feedback',
     points: [
-      'Each scope includes a set number of revision rounds — one on Starter, two on Business, three on Extended. Custom is agreed in your quote.',
+      'Each scope includes a set number of revision rounds — one on Starter, two on Advanced, three on Pro. Custom is agreed in your quote.',
       'Please send the feedback for each round within 10 working days of getting the preview link.',
       'If it arrives later than that, the project may be paused and the estimated completion date may move.',
       'Silence is never treated as approval. If I have not heard from you, I will follow up rather than sign the work off on your behalf.',
