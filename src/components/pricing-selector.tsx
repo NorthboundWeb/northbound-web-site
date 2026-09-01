@@ -133,7 +133,7 @@ export function PricingSelector({
                     className={cn(
                       'grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 transition-colors duration-150',
                       isSelected
-                        ? 'border-accent bg-accent text-cream'
+                        ? 'border-accent bg-accent text-on-invert'
                         : 'border-line-strong text-transparent'
                     )}
                   >

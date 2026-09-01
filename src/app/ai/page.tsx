@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
-import { CompassDiagram, Crosshair, TravellingLine } from '@/components/graphics'
+import { EmployeeCard } from '@/components/ai/employee-card'
+import { OutcomePicker } from '@/components/ai/outcome-picker'
+import { TeamFlow } from '@/components/ai/team-flow'
+import { TravellingLine } from '@/components/graphics'
 import {
   ArrowLink,
   ButtonLink,
@@ -7,189 +10,270 @@ import {
   Display,
   Label,
   Section,
-  StatementBand,
 } from '@/components/ui'
-import {
-  AI_STATUS_NOTE,
-  EMPLOYEE_STATE_LABEL,
-  employeesByReadiness,
-} from '@/lib/ai-employees'
+import { AI_STATUS_NOTE, employeesByReadiness } from '@/lib/ai/employees'
+import { teamStatus, teams } from '@/lib/ai/teams'
+import { STATUS_LABEL } from '@/lib/ai/employees'
 import { site } from '@/lib/site'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
-  // Absolute: this is a division landing page, so it carries the full brand
-  // itself rather than having ' — Northbound' appended to a name that
-  // already contains it.
-  title: { absolute: 'Northbound.AI — AI employees for your business' },
+  // Absolute: a division landing page carries the full brand itself rather
+  // than having ' — Northbound' appended to a name that already contains it.
+  title: { absolute: 'Northbound.AI — AI employees built to get work done' },
   description:
-    'Northbound.AI builds AI employees: workers that do a real job in your business — reading your inbox, auditing your site, handling the admin — rather than sitting in a chat window. In development.',
+    'Northbound Employees are specialists that take on a real job in your business — finding customers, writing the outreach, watching the website. Hire one, or a team built around the outcome. In development.',
   alternates: { canonical: '/ai' },
 }
 
-/**
- * A preview, and it says so at the top. Every role reads from
- * `src/lib/ai-employees.ts`, where `state` is what stops this page describing
- * something that does not exist as though you could buy it today. No prices:
- * Northbound.AI is not on sale.
- */
+const HOW_IT_WORKS = [
+  {
+    step: '01',
+    title: 'Say what you need',
+    body: 'Not which product — what is actually going wrong, or not happening. That is enough to start.',
+  },
+  {
+    step: '02',
+    title: 'We match the employee',
+    body: 'One specialist, or a team where the job runs across more than one. If nothing fits yet, we will say so.',
+  },
+  {
+    step: '03',
+    title: 'You connect what it needs',
+    body: 'Only the accounts that specific job requires, connected by you and revocable at any time.',
+  },
+  {
+    step: '04',
+    title: 'It starts working',
+    body: 'Research, drafts, lists, checks — produced and handed to you rather than happening invisibly.',
+  },
+  {
+    step: '05',
+    title: 'You stay in charge',
+    body: 'Anything that leaves your business waits for your approval. You see what was done and can stop it.',
+  },
+]
 
-const principles = [
+const CONTROL = [
   {
-    index: '01',
-    title: 'A job, not a chatbot',
-    body: 'An employee has a role and a remit. It does the whole job — gathers what it needs, does the work, tells you what it did — rather than waiting to be prompted a step at a time.',
+    title: 'You choose what it can reach',
+    body: 'An employee is connected to the accounts its job needs and nothing else. Connecting is a decision you make, one at a time.',
   },
   {
-    index: '02',
-    title: 'It asks before it acts',
-    body: 'Anything that reaches outside — sending, creating, deleting — stops and asks. Permission is enforced in the code that runs the action, not in the instructions given to a model.',
+    title: 'Nothing leaves without approval',
+    body: 'Messages, posts and changes are prepared and shown to you. Sending is a separate step, and it is yours.',
   },
   {
-    index: '03',
-    title: 'It uses what you already have',
-    body: 'Your inbox, your calendar, your files, your site. An employee works with the tools the business already runs on instead of asking you to move into a new one.',
+    title: 'The work is visible',
+    body: 'You can see what an employee did and what it produced. Work you cannot check is work you cannot trust.',
   },
   {
-    index: '04',
-    title: 'You can see what it did',
-    body: 'Every action is recorded and readable after the fact. An employee whose work you cannot check is not one you can trust with anything that matters.',
+    title: 'You can disconnect',
+    body: 'Remove an account and access stops. There is no arrangement that survives you changing your mind.',
   },
 ]
 
 export default function AiPage() {
   return (
     <>
+      {/* ── 01 · Hero ─────────────────────────────────────────── */}
       <section className="border-b border-line">
-        <Container className="pt-14 pb-20 sm:pt-16 sm:pb-24">
-          <div className="flex items-start justify-between">
+        <Container className="pt-14 pb-16 sm:pt-20 sm:pb-24">
+          <div className="flex items-baseline justify-between gap-4">
             <Label>Northbound.AI</Label>
-            <span className="label text-ink-faint">In development</span>
+            <span className="label text-ink-faint">02 / Division</span>
           </div>
 
-          <div className="mt-10 grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
-            <div>
-              <h1 className="display text-[clamp(2.75rem,10vw,8rem)] text-ink">
-                AI employees<span className="text-accent">.</span>
-              </h1>
-              <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted sm:text-xl">
-                Not another chatbot. Workers that hold a role in your business
-                and do the job end to end — the morning read-through, the site
-                audit, the admin nobody gets round to.
+          <h1 className="display display-stack mt-10 text-[clamp(3.25rem,14vw,11rem)] text-ink">
+            Meet
+            <br />
+            your new
+            <br />
+            team<span className="text-accent">.</span>
+          </h1>
+
+          <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div className="max-w-xl">
+              <p className="text-lg leading-relaxed text-ink-muted sm:text-xl">
+                AI employees built to get work done. Each one takes a real job
+                off your hands — finding customers, writing the outreach,
+                watching the website — and shows you what it did.
               </p>
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-                <ButtonLink href="/ai/full-access" size="lg">
-                  Request early access
+              <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
+                <ButtonLink href="#employees" size="lg">
+                  Meet the employees
                 </ButtonLink>
-                <ArrowLink href="/ai/full-access">What Full Access unlocks</ArrowLink>
+                <ArrowLink href="#needs">See what they can do</ArrowLink>
               </div>
-              <p className="mt-8 max-w-md text-sm leading-relaxed text-ink-faint">
-                {AI_STATUS_NOTE}
-              </p>
             </div>
-            <div className="lg:pb-4">
-              <Crosshair className="mx-auto w-56 text-ink sm:w-72" />
-              <TravellingLine className="mt-10" />
-            </div>
+            <TravellingLine className="w-full max-w-sm lg:w-72" />
           </div>
+
+          <p className="mt-12 max-w-2xl border-l-2 border-accent pl-5 text-sm leading-relaxed text-ink-faint">
+            {AI_STATUS_NOTE}
+          </p>
         </Container>
       </section>
 
-      {/* ── The roster ─────────────────────────────────────────── */}
+      {/* ── 02 · What do you need help with? ──────────────────── */}
+      <Section id="needs" className="scroll-mt-20 border-b border-line">
+        <Container>
+          <Label index="01">What do you need help with?</Label>
+          <Display className="mt-6">Start here</Display>
+          <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted">
+            You do not need to know which employee you want. Pick the thing
+            that is not happening, and we will point you at whoever does it.
+          </p>
+          <div className="mt-14">
+            <OutcomePicker />
+          </div>
+        </Container>
+      </Section>
+
+      {/* ── 03 · The roster ───────────────────────────────────── */}
+      <Section id="employees" className="scroll-mt-20 border-b border-line">
+        <Container>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <Label index="02">The roster</Label>
+              <Display className="mt-6">Employees</Display>
+            </div>
+            <p className="max-w-sm text-sm leading-relaxed text-ink-faint">
+              Six specialists. Each one is a job with a boundary — what it
+              does, and what it will never do without asking you first.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {employeesByReadiness.map((e) => (
+              <EmployeeCard key={e.slug} employee={e} />
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      {/* ── 04 · Teams ────────────────────────────────────────── */}
+      <Section id="teams" className="scroll-mt-20 border-b border-line">
+        <Container>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <Label index="03">Working together</Label>
+              <Display className="mt-6">Teams</Display>
+            </div>
+            <p className="max-w-sm text-sm leading-relaxed text-ink-faint">
+              Some jobs need more than one specialist. A team is a set of
+              employees pointed at a single outcome.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-px border border-line bg-line lg:grid-cols-2">
+            {teams.map((team) => (
+              <Link
+                key={team.slug}
+                href={`/ai/services/${team.slug}`}
+                className="group flex flex-col bg-paper p-7 transition-colors duration-200 hover:bg-paper-raised sm:p-9"
+              >
+                <div className="flex items-baseline justify-between gap-4">
+                  <span className="label text-ink-faint">{team.number}</span>
+                  <span className="label text-ink-faint">
+                    {STATUS_LABEL[teamStatus(team)]}
+                  </span>
+                </div>
+                <h3 className="display mt-5 text-[clamp(2rem,6vw,3rem)] text-ink group-hover:text-accent">
+                  {team.name}
+                </h3>
+                <p className="mt-3 text-[17px] leading-relaxed text-ink-muted">
+                  {team.outcome}
+                </p>
+                <TeamFlow steps={team.flow} className="mt-8" />
+              </Link>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      {/* ── 05 · How it works ─────────────────────────────────── */}
+      <Section className="border-b border-line">
+        <Container>
+          <Label index="04">How it works</Label>
+          <Display className="mt-6">Five steps</Display>
+
+          <ol className="mt-14 border-t border-line">
+            {HOW_IT_WORKS.map((s) => (
+              <li
+                key={s.step}
+                className="step-in grid gap-3 border-b border-line py-7 sm:grid-cols-[4rem_14rem_1fr] sm:items-baseline sm:gap-8"
+              >
+                <span className="label text-accent">{s.step}</span>
+                <h3 className="display text-2xl text-ink sm:text-[1.75rem]">
+                  {s.title}
+                </h3>
+                <p className="max-w-xl text-[15px] leading-relaxed text-ink-muted">
+                  {s.body}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </Container>
+      </Section>
+
+      {/* ── 06 · Control ──────────────────────────────────────── */}
       <Section className="border-b border-line">
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <Label index="01">The roster</Label>
-              <Display className="mt-6">Hires</Display>
+              <Label index="05">Human control</Label>
+              <Display className="mt-6">Yours</Display>
             </div>
-            <p className="max-w-md text-sm leading-relaxed text-ink-faint">
-              Each one is a role with a boundary. The state beside it is the
-              real state — nothing here is described as working before it is.
+            <p className="max-w-sm text-sm leading-relaxed text-ink-faint">
+              An employee that can act without you knowing is not an employee.
+              These are not settings we hope you find — they are how it works.
             </p>
           </div>
 
-          <div className="mt-14 grid border-t border-l border-line md:grid-cols-2 xl:grid-cols-3">
-            {employeesByReadiness.map((e) => (
-              <div
-                key={e.slug}
-                className="step-in flex flex-col border-r border-b border-line p-8"
-              >
-                <div className="flex items-baseline justify-between gap-4">
-                  <h2 className="display text-2xl text-ink sm:text-3xl">{e.role}</h2>
-                  <span
-                    className={`label shrink-0 ${
-                      e.state === 'live' ? 'text-accent-deep' : 'text-ink-faint'
-                    }`}
-                  >
-                    {EMPLOYEE_STATE_LABEL[e.state]}
-                  </span>
-                </div>
+          <div className="mt-14 grid border-t border-l border-line sm:grid-cols-2">
+            {CONTROL.map((c, i) => (
+              <div key={c.title} className="border-r border-b border-line p-8">
+                <span className="label text-accent">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className="display mt-4 text-2xl text-ink sm:text-3xl">
+                  {c.title}
+                </h3>
                 <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
-                  {e.remit}
+                  {c.body}
                 </p>
-                <ul className="mt-6 flex-1 space-y-3">
-                  {e.duties.map((d) => (
-                    <li key={d} className="flex gap-3">
-                      <span
-                        aria-hidden
-                        className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
-                      />
-                      <span className="text-[14px] leading-relaxed text-ink-muted">{d}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>
         </Container>
       </Section>
 
-      <StatementBand
-        index="02"
-        eyebrow="How they are built"
-        word="Bounded"
-        lede="An employee you cannot audit and cannot stop is not an employee, it is a liability. Every one of these is built to be checked."
-      />
-
-      <Section className="border-b border-line">
-        <Container>
-          <div className="grid border-t border-l border-line sm:grid-cols-2">
-            {principles.map((p) => (
-              <div key={p.index} className="border-r border-b border-line p-8">
-                <span className="label text-accent-deep">{p.index}</span>
-                <h3 className="display mt-4 text-2xl text-ink sm:text-3xl">{p.title}</h3>
-                <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">{p.body}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </Section>
-
+      {/* ── 07 · Close ────────────────────────────────────────── */}
       <Section>
         <Container>
-          <div className="step-in grid items-end gap-12 lg:grid-cols-[1fr_auto]">
-            <div>
-              <Label index="03" />
-              <Display className="mt-6">Early</Display>
-              <p className="mt-8 max-w-lg text-lg leading-relaxed text-ink-muted">
-                The Assistant is in private preview as Jarvis. There is no
-                public pricing for Northbound.AI yet, because there is nothing
-                to sell yet — access is granted a few people at a time so the
-                people using it get looked after properly.
-              </p>
-              <div className="mt-10">
-                <ButtonLink href="/ai/full-access" size="lg">
-                  Request early access
-                </ButtonLink>
-              </div>
-              <p className="mt-6 text-sm text-ink-faint">
-                Or email{' '}
-                <a href={`mailto:${site.email}`} className="text-accent-deep underline-offset-4 hover:underline">
-                  {site.email}
-                </a>
-              </p>
+          <div className="max-w-3xl">
+            <Display as="h2">Build your digital workforce</Display>
+            <p className="mt-8 text-lg leading-relaxed text-ink-muted">
+              Northbound.AI is being built now, with a small number of
+              businesses shaping it. Tell us which job you would hand over
+              first and you will be among them.
+            </p>
+            <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center">
+              <ButtonLink href="/ai/access" size="lg">
+                Request early access
+              </ButtonLink>
+              <ArrowLink href="/ai/employees">Explore the employees</ArrowLink>
             </div>
-            <CompassDiagram className="w-40 justify-self-start text-ink sm:w-56" />
+            <p className="mt-8 text-sm text-ink-faint">
+              Or email{' '}
+              <a
+                href={`mailto:${site.email}`}
+                className="text-accent underline-offset-4 hover:underline"
+              >
+                {site.email}
+              </a>
+            </p>
           </div>
         </Container>
       </Section>

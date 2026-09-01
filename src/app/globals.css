@@ -1,110 +1,159 @@
 @import 'tailwindcss';
 
 /*
-  Northbound print system.
+  ── NORTHBOUND — the identity system ─────────────────────────────────────
 
-  Warm cream paper, deep bottle-green ink, burnt-orange as the one interaction
-  colour. Olive, mustard, cobalt and dusty pink are editorial accents used
-  sparingly — never as UI states. No purple, no gradients, no gloss.
+  One parent, two divisions, three environments. Every environment declares
+  the SAME token names, so a component never asks which division it is in —
+  it asks for --ink and gets the right ink.
+
+    :root                    NORTHBOUND (parent)   cream ground, near-black
+    [data-division='web']    NORTHBOUND.WEB        cream, near-black, rust
+    [data-division='ai']     NORTHBOUND.AI         charcoal, warm white, yellow
+
+  The attribute is set by each division's layout, so it is server-rendered —
+  there is no flash of the parent theme before the division's own.
+
+  Deliberately single-scheme. Each environment commits to one look rather
+  than inverting on prefers-color-scheme: the AI division IS the dark one,
+  and inverting it would undo the art direction rather than serve it.
+
+  Two tokens do the heavy lifting for inverted bands:
+    --invert      a surface that opposes --paper
+    --on-invert   text that sits on it
+  So a band is `bg-invert text-on-invert` in every division and comes out
+  correct — near-black in Web, warm white in AI.
 */
 :root {
-  /* Paper */
-  --cream: #f2ebdd;
-  --paper: #f2ebdd;
-  --paper-sunk: #f0e9db;
-  --paper-raised: #f7f2e7;
+  /* ── PARENT ── neutral, premium, almost colourless. Colour belongs to the
+     divisions; the gateway is where you choose one. */
+  --paper: #efebe4;
+  --paper-sunk: #e7e2d9;
+  --paper-raised: #f7f4ef;
 
-  /* Ink — deep green carries the brand, not neutral black */
-  --green: #0d2a24;
-  --green-deep: #112f29;
-  --black: #111111;
-  --ink: #0d2a24;
-  --ink-muted: #3d564e;
-  /* Darkened from #6B8078 (3.55:1) to clear WCAG AA at small sizes on cream. */
-  --ink-faint: #55675f;
+  --ink: #14130f;
+  --ink-muted: #46433c;
+  --ink-faint: #635f55;
 
-  /* Interaction */
-  --orange: #f04a0a;
-  --orange-lit: #f25a14;
-  --accent: #f04a0a;
-  --accent-ink: #f2ebdd;
-  --accent-wash: #f7e3d5;
-  /* Small orange text on cream fails AA at #F04A0A (3.11:1). This darker burnt
-     orange reads as the same colour and clears 4.5:1. Used ONLY for small text;
-     fills, arrows, full stops and large display type keep the brand orange. */
-  --accent-deep: #b83605;
-  /* The mirror of --accent-deep for the deep-green bands. Brand orange on
-     green is 3.7:1, so small text there lifts to this (5.6:1). Fixed against
-     green in both colour schemes, so it is not redefined for dark mode. */
-  --accent-lit: #f9782f;
-  /* Orange on a surface painted with --ink (the inverted scope tab). --ink is
-     green in light mode and cream in dark, so this flips with it. */
-  --accent-on-ink: #f9782f;
+  --invert: #14130f;
+  --on-invert: #efebe4;
 
-  /* Editorial accents — sparing, decorative only */
-  --olive: #7d8242;
-  --mustard: #d49a17;
-  --cobalt: #3047a8;
-  --pink: #e7b1aa;
+  /* The one accent, used on numerals, rules and focus. Restraint is the
+     point: the parent brand is black and cream. */
+  --accent: #b2410f;
+  --accent-deep: #9c3a0e;
+  --accent-ink: #efebe4;
+  --accent-wash: #eae2d6;
+  --accent-lit: #e58a5b;
+  --accent-on-ink: #e58a5b;
 
-  --line: rgba(13, 42, 36, 0.2);
-  --line-strong: rgba(13, 42, 36, 0.42);
+  --line: rgba(20, 19, 15, 0.18);
+  --line-strong: rgba(20, 19, 15, 0.4);
+
+  /* Texture strength. The AI division carries less grain than paper does. */
+  --grain-opacity: 0.42;
+
+  --radius: 0px;
 }
 
-/* Dark mode is the same brand inverted: green paper, cream ink. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #0d2a24;
-    --paper-sunk: #0a211c;
-    --paper-raised: #112f29;
+/* ── NORTHBOUND.WEB ── warm cream, near-black ink, burnt orange. Steel blue
+   is a secondary editorial tone, never a UI state. */
+[data-division='web'] {
+  --paper: #f2ebdd;
+  --paper-sunk: #ece5d6;
+  --paper-raised: #f8f4ea;
 
-    --ink: #f2ebdd;
-    --ink-muted: #c2cec7;
-    --ink-faint: #8ba095;
+  --ink: #16150f;
+  --ink-muted: #4a463c;
+  --ink-faint: #676256;
 
-    --accent: #f25a14;
-    --accent-ink: #0d2a24;
-    /* Slightly darker than the raised surface it derives from: --ink-faint on
-       the old #1B3A32 measured 4.45:1, a hair under AA, and this wash sits
-       behind the selected pricing card's supporting text. */
-    --accent-wash: #19372f;
-    --accent-deep: #ff7a3d;
-    /* --ink is cream here, so the orange has to go darker, not lighter. */
-    --accent-on-ink: #b83605;
+  --invert: #16150f;
+  --on-invert: #f2ebdd;
 
-    --line: rgba(242, 235, 221, 0.2);
-    --line-strong: rgba(242, 235, 221, 0.4);
-  }
+  --accent: #e2450a;
+  --accent-deep: #ad3506;
+  --accent-ink: #f2ebdd;
+  --accent-wash: #f7e3d5;
+  --accent-lit: #f9782f;
+  --accent-on-ink: #f9782f;
+
+  --steel: #35566f;
+
+  --line: rgba(22, 21, 15, 0.18);
+  --line-strong: rgba(22, 21, 15, 0.42);
+
+  --grain-opacity: 0.5;
+}
+
+/* ── NORTHBOUND.AI ── charcoal base, warm white, signal yellow. Yellow marks
+   state — active, selected, checked, live. It is not a background. */
+[data-division='ai'] {
+  --paper: #15161a;
+  --paper-sunk: #101115;
+  --paper-raised: #1d1f25;
+
+  --ink: #f4f2ec;
+  --ink-muted: #c0bdb4;
+  --ink-faint: #918d84;
+
+  --invert: #f4f2ec;
+  --on-invert: #15161a;
+
+  --accent: #ffd400;
+  /* Yellow on charcoal is 12:1, so small text needs no darker companion —
+     unlike orange on cream. Both aliases point at the signal. */
+  --accent-deep: #ffd400;
+  --accent-ink: #15161a;
+  --accent-wash: #24252a;
+  --accent-lit: #ffd400;
+  /* Signal yellow is unreadable on the warm-white inverted surface, so the
+     amber that replaces it there has to clear AA at body size: 5.2:1. */
+  --accent-on-ink: #8f5a00;
+
+  --line: rgba(244, 242, 236, 0.16);
+  --line-strong: rgba(244, 242, 236, 0.34);
+
+  --grain-opacity: 0.22;
+}
+
+/* Employee identities. Controlled extra colour so each worker reads as an
+   individual while the division stays cohesive. Used on marks and
+   identifiers only — never as a UI state, which is always the signal. */
+[data-division='ai'] {
+  --emp-scout: #5fc9b7;
+  --emp-closer: #ff7a4d;
+  --emp-signal: #c9d14a;
+  --emp-rank: #6fa8ff;
+  --emp-keeper: #d9a25f;
+  --emp-watch: #ffd400;
 }
 
 @theme inline {
   --color-paper: var(--paper);
   --color-paper-sunk: var(--paper-sunk);
   --color-paper-raised: var(--paper-raised);
-  --color-cream: var(--cream);
-  --color-green: var(--green);
-  --color-green-deep: var(--green-deep);
-  --color-black: var(--black);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-ink-faint: var(--ink-faint);
+
+  --color-invert: var(--invert);
+  --color-on-invert: var(--on-invert);
+
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-accent-wash: var(--accent-wash);
   --color-accent-deep: var(--accent-deep);
   --color-accent-lit: var(--accent-lit);
   --color-accent-on-ink: var(--accent-on-ink);
-  --color-orange: var(--orange);
-  --color-olive: var(--olive);
-  --color-mustard: var(--mustard);
-  --color-cobalt: var(--cobalt);
-  --color-pink: var(--pink);
+
+  --color-steel: var(--steel);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
 
   --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', sans-serif;
   --font-display: var(--font-display), 'Arial Narrow', sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
 @layer base {
@@ -120,6 +169,13 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Overscroll on iOS reveals the body behind the shell, and the body sits at
+     the parent theme. Without this, rubber-banding on an AI page flashes
+     cream behind a charcoal design. */
+  body:has([data-division='ai']) {
+    background-color: #15161a;
+  }
+
   /* Display type is a graphic element: condensed, uppercase, tight. */
   .display {
     font-family: var(--font-display);
@@ -127,6 +183,17 @@
     line-height: 0.82;
     letter-spacing: -0.015em;
     font-weight: 400;
+    text-wrap: balance;
+  }
+
+  /* Condensed type set very large closes up on small screens; a hair of
+     tracking and a little more leading keeps it readable rather than just
+     smaller. Mobile type is designed, not scaled down. */
+  @media (max-width: 40rem) {
+    .display {
+      line-height: 0.88;
+      letter-spacing: -0.005em;
+    }
   }
 
   p {
@@ -140,7 +207,7 @@
 
   ::selection {
     background-color: var(--accent);
-    color: var(--cream);
+    color: var(--accent-ink);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -158,12 +225,49 @@
 }
 
 /* Small technical label — the recurring print annotation. */
+@utility mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* An inverted region: the footer, a statement band. Rather than overriding
+   colours element by element, it re-points the tokens — so everything inside
+   resolves correctly on the flipped ground, in every division, including the
+   accent. Northbound.AI's footer sits on warm white, where signal yellow is
+   1.3:1 and unreadable; --accent-on-ink is the amber that works there. */
+@utility invert-surface {
+  --paper: var(--invert);
+  --paper-sunk: var(--invert);
+  --paper-raised: var(--invert);
+  --ink: var(--on-invert);
+  --ink-muted: color-mix(in srgb, var(--on-invert) 82%, transparent);
+  --ink-faint: color-mix(in srgb, var(--on-invert) 68%, transparent);
+  --accent: var(--accent-on-ink);
+  --accent-deep: var(--accent-on-ink);
+  --accent-lit: var(--accent-on-ink);
+  --line: color-mix(in srgb, var(--on-invert) 22%, transparent);
+  --line-strong: color-mix(in srgb, var(--on-invert) 44%, transparent);
+  background-color: var(--invert);
+  color: var(--on-invert);
+}
+
+/* 0.82 is right for a single enormous word, and wrong the moment a heading
+   stacks: at 11rem the ascenders of one line reach into the line above. Any
+   display heading with more than one line uses this instead. */
+@utility display-stack {
+  line-height: 0.9;
+}
+
+/* The technical voice of the system: section numbers, statuses, identifiers.
+   Mono because these are data, not prose — and it reads as a spec sheet
+   rather than a marketing caption. */
 @utility label {
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 
 /*
@@ -180,16 +284,15 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: var(--grain-opacity);
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
 }
 
-@media (prefers-color-scheme: dark) {
-  .grain-overlay {
-    mix-blend-mode: screen;
-    opacity: 0.28;
-  }
+/* On the charcoal ground, multiply would only muddy it. Screen lifts the
+   grain into a fine light noise instead. */
+[data-division='ai'] .grain-overlay {
+  mix-blend-mode: screen;
 }
 
 /* Faint technical grid, as on the reference sheets. */
@@ -271,7 +374,7 @@
 .enquiry:has(#type-build:checked) [data-when~='build'],
 .enquiry:has(#type-management:checked) [data-when~='management'],
 .enquiry:has(#type-help:checked) [data-when~='help'],
-.enquiry:has(#type-jarvis:checked) [data-when~='jarvis'],
+.enquiry:has(#type-ai:checked) [data-when~='ai'],
 .enquiry:has(#type-other:checked) [data-when~='other'] {
   display: block;
 }
@@ -280,7 +383,7 @@ span[data-when] { display: none; }
 .enquiry:has(#type-build:checked) span[data-when~='build'],
 .enquiry:has(#type-management:checked) span[data-when~='management'],
 .enquiry:has(#type-help:checked) span[data-when~='help'],
-.enquiry:has(#type-jarvis:checked) span[data-when~='jarvis'],
+.enquiry:has(#type-ai:checked) span[data-when~='ai'],
 .enquiry:has(#type-other:checked) span[data-when~='other'] {
   display: inline;
 }

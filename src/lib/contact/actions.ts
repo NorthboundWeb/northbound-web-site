@@ -37,7 +37,7 @@ const TYPE_LABELS: Record<string, string> = {
   build: 'New website',
   management: 'Website management',
   help: 'Help with an existing site',
-  jarvis: 'Jarvis Full Access request',
+  ai: 'Northbound.AI early access',
   other: 'Something else',
 }
 

@@ -1,4 +1,6 @@
 import type { MetadataRoute } from 'next'
+import { employees } from '@/lib/ai/employees'
+import { teams } from '@/lib/ai/teams'
 import { site } from '@/lib/site'
 
 /**
@@ -12,8 +14,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/web', priority: 0.9 },
     { path: '/web/services', priority: 0.9 },
     { path: '/web/process', priority: 0.7 },
-    { path: '/ai', priority: 0.6 },
-    { path: '/ai/full-access', priority: 0.5 },
+    { path: '/ai', priority: 0.8 },
+    { path: '/ai/employees', priority: 0.7 },
+    { path: '/ai/services', priority: 0.7 },
+    { path: '/ai/access', priority: 0.5 },
+    // Derived, so a new employee or team is in the sitemap by existing.
+    ...employees.map((e) => ({ path: `/ai/employees/${e.slug}`, priority: 0.6 })),
+    ...teams.map((t) => ({ path: `/ai/services/${t.slug}`, priority: 0.6 })),
     { path: '/about', priority: 0.6 },
     { path: '/contact', priority: 0.8 },
   ]

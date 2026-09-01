@@ -71,11 +71,14 @@ export function ContactForm({
   defaultScope,
   defaultPlan,
   defaultUnlock,
+  defaultMessage,
 }: {
   defaultType?: EnquiryTypeId
   defaultScope?: string
   defaultPlan?: string
   defaultUnlock?: string
+  /** Lets a page carry context in — the employee someone arrived from. */
+  defaultMessage?: string
 }) {
   const [state, formAction] = useActionState(submitEnquiry, initialContactState)
   const formRef = useRef<HTMLFormElement>(null)
@@ -316,7 +319,7 @@ export function ContactForm({
             <span data-when="build">What does your business do, and what is the site for?</span>
             <span data-when="management">What would you want looking after?</span>
             <span data-when="help">What is going wrong?</span>
-            <span data-when="jarvis">What would you want Jarvis to do for you?</span>
+            <span data-when="ai">Which job would you hand over first?</span>
             <span data-when="other">What do you need?</span>
           </Label>
           <textarea
@@ -324,6 +327,7 @@ export function ContactForm({
             name="message"
             rows={6}
             required
+            defaultValue={defaultMessage}
             placeholder="A few sentences is plenty. Include a deadline if you have one."
             aria-invalid={Boolean(state.errors?.message)}
             aria-describedby={state.errors?.message ? 'message-error' : undefined}

@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
-import { Anton, Inter } from 'next/font/google'
-import { SiteHeader } from '@/components/site-header'
-import { SiteFooter } from '@/components/site-footer'
+import { Anton, Inter, JetBrains_Mono } from 'next/font/google'
 import { site } from '@/lib/site'
 import './globals.css'
 
@@ -16,6 +14,15 @@ const display = Anton({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-display',
+  display: 'swap',
+})
+
+// The technical voice: section numbers, statuses, employee identifiers. It is
+// what makes a label read as data off a spec sheet rather than a caption.
+const mono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-mono',
   display: 'swap',
 })
 
@@ -64,22 +71,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en-GB" className={`${body.variable} ${display.variable}`}>
-      <body className="relative flex min-h-dvh flex-col bg-paper text-ink">
-        {/* Print grain, drawn once over the whole page. */}
-        <div aria-hidden className="grain-overlay" />
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-ink"
-        >
-          Skip to content
-        </a>
-        <SiteHeader />
-        <main id="main" className="relative z-10 flex-1">
-          {children}
-        </main>
-        <SiteFooter />
-      </body>
+    /* The shell — header, footer, grain, theme — belongs to each division's
+       own layout, so this stays deliberately bare. */
+    <html
+      lang="en-GB"
+      className={`${body.variable} ${display.variable} ${mono.variable}`}
+    >
+      <body>{children}</body>
     </html>
   )
 }

@@ -2,8 +2,15 @@
 
 Marketing site for **Northbound**, the parent brand, and its two divisions:
 
-- **Northbound Web** — `/web/*`. Live, taking projects.
-- **Northbound AI** — `/ai/*`. Private preview. Nothing there is on sale.
+- **Northbound.Web** — `/web/*`. Live, taking projects.
+- **Northbound.AI** — `/ai/*`. In development. Northbound Employees —
+  specialists hired for one job. Nothing there is on sale, and nothing claims
+  to be working before it is.
+
+Three visual environments share one token contract: the parent is cream and
+near-black, Web adds burnt orange, AI is charcoal and signal yellow. Each is
+set server-side by `SiteShell` via `data-division`, so a third division is one
+entry in `divisions`, one palette block, and one layout file.
 
 Next.js 16 (App Router), Tailwind CSS v4, TypeScript, deployed on Vercel. The
 enquiry form sends through Resend.
@@ -147,22 +154,30 @@ npm run lint       # eslint
 ```
 src/
   app/
-    layout.tsx            root layout, fonts, metadata, header/footer
-    page.tsx              NORTHBOUND gateway — parent brand, two divisions
+    layout.tsx            html/body and fonts only — the shell is per division
+    (parent)/             route group: gateway, About, Contact, Unlock
+      layout.tsx          SiteShell division="parent"
+      page.tsx            NORTHBOUND gateway — two full-environment panels
     web/
+      layout.tsx          SiteShell division="web"
       page.tsx            Northbound Web overview
       services/           scopes, prices, management plans, commercial terms
       process/            how a build runs, standards, stack
       work/               empty by design, noindex until there is real work
     ai/
-      page.tsx            Northbound AI overview (preview)
-      full-access/        what Full Access unlocks, request route
+      layout.tsx          SiteShell division="ai"
+      page.tsx            hero, outcome picker, roster, teams, control
+      employees/          roster and one page per employee (generated)
+      services/           teams and one page per team (generated)
+      access/             early access — reuses the site's one enquiry form
     about/                parent-brand positioning
     contact/              enquiry form, prefilled from ?package= / ?type=
     unlock/               UNLOCK code redemption
     opengraph-image.tsx   build-time social share image
     sitemap.ts  robots.ts  icon.svg  not-found.tsx
   components/
+    site-shell.tsx        the frame: theme, grain, header, main, footer
+    ai/                   employee-mark, employee-card, outcome-picker, team-flow
     site-header.tsx       division-aware nav, mobile division switcher
     site-footer.tsx
     contact-form.tsx      client component, useActionState, CSS branching
@@ -170,6 +185,9 @@ src/
     graphics.tsx          compass, browser frame, crop marks, wireframes
   lib/
     site.ts               brand, divisions, nav — edit here, not in pages
+    ai/employees.ts       the roster; `status` is what licenses a claim
+    ai/teams.ts           employees combined around an outcome
+    ai/outcomes.ts        "what do you need help with?" — validated at load
     services.ts           scopes, prices, process, standards — the site's copy
     unlock.ts             server-only: UNLOCK codes and rewards
     rate-limit.ts         in-memory limiter for the form

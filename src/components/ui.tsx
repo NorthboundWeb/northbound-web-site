@@ -50,7 +50,7 @@ export function Label({
     <p
       className={cn(
         'label flex items-center gap-3',
-        tone === 'light' ? 'text-cream/60' : 'text-ink-faint',
+        tone === 'light' ? 'text-on-invert/60' : 'text-ink-faint',
         className
       )}
     >
@@ -63,7 +63,7 @@ export function Label({
         aria-hidden
         className={cn(
           'h-px w-8',
-          tone === 'light' ? 'bg-cream/40' : 'bg-line-strong'
+          tone === 'light' ? 'bg-on-invert/40' : 'bg-line-strong'
         )}
       />
       {children}
@@ -99,7 +99,7 @@ export function StatementBand({
   className?: string
 }) {
   return (
-    <section id={id} className={cn('bg-green text-cream', className)}>
+    <section id={id} className={cn('invert-surface', className)}>
       <Container className="py-16 sm:py-20">
         <div className="flex items-start justify-between gap-6">
           <Label index={index} tone="light">
@@ -107,12 +107,12 @@ export function StatementBand({
           </Label>
           {aside ? <span className="label text-accent-lit">{aside}</span> : null}
         </div>
-        <p className="display mt-6 text-[clamp(3rem,11vw,8.5rem)] text-cream">
+        <p className="display mt-6 text-[clamp(3rem,11vw,8.5rem)] text-on-invert">
           {word}
           <span className="text-accent">.</span>
         </p>
         {lede ? (
-          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-cream/80">
+          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-on-invert/80">
             {lede}
           </p>
         ) : null}
@@ -156,12 +156,12 @@ const base =
 
 const variants = {
   /** Deep green block, cream text, orange arrow. */
-  primary: 'bg-ink text-paper hover:bg-accent hover:text-cream',
+  primary: 'bg-ink text-paper hover:bg-accent hover:text-on-invert',
   /** Outlined, for secondary weight. */
   secondary:
     'border border-line-strong text-ink hover:border-accent hover:text-accent-deep',
   /** Cream on green sections. */
-  inverse: 'bg-cream text-green hover:bg-accent hover:text-cream',
+  inverse: 'bg-on-invert text-invert hover:bg-accent hover:text-on-invert',
 } as const
 
 const sizes = {
@@ -233,7 +233,7 @@ export function ArrowLink({
  *
  * The card is the positioned ancestor; this link's ::after stretches across it,
  * so a mouse or thumb can hit anywhere on the card. Screen readers and keyboard
- * users still get one short, meaningful link ("Choose Standard") rather than a
+ * users still get one short, meaningful link ("Choose Ultimate Management") rather than a
  * link whose name is every word in the card.
  *
  * The card needs `group relative`; other interactive elements inside it need
@@ -262,7 +262,7 @@ export function CardCta({
       className={cn(
         "label inline-flex items-center gap-2.5 after:absolute after:inset-0 after:content-['']",
         tone === 'light'
-          ? 'text-cream group-hover:text-accent-lit'
+          ? 'text-on-invert group-hover:text-accent-lit'
           : 'text-ink group-hover:text-accent-deep',
         className
       )}

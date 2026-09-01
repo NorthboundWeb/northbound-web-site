@@ -15,9 +15,9 @@ export const site = {
   name: 'Northbound',
   legalName: 'Northbound',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://northboundweb.co.uk',
-  tagline: 'Two divisions. One technology company.',
+  tagline: 'Digital infrastructure for modern businesses.',
   description:
-    'Northbound builds digital infrastructure for small businesses. Northbound.Web designs, builds and manages websites. Northbound.AI builds AI employees — workers that do a real job in your business.',
+    'Northbound builds digital infrastructure for modern businesses. Northbound.Web builds your digital presence. Northbound.AI builds your digital workforce.',
   email: 'che@northboundweb.co.uk',
   location: 'United Kingdom',
   socials: [
@@ -36,18 +36,25 @@ export const site = {
 
 export type DivisionId = 'web' | 'ai'
 
+/** Which palette an environment renders in. The parent is its own. */
+export type ThemeId = 'parent' | DivisionId
+
 export type Division = {
   id: DivisionId
+  /** Two-digit index. Divisions are numbered in the order they were founded. */
+  index: string
   /** The short form: "Web", "AI". Shown after the wordmark in the header. */
   name: string
   /** The full lockup, as written in running copy and on the gateway. */
   wordmark: string
+  /** The one-line promise. Parallel across divisions on purpose. */
+  promise: string
+  /** What the division sells, in a sentence. */
+  summary: string
   /** The gateway's call to action. */
   enter: string
   href: string
-  /** One line on the gateway. */
-  summary: string
-  /** The one-word display headline on the gateway card. */
+  /** The one-word display headline on the gateway panel. */
   word: string
   /** Whether it is open for business or still being built. */
   state: 'live' | 'preview'
@@ -55,16 +62,26 @@ export type Division = {
   nav: { href: string; label: string }[]
 }
 
+/**
+ * The divisions, in order.
+ *
+ * This array is the site's spine: the gateway, the header, the footer and the
+ * About page all render from it, and each division's palette is a block in
+ * globals.css keyed to the same id. A third division is one entry here, one
+ * palette block, and one layout file — not a rebuild.
+ */
 export const divisions: Division[] = [
   {
     id: 'web',
+    index: '01',
     name: 'Web',
     wordmark: 'Northbound.Web',
+    promise: 'Build your digital presence.',
+    summary:
+      'Websites designed and built to grow a business, plus hosting, management and help with the site you already have.',
     enter: 'Explore Web',
     href: '/web',
-    word: 'Build',
-    summary:
-      'Website design and build, ecommerce and web services, hosting and ongoing management — including sites you already have.',
+    word: 'Presence',
     state: 'live',
     stateLabel: 'Taking projects',
     nav: [
@@ -76,18 +93,22 @@ export const divisions: Division[] = [
   },
   {
     id: 'ai',
+    index: '02',
     name: 'AI',
     wordmark: 'Northbound.AI',
-    enter: 'Explore AI',
-    href: '/ai',
-    word: 'Work',
+    promise: 'Build your digital workforce.',
     summary:
-      'AI employees: workers that do a real job in your business rather than sitting in a chat window waiting to be asked.',
+      'Northbound Employees — specialists that take on a real job in your business, working alone or as a team.',
+    enter: 'Meet the employees',
+    href: '/ai',
+    word: 'Workforce',
     state: 'preview',
     stateLabel: 'In development',
     nav: [
       { href: '/ai', label: 'Overview' },
-      { href: '/ai/full-access', label: 'Full Access' },
+      { href: '/ai/employees', label: 'Employees' },
+      { href: '/ai/services', label: 'Teams' },
+      { href: '/ai/access', label: 'Early access' },
     ],
   },
 ]

@@ -8,19 +8,83 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Project notes
 
-Marketing site for **Northbound**, the parent brand. Two divisions live beneath
-it: **Northbound Web** (`/web/*`, live and selling) and **Northbound AI**
-(`/ai/*`, in private preview). Next.js 16 App Router, Tailwind CSS v4,
-TypeScript. Every route is static except `/contact`, which reads
-`searchParams`. There is no database and no auth.
+**Northbound is a parent brand with two divisions.** `NORTHBOUND` sits above
+`NORTHBOUND.WEB` (`/web/*`, live and selling) and `NORTHBOUND.AI` (`/ai/*`, in
+development). The gateway at `/` is a genuine choice between them, not a Web
+homepage with an AI page bolted on.
 
-**Divisions are data, not routes hardcoded in the header.** `divisions` in
-`src/lib/site.ts` drives the homepage gateway, the header's division chip and
-nav, the footer and the About page. Adding a third division is one entry there.
+**Three environments, one token contract.** `:root` is the parent palette
+(cream, near-black, restrained rust). `[data-division='web']` is cream,
+near-black and burnt orange. `[data-division='ai']` is charcoal, warm white and
+signal yellow. Every environment declares the *same* token names, so a
+component asks for `--ink` and gets the right ink — no component knows which
+division it is in. Deliberately single-scheme: there is no
+`prefers-color-scheme` inversion, because the AI division *is* the dark one and
+flipping it would undo the art direction.
 
-**Copy lives in data files, not JSX.** Scopes, management plans, prices, the
-process steps and the build standards are in `src/lib/services.ts`; the brand
-name, URL and contact email are in `src/lib/site.ts`. Edit copy there.
+**The attribute is set by a layout, not a hook.** `SiteShell` renders
+`data-division` server-side, so the correct theme is in the first byte of HTML.
+Header and footer live *inside* the wrapper so they theme too. Parent pages sit
+in the `(parent)` route group — a group, so URLs are unchanged.
+
+**Adding a third division** is one entry in `divisions` (`src/lib/site.ts`), one
+palette block in `globals.css`, and one layout file. Nothing else.
+
+**Inverted regions swap tokens, not classes.** A footer or statement band uses
+the `invert-surface` utility, which re-points `--paper`/`--ink`/`--accent` for
+everything inside it. This is not cosmetic: signal yellow on the AI division's
+warm-white footer is 1.3:1, and `--accent-on-ink` is the amber that works
+there. Never fix an inverted region colour by colour.
+
+**Small accent text needs the deep companion.** `--accent` is tuned for fills,
+arrows and display type. On cream it fails AA below ~24px, so small text uses
+`--accent-deep`. In the AI division both point at the signal, because yellow on
+charcoal is 12:1. Note the Tailwind trap that caused invisible CTAs once: two
+colour utilities of equal specificity resolve by **stylesheet order**, not
+class-attribute order — which is why `Label` and `CardCta` take a `tone` prop.
+
+**`display` is 0.82 leading**, which is right for one enormous word and wrong
+the moment a heading stacks. Multi-line display headings add `display-stack`.
+Mobile gets its own leading and tracking — headings are designed at 390px, not
+shrunk until they fit.
+
+**Sticky is `lg`-only.** `pin-column` applies from 64rem up, because that is
+the only place a second column exists to scroll past it. A sticky block in a
+single-column stack hangs over the content below it and reads as the page being
+stuck. `scroll-stick.mjs` in the scratchpad catches regressions.
+
+---
+
+## Northbound.AI
+
+**Jarvis is not the product and must not appear on a public page.** The
+customer-facing division is **Northbound Employees** — specialists hired for
+one job. Jarvis may exist internally; it is not the proposition.
+
+**Everything renders from three data files** in `src/lib/ai/`:
+`employees.ts` (the roster), `teams.ts` (employees combined around an outcome),
+`outcomes.ts` (the "what do you need help with?" map). Adding employee 007 is
+one entry — its card, page, sitemap entry and team membership all follow.
+
+**`status` is the honesty mechanism.** Only `'live'` may be described as usable
+today, and nothing is `'live'`. A team's status is *derived* from its least
+ready member, so a team can never advertise itself past its own parts.
+`outcomes.ts` throws at module load if it names an employee or team that does
+not exist.
+
+**No prices on the AI side.** Northbound.AI is not on sale; a price would imply
+a product that can be bought today.
+
+**Copy rule:** say what it does, not what it is. "Finds businesses matching
+your target customer", never "agentic autonomous workflows". Once the reader
+knows these are AI employees, stop saying AI.
+
+**Employee marks are generated, not drawn.** `employee-mark.tsx` derives an
+instrument reading from the employee's own number — deterministic, so server
+and client agree. No robots, faces or glowing brains. It is pure artwork: the
+identifier and role come from whatever frames it.
+
+---
 
 **Pricing — `src/lib/services.ts` is the single source of truth.** Every page,
 the Stripe session and every enquiry link read from it. Never write a price

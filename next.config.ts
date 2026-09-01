@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
       { source: '/approach', destination: '/web/process', permanent: true },
       { source: '/work', destination: '/web/work', permanent: true },
       { source: '/jarvis', destination: '/ai', permanent: true },
+      // Northbound.AI is a division of employees now, not one assistant, so
+      // "Full Access" no longer names anything.
+      { source: '/ai/full-access', destination: '/ai/access', permanent: true },
     ]
   },
   async headers() {

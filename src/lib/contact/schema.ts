@@ -22,9 +22,9 @@ export const enquiryTypes = [
     blurb: 'Something is broken, slow, or not doing its job.',
   },
   {
-    id: 'jarvis',
-    label: 'Jarvis Full Access',
-    blurb: 'You want the advanced Jarvis capabilities switched on.',
+    id: 'ai',
+    label: 'Northbound.AI',
+    blurb: 'You want an employee working on a job in your business.',
   },
   { id: 'other', label: 'Something else', blurb: 'Tell me what you need.' },
 ] as const
@@ -137,8 +137,11 @@ export function prefillFromParams(params: {
   if (pkg && paramToScope[pkg]) {
     return { enquiryType: 'build', scope: paramToScope[pkg] }
   }
-  if (type && (enquiryTypeIds as string[]).includes(type)) {
-    return { enquiryType: type as EnquiryTypeId }
+  // 'jarvis' was the old name for this enquiry, before Northbound.AI was a
+  // division rather than one assistant. Old links still work.
+  const resolvedType = type === 'jarvis' ? 'ai' : type
+  if (resolvedType && (enquiryTypeIds as string[]).includes(resolvedType)) {
+    return { enquiryType: resolvedType as EnquiryTypeId }
   }
   return { enquiryType: 'build' }
 }

@@ -23,7 +23,7 @@ export function SiteHeader() {
   const division = divisionFor(pathname)
   const links = division ? division.nav : divisions.map((d) => ({ href: d.href, label: d.wordmark }))
   const cta = division?.id === 'ai'
-    ? { href: '/ai/full-access', label: 'Request Full Access' }
+    ? { href: '/ai/access', label: 'Request early access' }
     : { href: '/contact', label: 'Start a project' }
 
   return (
