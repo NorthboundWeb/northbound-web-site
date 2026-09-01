@@ -99,7 +99,7 @@ export default async function ContactPage({
           </div>
 
           <aside>
-            <div className="pin-column border border-line bg-paper-sunk p-8">
+            <div className="border border-line bg-paper-sunk p-8">
               <h2 className="label text-ink-faint">Before you ask</h2>
               <dl className="mt-8 divide-y divide-line">
                 {answers.map((item, i) => (

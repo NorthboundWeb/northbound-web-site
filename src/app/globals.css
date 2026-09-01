@@ -292,12 +292,23 @@ span[data-when] { display: none; }
 }
 
 /* ── Scroll storytelling ───────────────────────────────────────────
-   A pinned column that holds while its sibling content scrolls past. Used
-   sparingly; normal scrolling is never hijacked. */
+   A pinned column that holds while its sibling content scrolls past.
+
+   Only from lg up, because that is the only place a second column exists to
+   scroll past it. Below that the grids collapse to a single stack, and a
+   sticky block in a stack does not "hold beside" anything — it detaches and
+   hangs over the content underneath it for the rest of the section, which
+   reads as the page being stuck.
+
+   Only for columns shorter than the viewport, too. A sticky element taller
+   than the screen pins its top and puts its own bottom permanently out of
+   reach. */
 @utility pin-column {
-  position: sticky;
-  top: 6rem;
-  align-self: start;
+  @media (min-width: 64rem) {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+  }
 }
 
 /* Progressive reveal driven by scroll position where supported. Content is
