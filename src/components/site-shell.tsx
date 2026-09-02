@@ -37,7 +37,15 @@ export function SiteShell({
         Skip to content
       </a>
       <SiteHeader />
-      <main id="main" className="relative z-10 flex-1">
+      {/*
+        z-20, not z-10. `relative` here opens a stacking context, so anything
+        fixed inside a page — the homepage's division switcher — is stacked
+        *within* main rather than against the document. With main and the
+        footer both at z-10 the footer won, being later in the DOM, and the
+        switcher disappeared behind it on scroll. The sticky header stays
+        above at z-40.
+      */}
+      <main id="main" className="relative z-20 flex-1">
         {children}
       </main>
       <SiteFooter />

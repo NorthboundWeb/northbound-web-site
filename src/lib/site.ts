@@ -23,8 +23,8 @@ export const site = {
   socials: [
     {
       label: 'Instagram',
-      handle: 'northboundwebuk',
-      href: 'https://www.instagram.com/northboundwebuk',
+      handle: 'northboundweb.uk',
+      href: 'https://www.instagram.com/northboundweb.uk',
     },
     {
       label: 'TikTok',
@@ -47,6 +47,15 @@ export type Division = {
   name: string
   /** The full lockup, as written in running copy and on the gateway. */
   wordmark: string
+  /**
+   * The word on the wayfinding switcher. Deliberately what the division
+   * *sells* rather than its initials — "EMPLOYEES" tells a first-time
+   * visitor more than "AI" does. Used by the division switcher only; the
+   * header chip and nav still use `name`.
+   */
+  signLabel: string
+  /** One short line on the switcher. Kept to a handful of words. */
+  signLine: string
   /** The one-line promise. Parallel across divisions on purpose. */
   promise: string
   /** What the division sells, in a sentence. */
@@ -76,6 +85,8 @@ export const divisions: Division[] = [
     index: '01',
     name: 'Web',
     wordmark: 'Northbound.Web',
+    signLabel: 'Web',
+    signLine: 'Websites built for business.',
     promise: 'Build your digital presence.',
     summary:
       'Websites designed and built to grow a business, plus hosting, management and help with the site you already have.',
@@ -96,6 +107,8 @@ export const divisions: Division[] = [
     index: '02',
     name: 'AI',
     wordmark: 'Northbound.AI',
+    signLabel: 'Employees',
+    signLine: 'Digital workers for business.',
     promise: 'Build your digital workforce.',
     summary:
       'Northbound Employees — specialists that take on a real job in your business, working alone or as a team.',

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { DivisionSwitcher } from '@/components/division-switcher'
 import { CompassDiagram } from '@/components/graphics'
 import { ArrowLink, Container, Display, Label, Section } from '@/components/ui'
 import { divisions, site } from '@/lib/site'
@@ -44,6 +45,8 @@ export default function GatewayPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      <DivisionSwitcher />
 
       {/* ── The masthead ──────────────────────────────────────── */}
       <section className="border-b border-line">

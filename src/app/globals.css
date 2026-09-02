@@ -246,6 +246,30 @@
   font-variant-numeric: tabular-nums;
 }
 
+/*
+  Space reserved for the division switcher.
+
+  The switcher is fixed, so anything underneath it is unreachable. Reserving
+  its footprint on the *shell* rather than on the page is the whole point:
+  the footer lives outside the page component, and padding only the page left
+  footer links stranded behind the bar at the bottom of the scroll.
+
+  Applied by presence, so it is impossible for the two to disagree — the
+  space exists exactly when the signage does.
+*/
+body:has([data-switcher]) main,
+body:has([data-switcher]) footer {
+  padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 64rem) {
+  body:has([data-switcher]) main,
+  body:has([data-switcher]) footer {
+    padding-bottom: 0;
+    padding-right: 11rem;
+  }
+}
+
 /* An inverted region: the footer, a statement band. Rather than overriding
    colours element by element, it re-points the tokens — so everything inside
    resolves correctly on the flipped ground, in every division, including the
