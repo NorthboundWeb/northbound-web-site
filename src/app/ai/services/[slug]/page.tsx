@@ -90,7 +90,7 @@ export default async function TeamPage({
                 </p>
                 <Link
                   href={`/ai/employees/${m.slug}`}
-                  className="label mt-7 inline-flex items-center gap-2.5 text-ink after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
+                  className="label mt-7 inline-flex min-h-11 items-center gap-2.5 text-ink after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
                 >
                   Meet {m.name}
                   <span aria-hidden className="text-accent">→</span>

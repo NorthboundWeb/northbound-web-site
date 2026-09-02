@@ -4,6 +4,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { rateLimit } from '@/lib/rate-limit'
 import { createCheckoutSession } from '@/lib/checkout/stripe'
+import { isCheckoutEnabled } from '@/lib/checkout/flag'
 import { scopeBySlug } from '@/lib/services'
 
 /**
@@ -15,6 +16,13 @@ import { scopeBySlug } from '@/lib/services'
  */
 export async function startCheckout(formData: FormData): Promise<void> {
   const slug = String(formData.get('scope') ?? '')
+
+  // The flag is the gate, not the credentials. With checkout off the public
+  // journey is enquiry-and-invoice, so this sends people there rather than
+  // bouncing them off a checkout error they did not cause.
+  if (!isCheckoutEnabled()) {
+    redirect(slug ? `/contact?type=build&package=${slug}` : '/contact?type=build')
+  }
 
   // Custom is quoted, not purchasable. Sending it to the enquiry form here
   // means the no-JavaScript path lands somewhere correct too, rather than

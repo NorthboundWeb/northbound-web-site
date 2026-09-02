@@ -21,12 +21,53 @@
 export const ONE_OFF_LABEL = 'One-off website build'
 
 /**
- * Klarna is offered by Stripe at checkout, to whoever Stripe finds eligible.
- * Northbound must not calculate instalments, name a plan ("Pay in 3"), or
- * promise terms — we do not decide any of it and eligibility varies per
- * customer. This sentence is the most we are allowed to say.
+ * ONLY renderable when `isCheckoutEnabled()` is true. Checkout is currently
+ * off, so nothing on the site may say this — a visitor cannot pay online, and
+ * claiming otherwise sends them to a dead end.
+ *
+ * When it is switched on: Klarna is offered by Stripe to whoever Stripe finds
+ * eligible. Northbound must not calculate instalments, name a plan ("Pay in
+ * 3") or promise terms. This sentence is the most we are ever allowed to say.
  */
 export const KLARNA_NOTE = 'Klarna available at checkout'
+
+/**
+ * How a build actually happens today. One process, stated identically on
+ * every surface — the services page, the package selector, the contact FAQ
+ * and the practical terms all render from this array, so they cannot drift
+ * apart and contradict each other the way they did.
+ */
+export const ENQUIRY_PROCESS = [
+  {
+    step: '01',
+    title: 'Choose, or ask',
+    body: 'Pick the package that looks right, or say what you are trying to do and I will tell you which one fits — including when it is the cheaper one.',
+  },
+  {
+    step: '02',
+    title: 'Send an enquiry',
+    body: 'A few sentences about the business is plenty. Nothing is charged, and you are not committing to anything by asking.',
+  },
+  {
+    step: '03',
+    title: 'Get a fixed quote',
+    body: 'I confirm the scope with you and put a fixed price in writing, with what is included set out beside it. No hourly billing and no surprise invoice.',
+  },
+  {
+    step: '04',
+    title: 'A 50% deposit starts it',
+    body: 'Once you are happy with the quote, a 50% deposit secures the project and work begins. You are invoiced directly.',
+  },
+  {
+    step: '05',
+    title: 'The balance before launch',
+    body: 'The remaining 50% is payable once the site is complete and you have approved it, before it goes live.',
+  },
+] as const
+
+/** One sentence version of the above, for places with no room for five steps. */
+export const ENQUIRY_PROCESS_SUMMARY =
+  'Send an enquiry, get a fixed price in writing, then a 50% deposit starts the work and the balance is due before launch.'
 
 /** Pro Management's monthly price, quoted wherever the free month is mentioned. */
 export const PRO_MANAGEMENT_PRICE = 60
@@ -273,9 +314,10 @@ export const commercialTerms: { title: string; points: string[] }[] = [
   {
     title: 'Payment',
     points: [
-      'Starter, Advanced and Pro are one-off prices you can pay in full online. Payment secures your project and allows work to begin.',
-      'Prefer to split it? A 50% deposit secures the project and the remaining 50% is payable once the site is complete and approved, before it goes live. Ask and I will send that instead.',
-      'Klarna and other payment methods are offered by our payment provider at checkout, to whoever they find eligible. Northbound does not set or guarantee those terms.',
+      'Every project starts with an enquiry. There is no online checkout — you are invoiced directly once we have agreed the scope.',
+      'The price you see is the one-off total for the website. It is confirmed in a written quote before anything is charged.',
+      'A 50% deposit secures your project and allows work to begin.',
+      'The remaining 50% is payable once the website is complete and approved, before it goes live.',
       'Custom projects are quoted first and invoiced against the agreed quote.',
     ],
   },

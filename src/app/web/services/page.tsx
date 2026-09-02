@@ -11,9 +11,11 @@ import {
   Section,
   StatementBand,
 } from '@/components/ui'
-import { isCheckoutConfigured } from '@/lib/checkout/stripe'
+import { isCheckoutEnabled } from '@/lib/checkout/flag'
 import {
   COMPLIMENTARY_MONTH_TERMS,
+  ENQUIRY_PROCESS,
+  ENQUIRY_PROCESS_SUMMARY,
   KLARNA_NOTE,
   MANAGEMENT_STEP_UP,
   ONE_OFF_LABEL,
@@ -35,16 +37,14 @@ export const metadata: Metadata = {
 }
 
 /**
- * Messages for the states Stripe can send a visitor back in. Written from the
- * visitor's side: what happened, and what to do — never a status code.
+ * Only reachable while checkout is switched on. With it off, the selector is
+ * a link into the enquiry form and there is no failure state to explain —
+ * which is the point: `?checkout=unconfigured` was a dead end a visitor got
+ * sent to for pressing the main call to action.
  */
 const CHECKOUT_NOTICES: Record<string, string> = {
   cancelled:
     'Checkout was cancelled and you have not been charged. Pick a package again whenever you are ready.',
-  unconfigured:
-    'Online payment is not switched on just yet. Choose a package and send an enquiry, and I will invoice you directly.',
-  'not-purchasable':
-    'That package is quoted rather than bought online. Tell me what you need and you will get a fixed price in writing.',
   failed:
     'Something went wrong opening checkout, and nothing has been charged. Try again, or send an enquiry and I will invoice you directly.',
   throttled:
@@ -57,8 +57,11 @@ export default async function ServicesPage({
   searchParams: Promise<{ checkout?: string }>
 }) {
   const { checkout } = await searchParams
-  const notice = checkout ? CHECKOUT_NOTICES[checkout] : undefined
-  const checkoutAvailable = isCheckoutConfigured()
+  // Suppressed entirely when checkout is off, so a stale link cannot show a
+  // visitor an error about a journey that no longer exists.
+  const notice =
+    checkout && isCheckoutEnabled() ? CHECKOUT_NOTICES[checkout] : undefined
+  const checkoutEnabled = isCheckoutEnabled()
 
   return (
     <>
@@ -87,22 +90,56 @@ export default async function ServicesPage({
               <Label index="02">Website builds</Label>
               <Display className="mt-6">Choose</Display>
               <p className="mt-8 max-w-md text-lg leading-relaxed text-ink-muted">
-                Four sizes. Pick the one that matches what you need and pay for
-                it in a couple of minutes — or tell me what you are trying to do
-                and I will point you at the right one, including when that is
-                the cheaper one.
+                Four sizes. Pick the one that matches what you need and send
+                an enquiry — or tell me what you are trying to do and I will
+                point you at the right one, including when that is the cheaper
+                one.
               </p>
               <p className="mt-6 max-w-md text-sm leading-relaxed text-ink-faint">
                 Every build price is a one-off total for the website itself. It
                 is never charged weekly or monthly. Management is a separate,
                 optional subscription.
               </p>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-faint">
+                {ENQUIRY_PROCESS_SUMMARY}
+              </p>
             </div>
 
             <PricingSelector
-              checkoutAvailable={checkoutAvailable}
+              checkoutEnabled={checkoutEnabled}
               notice={notice}
             />
+          </div>
+        </Container>
+      </Section>
+
+      {/* ── How buying works ───────────────────────────────────── */}
+      <Section className="border-b border-line">
+        <Container>
+          <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+            <div>
+              <Label index="03">How buying works</Label>
+              <Display className="mt-6">No checkout</Display>
+              <p className="mt-8 max-w-sm text-[17px] leading-relaxed text-ink-muted">
+                You are not buying a website out of a vending machine. Every
+                project is confirmed and priced in writing before a penny
+                changes hands.
+              </p>
+            </div>
+            <ol className="border-t border-line">
+              {ENQUIRY_PROCESS.map((s) => (
+                <li
+                  key={s.step}
+                  className="step-in grid gap-2 border-b border-line py-6 sm:grid-cols-[3.5rem_12rem_1fr] sm:items-baseline sm:gap-8"
+                >
+                  <span className="label text-accent-deep">{s.step}</span>
+                  <h3 className="display text-xl text-ink sm:text-2xl">{s.title}</h3>
+                  <p className="max-w-xl text-[15px] leading-relaxed text-ink-muted">
+                    {s.body}
+                  </p>
+                </li>
+              ))}
+            </ol>
           </div>
         </Container>
       </Section>
@@ -110,7 +147,7 @@ export default async function ServicesPage({
       {/* ── What each one includes ─────────────────────────────── */}
       <Section className="border-b border-line">
         <Container>
-          <Label index="03">Side by side</Label>
+          <Label index="04">Side by side</Label>
           <Display className="mt-6">Included</Display>
 
           <div className="mt-14 grid border-t border-l border-line md:grid-cols-2 xl:grid-cols-4">
@@ -175,18 +212,20 @@ export default async function ServicesPage({
           <p className="mt-8 max-w-3xl text-sm leading-relaxed text-ink-faint">
             {TIMELINE_TERMS}
           </p>
-          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-ink-faint">
-            {KLARNA_NOTE} — the available payment methods are decided by our
-            payment provider based on what you are eligible for. Northbound does
-            not set those terms.
-          </p>
+          {checkoutEnabled ? (
+            <p className="mt-4 max-w-3xl text-sm leading-relaxed text-ink-faint">
+              {KLARNA_NOTE} — the available payment methods are decided by our
+              payment provider based on what you are eligible for. Northbound
+              does not set those terms.
+            </p>
+          ) : null}
         </Container>
       </Section>
 
       {/* ── Already have a website ─────────────────────────────── */}
       <StatementBand
         id="existing"
-        index="04"
+        index="05"
         eyebrow="Already have a website?"
         word={existingSiteHelp.word}
         className="scroll-mt-20"
@@ -216,7 +255,7 @@ export default async function ServicesPage({
       {/* ── Management ────────────────────────────────────────── */}
       <StatementBand
         id="management"
-        index="05"
+        index="06"
         eyebrow="Management plans"
         aside="Optional · monthly"
         word="Kept"
@@ -309,7 +348,7 @@ export default async function ServicesPage({
       <Section id="terms" className="scroll-mt-20 border-b border-line">
         <Container>
           <div className="step-in">
-            <Label index="06">The practical bits</Label>
+            <Label index="07">The practical bits</Label>
             <Display className="mt-6">Plainly</Display>
             <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted">
               The things people normally have to ask for. Easier to put them here.

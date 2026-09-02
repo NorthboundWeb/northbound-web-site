@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { ContactForm } from '@/components/contact-form'
+import { AiAccessForm } from '@/components/ai-access-form'
 import { Container, Display, Label, Section } from '@/components/ui'
 import { AI_STATUS_NOTE, employeeBySlug } from '@/lib/ai/employees'
 import { teamBySlug } from '@/lib/ai/teams'
@@ -33,12 +33,10 @@ export default async function AccessPage({
   const employee = employeeSlug ? employeeBySlug(employeeSlug) : undefined
   const team = teamSlug ? teamBySlug(teamSlug) : undefined
 
-  // Carried in from wherever they clicked, so nobody retypes it.
-  const context = employee
-    ? `I am interested in ${employee.name} (${employee.role}).\n\n`
-    : team
-      ? `I am interested in the ${team.name}.\n\n`
-      : undefined
+  // Carried in from wherever they clicked, so nobody retypes it. An unknown
+  // ?employee= or ?team= simply leaves the field unset rather than confirming
+  // something that was never chosen.
+  const interest = employee?.name ?? team?.name
 
   return (
     <Section>
@@ -98,7 +96,13 @@ export default async function AccessPage({
           </div>
 
           <div className="border border-line bg-paper-raised p-6 sm:p-8">
-            <ContactForm defaultType="ai" defaultMessage={context} />
+            <AiAccessForm
+              /* Remounts when the link's intent changes, so a client-side
+                 navigation from one employee to another cannot leave the
+                 previous selection in the uncontrolled select. */
+              key={interest ?? 'general'}
+              defaultInterest={interest}
+            />
           </div>
         </div>
       </Container>

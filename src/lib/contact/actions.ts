@@ -51,6 +51,7 @@ function summarise(enquiry: ContactInput) {
     ['Existing site', enquiry.existingUrl || '—'],
     ['Scope', enquiry.scope || '—'],
     ['Plan', enquiry.plan || '—'],
+    ['Interested in', enquiry.interest || '—'],
     ['Size', enquiry.size || '—'],
     [
       'UNLOCK',
@@ -112,6 +113,7 @@ export async function submitEnquiry(
     plan: formData.get('plan') || undefined,
     size: formData.get('size') || undefined,
     unlock: formData.get('unlock') || undefined,
+    interest: formData.get('interest') || undefined,
     message: formData.get('message'),
   })
 

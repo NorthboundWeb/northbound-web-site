@@ -14,8 +14,11 @@ import {
   type EnquiryTypeId,
 } from '@/lib/contact/schema'
 
+// No `focus:outline-none` here: it suppressed the global :focus-visible
+// ring and left a border tint as the only cue, which is not a visible focus
+// indicator for a keyboard user.
 const field =
-  'w-full border border-line bg-paper-raised px-4 py-3.5 text-[15px] text-ink transition-colors placeholder:text-ink-faint hover:border-line-strong focus:border-accent focus:outline-none'
+  'w-full border border-line bg-paper-raised px-4 py-3.5 text-[15px] text-ink transition-colors placeholder:text-ink-faint hover:border-line-strong focus:border-accent'
 
 function Label({
   htmlFor,
@@ -362,8 +365,21 @@ export function ContactForm({
         </details>
       </fieldset>
 
-      {/* Honeypot. Named so no password manager or browser autofill targets it. */}
-      <div aria-hidden className="absolute left-[-9999px] h-px w-px overflow-hidden">
+      {/*
+        Spam honeypot, named so no password manager or browser autofill
+        targets it.
+
+        `inert` removes the whole subtree from the accessibility tree AND the
+        tab order in one attribute. The previous `aria-hidden` wrapper did
+        not: it still surfaced as "Do not fill this in" followed by an
+        unnamed textbox, because aria-hidden around a focusable control is
+        invalid and assistive technology does not reliably honour it.
+
+        Still positioned off-screen rather than display:none — a field that
+        is never rendered is one a bot can cheaply learn to skip — and still
+        posted, so the server-side check is unchanged.
+      */}
+      <div inert className="absolute left-[-9999px] h-px w-px overflow-hidden">
         <label htmlFor="subject">Do not fill this in</label>
         <input id="subject" name="subject" type="text" tabIndex={-1} autoComplete="off" />
       </div>

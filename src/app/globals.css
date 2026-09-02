@@ -158,8 +158,24 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+  }
+
+  /*
+    Smooth scrolling for in-page anchors ONLY.
+
+    Applied to `html` unconditionally it also animates the scroll reset the
+    router performs on every route change. The animation starts from the old
+    page's offset, and if the destination is shorter the browser stops
+    part-way — which is how opening Signal from the AI matcher landed half
+    way down on "Three jobs".
+
+    Scoping it to `:has(:target)` means it is active while a fragment is
+    being navigated to and inert during an ordinary route change, so the
+    router's jump to the top is instant and reliable.
+  */
+  html:has(:target) {
+    scroll-behavior: smooth;
   }
 
   body {
@@ -389,6 +405,17 @@ span[data-when] { display: none; }
 }
 
 /* Selected-state dot on the enquiry type cards. */
+/* The package CTA names the selected package. React updates it, but it has
+   to be right without JavaScript too — so every label is in the DOM and the
+   checked radio reveals its own. Same mechanism as the enquiry form above. */
+.pkg-cta [data-pkg] { display: none; }
+.pkg-form:has([value='starter']:checked) .pkg-cta [data-pkg='starter'],
+.pkg-form:has([value='advanced']:checked) .pkg-cta [data-pkg='advanced'],
+.pkg-form:has([value='pro']:checked) .pkg-cta [data-pkg='pro'],
+.pkg-form:has([value='custom']:checked) .pkg-cta [data-pkg='custom'] {
+  display: inline;
+}
+
 .enquiry input[type='radio']:checked + label .dot {
   background-color: var(--accent);
   border-color: var(--accent);

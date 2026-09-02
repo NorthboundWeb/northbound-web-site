@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import { employees } from '@/lib/ai/employees'
+import { teams } from '@/lib/ai/teams'
 import { buildScopes, managementPlans } from '@/lib/services'
 
 /**
@@ -46,6 +48,17 @@ export const managementPlanOptions = [
   'Not sure yet',
 ] as const
 
+/**
+ * What an early-access visitor can say they are interested in. Built from the
+ * roster and the team list, so an employee added later appears here without
+ * anyone remembering to update a second list.
+ */
+export const aiInterestOptions = [
+  ...employees.map((e) => e.name),
+  ...teams.map((t) => t.name),
+  'Not sure yet',
+] as const
+
 export const projectSizes = [
   'Not sure yet',
   'A single page',
@@ -72,6 +85,8 @@ export const contactSchema = z.object({
   plan: z.enum(managementPlanOptions).optional(),
   size: z.enum(projectSizes).optional(),
   unlock: z.string().trim().max(40).optional(),
+  /** Which employee or team an early-access enquiry is about. */
+  interest: z.enum(aiInterestOptions).optional(),
   message: z
     .string()
     .trim()
@@ -123,19 +138,44 @@ const RETIRED_PARAMS: Record<string, string> = {
   'complete-management': 'ultimate-management',
 }
 
+export type Prefill = {
+  enquiryType: EnquiryTypeId
+  scope?: string
+  plan?: string
+  /**
+   * What was recognised, for the visible confirmation. Undefined when the
+   * link carried nothing usable — an unknown ?package= must fall back
+   * silently rather than confirm something that was never chosen.
+   */
+  confirmed?: string
+}
+
+/**
+ * Reads a link's intent. Every branch is total: an unknown, misspelled or
+ * missing parameter lands on the default enquiry rather than throwing or
+ * confirming a package the visitor did not pick.
+ */
 export function prefillFromParams(params: {
   package?: string | string[]
   type?: string | string[]
-}): { enquiryType: EnquiryTypeId; scope?: string; plan?: string } {
+}): Prefill {
   const raw = typeof params.package === 'string' ? params.package : undefined
   const pkg = raw ? (RETIRED_PARAMS[raw] ?? raw) : undefined
   const type = typeof params.type === 'string' ? params.type : undefined
 
   if (pkg && paramToPlan[pkg]) {
-    return { enquiryType: 'management', plan: paramToPlan[pkg] }
+    return {
+      enquiryType: 'management',
+      plan: paramToPlan[pkg],
+      confirmed: paramToPlan[pkg],
+    }
   }
   if (pkg && paramToScope[pkg]) {
-    return { enquiryType: 'build', scope: paramToScope[pkg] }
+    return {
+      enquiryType: 'build',
+      scope: paramToScope[pkg],
+      confirmed: paramToScope[pkg],
+    }
   }
   // 'jarvis' was the old name for this enquiry, before Northbound.AI was a
   // division rather than one assistant. Old links still work.

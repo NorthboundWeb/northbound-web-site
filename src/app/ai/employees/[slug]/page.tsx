@@ -128,24 +128,51 @@ export default async function EmployeePage({
               </p>
               {inTeams.length ? (
                 <div className="mt-8">
-                  <p className="label text-ink-faint">Works alongside</p>
-                  <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-                    {inTeams.map((t) => (
-                      <li key={t.slug}>
-                        <Link
-                          href={`/ai/services/${t.slug}`}
-                          className="label text-ink underline-offset-4 hover:text-accent hover:underline"
-                        >
-                          {t.name}
-                          <span className="ml-2 text-ink-faint">
-                            {teamMembers(t)
-                              .filter((m) => m.slug !== employee.slug)
-                              .map((m) => m.name)
-                              .join(' · ')}
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
+                  <h2 className="label text-ink-faint">Works alongside</h2>
+                  {/*
+                    Each relationship is its own link. Nesting the co-workers'
+                    names inside the team's anchor gave a single control named
+                    "Content Engine Rank" pointing at one of the two — two
+                    different destinations collapsed into one confusing name.
+                  */}
+                  <ul className="mt-4 space-y-4">
+                    {inTeams.map((t) => {
+                      const others = teamMembers(t).filter(
+                        (m) => m.slug !== employee.slug
+                      )
+                      return (
+                        <li key={t.slug} className="flex flex-wrap items-baseline gap-x-3 gap-y-2">
+                          <Link
+                            href={`/ai/services/${t.slug}`}
+                            className="label min-h-11 inline-flex items-center text-ink underline-offset-4 hover:text-accent hover:underline"
+                          >
+                            {t.name}
+                          </Link>
+                          {others.length ? (
+                            <>
+                              <span className="label text-ink-faint" aria-hidden>
+                                with
+                              </span>
+                              {others.map((m) => (
+                                <Link
+                                  key={m.slug}
+                                  href={`/ai/employees/${m.slug}`}
+                                  aria-label={`${m.name} — ${m.role}`}
+                                  className="label min-h-11 inline-flex items-center gap-2 text-ink-muted underline-offset-4 hover:text-accent hover:underline"
+                                >
+                                  <span
+                                    aria-hidden
+                                    className="h-2 w-2 shrink-0"
+                                    style={{ backgroundColor: `var(${m.colourVar})` }}
+                                  />
+                                  {m.name}
+                                </Link>
+                              ))}
+                            </>
+                          ) : null}
+                        </li>
+                      )
+                    })}
                   </ul>
                 </div>
               ) : null}

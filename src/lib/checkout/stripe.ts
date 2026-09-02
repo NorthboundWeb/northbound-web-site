@@ -18,7 +18,11 @@ import { scopeBySlug, type BuildScope } from '@/lib/services'
  * terms we do not set, to people who may not qualify for them.
  */
 
-/** Payment is optional infrastructure: the site works fully without it. */
+/**
+ * Whether Stripe *could* run, ignoring whether we have chosen to offer it.
+ * Use `isCheckoutEnabled()` from ./flag for anything a visitor can see —
+ * credentials existing is not the same as the journey being open.
+ */
 export function isCheckoutConfigured(): boolean {
   return Boolean(process.env.STRIPE_SECRET_KEY)
 }

@@ -32,14 +32,14 @@ export function SiteFooter() {
             <ul className="mt-5 space-y-2.5">
               {divisions.map((d) => (
                 <li key={d.id}>
-                  <Link href={d.href} className="text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
+                  <Link href={d.href} className="inline-flex min-h-11 items-center text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
                     {d.wordmark}
                   </Link>
                 </li>
               ))}
               {parentNav.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
+                  <Link href={item.href} className="inline-flex min-h-11 items-center text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
                     {item.label}
                   </Link>
                 </li>
@@ -52,13 +52,13 @@ export function SiteFooter() {
             <ul className="mt-5 space-y-2.5">
               {buildScopes.map((s) => (
                 <li key={s.slug}>
-                  <Link href={`/web/services#${s.slug}`} className="text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
+                  <Link href={`/web/services#${s.slug}`} className="inline-flex min-h-11 items-center text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
                     {s.name}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link href="/web/services#existing" className="text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
+                <Link href="/web/services#existing" className="inline-flex min-h-11 items-center text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
                   Existing website help
                 </Link>
               </li>
@@ -70,7 +70,7 @@ export function SiteFooter() {
             <ul className="mt-5 space-y-2.5">
               {managementPlans.map((p) => (
                 <li key={p.slug}>
-                  <Link href={`/web/services#management`} className="text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
+                  <Link href={`/web/services#management`} className="inline-flex min-h-11 items-center text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
                     {p.name}
                   </Link>
                 </li>
@@ -80,7 +80,7 @@ export function SiteFooter() {
             <ul className="mt-5 space-y-2.5">
               {employees.map((e) => (
                 <li key={e.slug}>
-                  <Link href={`/ai/employees/${e.slug}`} className="text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
+                  <Link href={`/ai/employees/${e.slug}`} className="inline-flex min-h-11 items-center text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit">
                     {e.name}
                   </Link>
                 </li>
@@ -95,7 +95,7 @@ export function SiteFooter() {
                 <li key={s.label}>
                   <a
                     href={s.href}
-                    className="text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit"
+                    className="inline-flex min-h-11 items-center text-[15px] text-on-invert/85 transition-colors hover:text-accent-lit"
                     rel="me noopener noreferrer"
                     target="_blank"
                   >
@@ -104,7 +104,7 @@ export function SiteFooter() {
                 </li>
               ))}
               <li>
-                <a href={`mailto:${site.email}`} className="text-[15px] text-accent-lit transition-colors hover:text-on-invert">
+                <a href={`mailto:${site.email}`} className="inline-flex min-h-11 items-center text-[15px] text-accent-lit transition-colors hover:text-on-invert">
                   {site.email}
                 </a>
               </li>
@@ -119,7 +119,7 @@ export function SiteFooter() {
           {/* UNLOCK lives here on purpose: findable, never shouted. */}
           <Link
             href="/unlock"
-            className="tracking-[0.35em] text-on-invert/60 transition-colors hover:text-accent-lit"
+            className="inline-flex min-h-11 items-center tracking-[0.35em] text-on-invert/60 transition-colors hover:text-accent-lit"
           >
             UNLOCK
           </Link>

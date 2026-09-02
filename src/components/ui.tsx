@@ -216,7 +216,9 @@ export function ArrowLink({
     <Link
       href={href}
       className={cn(
-        'group/link label inline-flex items-center gap-2.5 text-ink hover:text-accent-deep',
+        // min-h-11 gives a 44px hit area. The type is 11px, so the box is
+        // 17px tall on its own — under the 24px target-size floor.
+        'group/link label inline-flex min-h-11 items-center gap-2.5 text-ink hover:text-accent-deep',
         className
       )}
     >
@@ -260,7 +262,7 @@ export function CardCta({
     <Link
       href={href}
       className={cn(
-        "label inline-flex items-center gap-2.5 after:absolute after:inset-0 after:content-['']",
+        "label inline-flex min-h-11 items-center gap-2.5 after:absolute after:inset-0 after:content-['']",
         tone === 'light'
           ? 'text-on-invert group-hover:text-accent-lit'
           : 'text-ink group-hover:text-accent-deep',

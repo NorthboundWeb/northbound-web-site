@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { ContactForm } from '@/components/contact-form'
 import { Container, Display, Label, Section } from '@/components/ui'
 import { prefillFromParams } from '@/lib/contact/schema'
-import { KLARNA_NOTE, buildScopes } from '@/lib/services'
+import { buildScopes } from '@/lib/services'
 import { currency, site } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -23,12 +23,13 @@ const answers = [
   },
   {
     question: 'How does payment work?',
-    answer: `You can pay for Starter, Advanced or Pro in full online and work begins straight away. ${KLARNA_NOTE}, and which methods you see is decided by our payment provider rather than by me. Prefer to split it? Ask, and I will send a 50% deposit invoice with the balance due once the site is complete and approved, before it goes live.`,
+    answer:
+      'There is no online checkout — every project starts with an enquiry. I confirm the scope with you and send a fixed price in writing. A 50% deposit secures the project and lets work begin, and the remaining 50% is payable once the site is complete and approved, before it goes live. You are invoiced directly.',
   },
   {
     question: 'How long does a build take?',
     answer:
-      'Roughly 5–7 working days for a Starter, 7–10 for Advanced and 10–15 for Pro. Custom is agreed in your quote. The clock starts once payment and your content have arrived.',
+      'Roughly 5–7 working days for a Starter, 7–10 for Advanced and 10–15 for Pro. Custom is agreed in your quote. The clock starts once the deposit and your content have arrived.',
   },
   {
     question: 'I already have a website — can you help?',
@@ -81,6 +82,19 @@ export default async function ContactPage({
               reaches the same place.
             </p>
 
+            {prefill.confirmed ? (
+              <p
+                role="status"
+                className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-l-2 border-accent bg-accent-wash px-5 py-4 text-sm text-ink"
+              >
+                <span className="label text-accent-deep">Selected</span>
+                <span>
+                  You are enquiring about <strong>{prefill.confirmed}</strong>.
+                  You can change it below.
+                </span>
+              </p>
+            ) : null}
+
             {unlock ? (
               <p className="mt-8 border-l-2 border-accent bg-accent-wash px-5 py-4 text-sm text-ink">
                 <span className="label mr-2 text-accent-deep">Unlock</span>
@@ -90,6 +104,12 @@ export default async function ContactPage({
 
             <div className="mt-12">
               <ContactForm
+                /* Remounts when the link's intent changes. Without it a
+                   client-side navigation from one ?package= to another
+                   reuses the mounted form, and the uncontrolled select keeps
+                   the previous value — which is how a chosen package
+                   silently reverted. */
+                key={`${prefill.enquiryType}:${prefill.scope ?? prefill.plan ?? ''}`}
                 defaultType={prefill.enquiryType}
                 defaultScope={prefill.scope}
                 defaultPlan={prefill.plan}

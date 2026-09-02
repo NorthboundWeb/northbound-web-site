@@ -308,7 +308,7 @@ export default function WebPage() {
                 </ButtonLink>
                 <a
                   href={`mailto:${site.email}`}
-                  className="label text-ink-muted underline-offset-4 hover:text-accent-deep hover:underline"
+                  className="label inline-flex min-h-11 items-center text-ink-muted underline-offset-4 hover:text-accent-deep hover:underline"
                 >
                   {site.email}
                 </a>

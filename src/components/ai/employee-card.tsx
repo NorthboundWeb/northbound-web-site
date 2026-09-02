@@ -79,7 +79,7 @@ export function EmployeeCard({
 
       <Link
         href={`/ai/employees/${employee.slug}`}
-        className="label mt-8 inline-flex items-center gap-2.5 text-ink after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
+        className="label mt-8 inline-flex min-h-11 items-center gap-2.5 text-ink after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
       >
         Meet {employee.name}
         <span className="text-accent transition-transform duration-200 group-hover:translate-x-1">

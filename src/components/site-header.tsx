@@ -39,7 +39,7 @@ export function SiteHeader() {
                 <span aria-hidden className="h-4 w-px bg-line-strong" />
                 <Link
                   href={division.href}
-                  className="label text-accent-deep transition-colors hover:text-ink"
+                  className="label inline-flex min-h-11 items-center text-accent-deep transition-colors hover:text-ink"
                 >
                   {division.name}
                 </Link>
@@ -56,7 +56,10 @@ export function SiteHeader() {
                   href={item.href}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'label transition-colors hover:text-accent-deep',
+                    // min-h-11 gives a 44px hit area inside the 64px header
+                    // row without moving the text: 17px of type is well under
+                    // the 24px target-size floor on its own.
+                    'label inline-flex min-h-11 items-center transition-colors hover:text-accent-deep',
                     active ? 'text-accent-deep' : 'text-ink'
                   )}
                 >
@@ -70,7 +73,7 @@ export function SiteHeader() {
                 href={item.href}
                 aria-current={pathname === item.href ? 'page' : undefined}
                 className={cn(
-                  'label transition-colors hover:text-accent-deep',
+                  'label inline-flex min-h-11 items-center transition-colors hover:text-accent-deep',
                   pathname === item.href ? 'text-accent-deep' : 'text-ink-faint'
                 )}
               >

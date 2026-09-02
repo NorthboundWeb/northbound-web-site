@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { BrowserFrame, CropMarks } from '@/components/graphics'
+import Link from 'next/link'
+import { BrowserFrame, CropMarks, Wireframe } from '@/components/graphics'
 import { ArrowLink, ButtonLink, Container, Display, Label, Section } from '@/components/ui'
 import { standards } from '@/lib/services'
-import { site } from '@/lib/site'
+import { divisions, site } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Work',
@@ -29,6 +30,32 @@ type Project = {
 
 const projects: Project[] = []
 
+/**
+ * The one thing there is honest evidence for: this site.
+ *
+ * Every claim below is verifiable by looking at the pages named. No client,
+ * no testimonial, no metric — not "40% faster", not "3x conversions", because
+ * there is nothing to measure it against yet. What it shows is the thinking
+ * and the standard of the build, which is what someone hiring a new studio is
+ * actually trying to assess.
+ */
+const internalStudy = {
+  label: 'Internal project',
+  name: 'Northbound digital platform',
+  status: 'Active internal platform, continuing to evolve',
+  problem:
+    'One parent brand had to explain two very different businesses. Northbound.Web sells websites at a fixed price to people who want a thing built. Northbound.AI is a division still in development, selling specialists that do a job. Put them on one site badly and each one makes the other harder to understand.',
+  decision:
+    'A shared design system with two distinct environments. Every page declares the same colour tokens, so a component asks for the ink colour and gets whichever division it is standing in — cream and burnt orange for Web, charcoal and signal yellow for AI. The typography, spacing and editorial structure stay identical across both, which is what holds the parent brand together while the two divisions look nothing alike.',
+  built: [
+    { thing: 'A gateway homepage', where: '/', detail: 'Two full-environment panels rather than two cards, so the choice between divisions is the first interaction.' },
+    { thing: 'Service and package selection', where: '/web/services', detail: 'A keyboard-operable selector that carries the chosen package into the enquiry form.' },
+    { thing: 'An enquiry flow', where: '/contact', detail: 'Validated on the server, working without JavaScript, with a fallback if delivery fails so no enquiry is lost.' },
+    { thing: 'The employee roster', where: '/ai/employees', detail: 'Six specialists rendered from one data file, each carrying an honest development status.' },
+    { thing: 'Employee and team pages', where: '/ai/services', detail: 'Generated per employee and per team, so adding a seventh is one entry rather than a new page.' },
+  ],
+} as const
+
 export default function WorkPage() {
   return (
     <>
@@ -51,6 +78,86 @@ export default function WorkPage() {
             If you are weighing up whether to trust a studio with no public
             portfolio yet, that is fair. Judge the thing you are reading: this
             site is the work.
+          </p>
+        </Container>
+      </Section>
+
+      {/* ── The one project there is honest evidence for ───────── */}
+      <Section className="border-b border-line">
+        <Container>
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
+            <Label index="02">{internalStudy.label}</Label>
+            <span className="label text-ink-faint">{internalStudy.status}</span>
+          </div>
+
+          <div className="mt-6 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-20">
+            <div>
+              <h2 className="display text-[clamp(2.5rem,8vw,4.5rem)] text-ink">
+                {internalStudy.name}
+              </h2>
+
+              <div className="mt-10 space-y-8">
+                <div>
+                  <h3 className="label text-accent-deep">The problem</h3>
+                  <p className="mt-3 max-w-xl text-[17px] leading-relaxed text-ink-muted">
+                    {internalStudy.problem}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="label text-accent-deep">The decision</h3>
+                  <p className="mt-3 max-w-xl text-[17px] leading-relaxed text-ink-muted">
+                    {internalStudy.decision}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="border border-line bg-paper-sunk p-6 sm:p-8">
+              <p className="label text-ink-faint">Two divisions, one system</p>
+              <div className="mt-6 grid grid-cols-2 gap-4">
+                {divisions.map((d) => (
+                  <div
+                    key={d.id}
+                    data-division={d.id}
+                    className="border border-line bg-paper p-4"
+                  >
+                    <p className="label text-ink-faint">{d.index}</p>
+                    <p className="display mt-2 text-lg text-ink">{d.name}</p>
+                    <span
+                      aria-hidden
+                      className="mt-3 block h-1 w-8 bg-accent"
+                    />
+                  </div>
+                ))}
+              </div>
+              <Wireframe className="mt-8 w-full text-ink-faint" />
+            </div>
+          </div>
+
+          <h3 className="label mt-16 text-ink-faint">What was built</h3>
+          <ul className="mt-6 border-t border-line">
+            {internalStudy.built.map((b) => (
+              <li
+                key={b.thing}
+                className="step-in grid gap-2 border-b border-line py-5 sm:grid-cols-[16rem_1fr] sm:items-baseline sm:gap-8"
+              >
+                <Link
+                  href={b.where}
+                  className="label min-h-11 inline-flex items-center text-ink underline-offset-4 hover:text-accent hover:underline"
+                >
+                  {b.thing}
+                </Link>
+                <p className="max-w-2xl text-[15px] leading-relaxed text-ink-muted">
+                  {b.detail}
+                </p>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-faint">
+            No client results are claimed here, because there are none to claim
+            yet. This is the platform Northbound runs on, and every page named
+            above is one you can open and judge for yourself.
           </p>
         </Container>
       </Section>
@@ -103,7 +210,7 @@ export default function WorkPage() {
               </ButtonLink>
               <a
                 href={`mailto:${site.email}`}
-                className="label text-ink-muted underline-offset-4 hover:text-accent-deep hover:underline"
+                className="label inline-flex min-h-11 items-center text-ink-muted underline-offset-4 hover:text-accent-deep hover:underline"
               >
                 {site.email}
               </a>
