@@ -90,8 +90,11 @@ identifier and role come from whatever frames it.
 the Stripe session and every enquiry link read from it. Never write a price
 anywhere else. The ladder is Starter £249, Advanced £299, Pro £389 (all
 one-off, all purchasable) and Custom from £499 (quoted, not purchasable).
-Management is a separate monthly subscription: Pro £60, Ultimate £69, with the
-gap derived as `MANAGEMENT_STEP_UP` so the "£9 more" claim cannot drift.
+Management is a separate monthly subscription: Pro £39, Ultimate £59 and
+Custom from £59, with the gap between the two fixed plans derived as
+`MANAGEMENT_STEP_UP` so the figure cannot drift. Custom Management has no
+`changeTime` on purpose — its allowance is quoted, and it is a different thing
+from the Custom *website build*.
 
 **Withdrawn, do not reinstate:** the £119 entry point, the
 £199/£299/£399/£499 ladder, and Business/Extended as tier names. Do not invent

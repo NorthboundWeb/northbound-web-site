@@ -12,8 +12,9 @@
  * 3. Build prices are ONE-OFF. Never render a build price as weekly or
  *    monthly, and never derive an instalment figure from one — see
  *    KLARNA_NOTE below.
- * 4. Management is a separate recurring subscription: Pro £60/month and
- *    Ultimate £69/month. It is never a condition of having a site built.
+ * 4. Management is a separate recurring subscription: Pro £39/month,
+ *    Ultimate £59/month and Custom from £59/month. It is never a condition
+ *    of having a site built.
  * 5. Do not invent a price that is not in this file.
  */
 
@@ -70,7 +71,7 @@ export const ENQUIRY_PROCESS_SUMMARY =
   'Send an enquiry, get a fixed price in writing, then a 50% deposit starts the work and the balance is due before launch.'
 
 /** Pro Management's monthly price, quoted wherever the free month is mentioned. */
-export const PRO_MANAGEMENT_PRICE = 60
+export const PRO_MANAGEMENT_PRICE = 39
 
 export type BuildScope = {
   slug: string
@@ -203,19 +204,28 @@ export type ManagementPlan = {
   name: string
   /** Per month, recurring. Never conflate with a one-off build price. */
   price: number
+  /** True when `price` is a starting figure rather than the whole cost. */
+  from?: boolean
   summary: string
   includes: string[]
-  changeTime: string
+  /**
+   * The monthly update allowance. Absent on a quoted plan — Custom's
+   * allowance is agreed in writing per customer, and inventing a number for
+   * it here would be inventing the product.
+   */
+  changeTime?: string
   enquiryParam: string
   cta: string
   badge?: string
 }
 
 /**
- * Two plans, £9 apart. The gap is deliberately small so Ultimate is the
- * obvious choice — but the difference has to be stated accurately, because a
- * plan that oversells itself gets cancelled in month two. Neither plan
- * promises unlimited anything; the change-time allowance is the boundary.
+ * Three plans. Pro and Ultimate are fixed; Custom is quoted, because the
+ * businesses that need it do not have a shape a standard plan can price.
+ *
+ * The update allowance is the boundary on every one of them. No plan
+ * promises unlimited anything, and Custom deliberately carries no allowance
+ * here — it is agreed in writing before work begins.
  */
 export const managementPlans: ManagementPlan[] = [
   {
@@ -223,42 +233,58 @@ export const managementPlans: ManagementPlan[] = [
     name: 'Pro Management',
     price: PRO_MANAGEMENT_PRICE,
     summary:
-      'Your site hosted, maintained and watched, with an hour of changes a month so it never goes stale.',
+      'Your website hosted, maintained and monitored, with up to 2 hours of requested website updates per billing month.',
     includes: [
-      'Hosting and technical maintenance',
-      'Security and dependency maintenance, where applicable',
-      'Uptime monitoring',
-      'Analytics and performance check',
+      'Website hosting',
+      'Routine maintenance and updates',
+      'Uptime and security monitoring',
+      'Up to 2 hours of requested website updates per billing month',
     ],
     changeTime:
-      'Includes up to 1 hour of requested website changes per billing month.',
+      'Includes up to 2 hours of requested website updates per billing month.',
     enquiryParam: 'pro-management',
     cta: 'Choose Pro Management',
   },
   {
     slug: 'ultimate-management',
     name: 'Ultimate Management',
-    price: 69,
+    price: 59,
     badge: 'Best value',
     summary:
-      'Everything in Pro, with double the change time, your requests moved up the queue, and a monthly report you can actually read.',
+      'Everything in Pro, with up to 4 hours of requested website updates per billing month, priority requests and a clear monthly report.',
     includes: [
-      'Everything in Pro Management',
-      'Double the included change time',
-      'Priority support — your requests go ahead of Pro ones in the queue',
-      'Performance and SEO review',
-      'Simple monthly performance report',
+      'Everything included in Pro Management',
+      'Up to 4 hours of requested website updates per billing month',
+      'Priority requests',
+      'Clear monthly performance and maintenance report',
     ],
     changeTime:
-      'Includes up to 2 hours of requested website changes per billing month.',
+      'Includes up to 4 hours of requested website updates per billing month.',
     enquiryParam: 'ultimate-management',
     cta: 'Choose Ultimate Management',
+  },
+  {
+    slug: 'custom-management',
+    name: 'Custom Management',
+    price: 59,
+    from: true,
+    summary:
+      'Tailored ongoing support for businesses with multiple websites, larger workloads or requirements that do not fit the standard plans. The scope and monthly price are agreed in writing before work begins.',
+    includes: [
+      'Scope agreed around your business, not a fixed tier',
+      'Suitable for multiple websites or larger workloads',
+      'Update allowance and inclusions agreed in your quote',
+      'A fixed monthly price, in writing, before anything starts',
+    ],
+    // No changeTime on purpose: see the type. Custom's allowance is quoted.
+    enquiryParam: 'custom-management',
+    cta: 'Discuss Custom Management',
   },
 ]
 
 /**
- * The gap between the two plans, quoted wherever the comparison is made, so
- * the "£9 more" claim can never drift away from the actual prices.
+ * The gap between the two fixed plans, quoted wherever the comparison is
+ * made, so the "£20 more" claim can never drift away from the actual prices.
  */
 export const MANAGEMENT_STEP_UP =
   managementPlans[1].price - managementPlans[0].price
@@ -267,10 +293,16 @@ export const MANAGEMENT_STEP_UP =
  * Bounded on purpose. Never promise unlimited fixes, updates, development or
  * support — the change-time allowance is what protects the business.
  */
+/** The policy line that renders directly beneath the plan cards. */
+export const MANAGEMENT_ALLOWANCE_POLICY =
+  'Update allowances reset at the end of each billing month. Unused time does not roll over.'
+
 export const managementTerms = [
-  'Unused change time does not roll over from one billing month to the next.',
+  MANAGEMENT_ALLOWANCE_POLICY,
+  'Every plan is optional and rolling. There is no minimum term, and you can cancel before your next billing date.',
+  'Custom Management has no standard allowance. Its scope, inclusions and monthly price are agreed in writing before work begins.',
   'Additional work beyond the included allowance is quoted separately and agreed before it is carried out.',
-  'Change time covers content, copy and small adjustments — not new features, redesigns or development work, which are quoted separately.',
+  'Update time covers content, copy and small adjustments — not new features, redesigns or development work, which are quoted separately.',
   'You can cancel before your next billing date, which stops future renewals. Amounts already charged for the current billing period are not partially refunded if you cancel part-way through it.',
   'If you end a plan, I will set out your options — either continuing hosting separately, where that is available, or transferring the website to another suitable hosting provider.',
   'A management plan is optional. It is not a condition of having a website built.',

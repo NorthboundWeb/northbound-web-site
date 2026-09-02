@@ -39,7 +39,7 @@ const answers = [
   {
     question: 'Do I have to take a management plan?',
     answer:
-      'No. Plans are optional and rolling, and the build price does not depend on taking one. The Pro and Custom builds include a complimentary month of Pro Management that does not turn into a paid subscription on its own.',
+      'No. Every plan is optional and rolling, with no minimum term, and the build price does not depend on taking one. The Pro and Custom website builds include a complimentary month of Pro Management that does not turn into a paid subscription on its own.',
   },
 ]
 

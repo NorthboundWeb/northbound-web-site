@@ -76,8 +76,8 @@ export default function GatewayPage() {
 
           <div className="mt-10 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
             <p className="max-w-md text-lg leading-relaxed text-ink-muted sm:text-xl">
-              {site.tagline} Two divisions: one builds where your business
-              lives, the other builds who works in it.
+              Websites for your business. Digital employees for the work behind
+              it.
             </p>
             <p className="label shrink-0 text-ink-faint">
               Choose your direction ↓
@@ -153,8 +153,8 @@ export default function GatewayPage() {
                 Small businesses get handed software they do not own, on
                 platforms they cannot leave, at prices that only go up.
                 Northbound builds the opposite: work you own outright, on
-                infrastructure that will still be maintained in five years,
-                priced so you know the number before you commit.
+                infrastructure designed to stay maintainable as your business
+                grows, priced so you know the number before you commit.
               </p>
               <div className="mt-10 flex flex-wrap gap-x-8 gap-y-4">
                 {divisions.map((d) => (

@@ -51,19 +51,27 @@ Starter, Advanced and Pro are purchasable through Stripe Checkout
 Withdrawn and not to be reinstated: the £119 entry point, the
 £199/£299/£399/£499 ladder, and Business/Extended as tier names.
 
-| Management plan | Price | Included change time |
+| Management plan | Price | Included update allowance |
 |---|---|---|
-| Pro Management | £60/month | Up to 1 hour per billing month |
-| Ultimate Management | £69/month | Up to 2 hours per billing month |
+| Pro Management | £39/month | Up to 2 hours per billing month |
+| Ultimate Management | £59/month | Up to 4 hours per billing month |
+| Custom Management | **From £59/month**, quoted | Agreed in the quote |
 
 Management is a **separate recurring subscription**, never part of a build
-price. The £9 gap is quoted from `MANAGEMENT_STEP_UP`, which is derived from
-the two prices, so the "£9 more" claim cannot drift away from them.
+price, and every plan is optional and rolling with no minimum term. The gap
+between the two fixed plans is quoted from `MANAGEMENT_STEP_UP`, derived from
+the prices, so the figure cannot drift away from them.
+
+**Custom Management carries no `changeTime`, deliberately.** Its allowance and
+inclusions are agreed in writing per customer; inventing a number for it here
+would be inventing the product. Do not confuse it with the Custom *website
+build* — different thing, different price, one is monthly and one is one-off.
 
 **Rules that the copy must keep honouring:**
 
-- Included change time does **not** roll over; work beyond it is quoted first.
-- Change time covers content, copy and small adjustments — **not** new
+- Update allowances reset at the end of each billing month and do **not** roll
+  over; work beyond the allowance is quoted first.
+- Update time covers content, copy and small adjustments — **not** new
   features, redesigns or development work.
 - Never promise unlimited fixes, updates, development or support.
 - No absolute promises ("every time") and no guaranteed same-day response.

@@ -17,6 +17,7 @@ import {
   ENQUIRY_PROCESS,
   ENQUIRY_PROCESS_SUMMARY,
   KLARNA_NOTE,
+  MANAGEMENT_ALLOWANCE_POLICY,
   MANAGEMENT_STEP_UP,
   ONE_OFF_LABEL,
   PRICING_PROMISE,
@@ -263,8 +264,9 @@ export default async function ServicesPage({
         lede={
           <>
             A separate monthly subscription, never part of the build price. The
-            Pro and Custom builds include one complimentary month of Pro
-            Management, worth {currency.format(PRO_MANAGEMENT_PRICE)}.{' '}
+            Pro and Custom <em className="not-italic underline underline-offset-4">website builds</em>{' '}
+            include one complimentary month of Pro Management, worth{' '}
+            {currency.format(PRO_MANAGEMENT_PRICE)}.{' '}
             {COMPLIMENTARY_MONTH_TERMS}
           </>
         }
@@ -272,7 +274,7 @@ export default async function ServicesPage({
 
       <Section className="border-b border-line">
         <Container>
-          <div className="grid border-t border-l border-line lg:grid-cols-2">
+          <div className="grid border-t border-l border-line md:grid-cols-2 xl:grid-cols-3">
             {managementPlans.map((plan, i) => {
               const isUpgrade = i === 1
               return (
@@ -289,18 +291,23 @@ export default async function ServicesPage({
                     ) : null}
                   </div>
 
-                  <p className="display mt-4 text-[clamp(3rem,7vw,4.5rem)] text-ink">
+                  <p className="display mt-4 text-[clamp(2.5rem,6vw,4rem)] text-ink">
+                    {plan.from ? (
+                      <span className="mr-2 align-middle text-[0.4em] text-ink-faint">
+                        From
+                      </span>
+                    ) : null}
                     {currency.format(plan.price)}
                     <span className="label ml-2 align-middle text-ink-faint">/month</span>
                   </p>
 
-                  {/* The whole point of the pair: the step up is £9. Derived
-                      from the prices above so it cannot drift. */}
+                  {/* The step up between the two fixed plans, derived from the
+                      prices above so the figure cannot drift away from them. */}
                   {isUpgrade ? (
                     <p className="mt-3 text-[15px] leading-relaxed text-accent-deep">
                       {currency.format(MANAGEMENT_STEP_UP)} more than Pro
-                      Management, for double the change time and everything
-                      below.
+                      Management, for double the update allowance and
+                      everything below.
                     </p>
                   ) : null}
 
@@ -317,10 +324,12 @@ export default async function ServicesPage({
                     ))}
                   </ul>
 
-                  {/* Change time sits below the benefits: a plan is the site
-                      being looked after, not hours sold by the month. */}
+                  {/* The allowance sits below the benefits: a plan is the site
+                      being looked after, not hours sold by the month. Custom
+                      has none to state — it is agreed in the quote. */}
                   <p className="mt-7 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
-                    {plan.changeTime}
+                    {plan.changeTime ??
+                      'Your update allowance is agreed in writing as part of the quote.'}
                   </p>
                   <CardCta href={`/contact?package=${plan.enquiryParam}`} className="mt-6">
                     {plan.cta}
@@ -329,6 +338,11 @@ export default async function ServicesPage({
               )
             })}
           </div>
+
+          <p className="mt-6 max-w-3xl text-sm leading-relaxed text-ink-faint">
+            {MANAGEMENT_ALLOWANCE_POLICY} Every plan is optional and rolling —
+            there is no minimum term.
+          </p>
 
           <div className="mt-12 border border-line bg-paper-sunk p-8">
             <h3 className="label text-ink-faint">How the plans work</h3>

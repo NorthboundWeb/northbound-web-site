@@ -256,12 +256,17 @@ export default function WebPage() {
                 <div key={p.slug} className="border-r border-b border-line p-7">
                   <h3 className="label text-ink-faint">{p.name}</h3>
                   <p className="display mt-3 text-[clamp(2.25rem,5vw,3rem)] text-ink">
+                    {p.from ? (
+                      <span className="mr-1.5 align-middle text-[0.4em] text-ink-faint">
+                        From
+                      </span>
+                    ) : null}
                     {currency.format(p.price)}
                     <span className="label ml-1 align-middle text-ink-faint">/mo</span>
                   </p>
                   <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">{p.summary}</p>
                   <p className="mt-5 border-t border-line pt-4 text-sm leading-relaxed text-ink-faint">
-                    {p.changeTime}
+                    {p.changeTime ?? 'Allowance agreed in your quote.'}
                   </p>
                 </div>
               ))}
