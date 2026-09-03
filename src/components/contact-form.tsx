@@ -2,7 +2,8 @@
 
 import { useActionState, useEffect, useRef } from 'react'
 import { useFormStatus } from 'react-dom'
-import { Arrow, buttonClass, cn } from '@/components/ui'
+import { ArrowRight } from '@/components/graphics'
+import { buttonClass, cn } from '@/components/ui'
 import { submitEnquiry } from '@/lib/contact/actions'
 import {
   budgetBands,
@@ -11,7 +12,7 @@ import {
 } from '@/lib/contact/schema'
 
 const fieldClass =
-  'w-full border border-line bg-paper-raised px-4 py-3.5 text-[15px] text-ink transition-colors placeholder:text-ink-faint hover:border-line-strong focus:border-accent focus:outline-none'
+  'w-full border border-line-ink bg-white px-4 py-3.5 text-[15px] text-ink transition-colors placeholder:text-ink-faint hover:border-line-ink-strong focus:border-orange focus:outline-none'
 
 function Label({
   htmlFor,
@@ -36,7 +37,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null
   return (
     <p id={id} className="mt-2 text-sm text-ink" role="alert">
-      <span aria-hidden className="mr-1.5 text-accent">
+      <span aria-hidden className="mr-1.5 text-orange-ink">
         ▲
       </span>
       {message}
@@ -50,12 +51,12 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className={cn(buttonClass({ size: 'lg' }), 'group/btn w-full sm:w-auto')}
+      className={cn(buttonClass({ variant: 'solid', size: 'lg' }), 'w-full sm:w-auto')}
     >
       {pending ? 'Sending…' : 'Send enquiry'}
       {pending ? null : (
-        <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
-          <Arrow />
+        <span className="transition-transform duration-200 group-hover/btn:translate-x-1">
+          <ArrowRight />
         </span>
       )}
     </button>
@@ -101,10 +102,10 @@ export function ContactForm({
         ref={statusRef}
         tabIndex={-1}
         role="status"
-        className="border border-line bg-paper-sunk p-10 focus:outline-none"
+        className="border border-line-ink bg-cream-sunk p-10 focus:outline-none"
       >
-        <p className="label text-accent">Sent</p>
-        <h2 className="display mt-4 text-4xl text-ink">Message sent<span className="text-accent">.</span></h2>
+        <p className="label text-orange-ink">Sent</p>
+        <h2 className="display mt-4 text-4xl text-ink">Message sent</h2>
         <p className="mt-3 leading-relaxed text-ink-muted">
           {state.message ??
             'Thanks — your message is with me. I normally reply within one working day.'}
@@ -123,7 +124,7 @@ export function ContactForm({
         className="focus:outline-none"
       >
         {state.status === 'error' && state.message ? (
-          <p className="border-l-2 border-accent bg-paper-sunk px-4 py-3 text-sm">
+          <p className="border-l-2 border-orange bg-cream-sunk px-4 py-3 text-sm text-ink">
             {state.message}
           </p>
         ) : null}

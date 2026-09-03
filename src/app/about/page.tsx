@@ -1,132 +1,143 @@
 import type { Metadata } from 'next'
-import { Crosshair } from '@/components/graphics'
 import {
   ArrowLink,
   ButtonLink,
+  ComingSoon,
   Container,
   Display,
   Label,
+  Rail,
   Section,
-  StatementBand,
 } from '@/components/ui'
-import { site } from '@/lib/site'
+import { process, standards } from '@/lib/services'
+import { divisions, site } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'About',
-  description: `About ${site.name} — an independent web development studio building websites and web applications for small businesses across the ${site.location}.`,
+  description:
+    'Northbound builds and manages websites for UK businesses, and is building Northbound Employees — AI workers designed around real business jobs.',
   alternates: { canonical: '/about' },
 }
-
-/*
-  NOTE FOR CHE: this page deliberately makes no claims that need verifying —
-  no invented years of experience, client counts, or past projects. Add the
-  specifics when you have them. Made-up credentials are the fastest way to
-  lose a client who checks.
-*/
-
-const beliefs = [
-  {
-    title: 'The price is on the page',
-    body: 'Package prices are published, and they are what you pay. If the work grows because you have asked for something new, we agree that separately, in writing, before I build it. No invoice should ever be a surprise.',
-  },
-  {
-    title: 'You own everything',
-    body: 'The domain stays in your name. The code lives in a repository you own. If you ever want to take the project elsewhere, you hand another developer a link and they can get to work. Nothing here depends on me staying reachable.',
-  },
-  {
-    title: 'Plain English, always',
-    body: 'You should never have to nod along to something you do not follow. I will explain what I am recommending and why, in language that does not require a computer science degree, and I will tell you when a decision genuinely does not matter.',
-  },
-  {
-    title: 'The honest answer',
-    body: 'If the Basic package would do what you need, I will not sell you the Advanced one. If the thing you are describing does not need a developer at all, I will say so. Long-term relationships pay better than one oversold project.',
-  },
-]
 
 export default function AboutPage() {
   return (
     <>
-      <Section className="border-b border-line">
+      <section className="border-b border-line">
         <Container>
-          <div className="flex items-start justify-between">
-            <Label index="01">About</Label>
-            <span className="label text-ink-faint">{site.location}</span>
-          </div>
-          <Display as="h1" className="mt-6">
-            Small
-          </Display>
-          <div className="mt-10 grid gap-12 lg:grid-cols-[1.1fr_auto] lg:items-start">
-            <div className="max-w-2xl space-y-6 text-lg leading-relaxed text-ink-muted">
-              <p>
-                Northbound Web is an independent web development studio working
-                with small businesses across the {site.location}. When you get in
-                touch, you are talking to the person who will design and build
-                the thing — not an account manager relaying messages to a team
-                you never meet.
-              </p>
-              <p>
-                Most small businesses have been failed by their website at least
-                once. A cheap template that never brought in an enquiry. An
-                agency that vanished after launch. A platform that seemed
-                reasonable until the subscription doubled and the content turned
-                out to be impossible to export. The work here is a reaction to
-                all three.
-              </p>
-              <p>
-                So: proper design rather than a stock theme, built on tools that
-                will still be maintained in five years, handed over in a form you
-                genuinely own — and, if you want it, looked after by me for a
-                predictable monthly fee.
+          <div className="flex gap-8 lg:gap-14">
+            <Rail index="04" />
+            <div className="min-w-0 flex-1 pt-14 pb-16 sm:pt-20 lg:pb-24">
+              <Label>About</Label>
+              <Display as="h1" size="lg" className="mt-9 max-w-3xl text-cream">
+                Two divisions.
+                <br />
+                One Northbound.
+              </Display>
+              <p className="mt-9 max-w-xl text-[15px] leading-relaxed text-chalk-muted sm:text-base">
+                Northbound is a UK studio building digital infrastructure for
+                small businesses. One division is trading today; the other is
+                being built, and this site says which is which on every page.
               </p>
             </div>
-            <Crosshair className="w-36 justify-self-start text-olive sm:w-48" />
           </div>
+        </Container>
+      </section>
+
+      {/* -------------------------------------------------------- divisions */}
+      <Section className="bg-black">
+        <Container>
+          <ul className="grid gap-px bg-line lg:grid-cols-2">
+            {divisions.map((d) => (
+              <li key={d.id} className="bg-black p-8 sm:p-10">
+                <span
+                  className={
+                    d.accent === 'orange'
+                      ? 'label text-orange'
+                      : 'label text-yellow'
+                  }
+                >
+                  {d.index}
+                </span>
+                <Display as="h2" size="sm" className="mt-6 text-cream">
+                  {d.name}
+                </Display>
+                {!d.available ? <ComingSoon className="mt-5" /> : null}
+                <p className="mt-6 text-sm leading-relaxed text-chalk-muted">
+                  {d.body}
+                </p>
+                <ArrowLink
+                  href={d.href}
+                  tone={d.accent === 'orange' ? 'orange' : 'yellow'}
+                  className="mt-8"
+                >
+                  {d.cta}
+                </ArrowLink>
+              </li>
+            ))}
+          </ul>
         </Container>
       </Section>
 
-      <StatementBand
-        index="02"
-        eyebrow="How I work"
-        word="Four"
-        lede="Things I will not budge on."
-      />
-
-      <Section className="border-b border-line">
+      {/* ---------------------------------------------------------- process */}
+      <Section id="process" className="scroll-mt-24 bg-cream text-ink">
         <Container>
-          <div className="reveal">
-            <dl className="grid border-t border-l border-line sm:grid-cols-2">
-              {beliefs.map((b, i) => (
-                <div key={b.title} className="border-r border-b border-line p-8">
-                  <span className="label text-accent">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <dt className="display mt-4 text-2xl text-ink sm:text-3xl">
-                    {b.title}
-                  </dt>
-                  <dd className="mt-4 text-[15px] leading-relaxed text-ink-muted">
-                    {b.body}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </Container>
-      </Section>
-
-      <Section>
-        <Container>
-          <div className="max-w-3xl">
-            <Display>Talk</Display>
-            <p className="mt-8 text-lg leading-relaxed text-ink-muted">
-              No obligation, no pitch, and no proposal written before I
-              understand what your business actually needs.
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <Label tone="light">Our process</Label>
+              <Display as="h2" size="md" className="mt-8 text-ink">
+                How a project
+                <br />
+                actually runs.
+              </Display>
+            </div>
+            <p className="max-w-sm text-sm leading-relaxed text-ink-muted">
+              Six steps, in the order they happen. No stage is a surprise and no
+              stage is skipped to hit a date.
             </p>
-            <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center">
-              <ButtonLink href="/contact" size="lg">
-                Start a project
-              </ButtonLink>
-              <ArrowLink href="/services">See packages and prices</ArrowLink>
-            </div>
+          </div>
+
+          <ol className="mt-14 grid gap-px bg-line-ink sm:grid-cols-2 lg:grid-cols-3">
+            {process.map((step) => (
+              <li key={step.step} className="bg-cream p-7 sm:p-8">
+                <span className="label text-orange-ink">{step.step}</span>
+                <h3 className="display mt-5 text-2xl text-ink">{step.title}</h3>
+                <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+                  {step.body}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </Container>
+      </Section>
+
+      {/* -------------------------------------------------------- standards */}
+      <Section className="bg-black">
+        <Container>
+          <Label>Standards</Label>
+          <Display as="h2" size="md" className="mt-8 max-w-2xl text-cream">
+            What does not get traded away.
+          </Display>
+          <ul className="mt-14 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
+            {standards.map((s) => (
+              <li key={s.title} className="bg-black p-7 sm:p-8">
+                <h3 className="label text-cream">{s.title}</h3>
+                <p className="mt-4 text-sm leading-relaxed text-chalk-muted">
+                  {s.body}
+                </p>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-16 flex flex-wrap items-center gap-5 border-t border-line pt-10">
+            <ButtonLink href="/contact" variant="light" size="lg">
+              Get in touch
+            </ButtonLink>
+            <a
+              href={`mailto:${site.email}`}
+              className="label text-chalk-muted underline-offset-4 transition-colors hover:text-chalk hover:underline"
+            >
+              {site.email}
+            </a>
           </div>
         </Container>
       </Section>

@@ -1,119 +1,144 @@
 import Link from 'next/link'
-import { CompassDiagram } from '@/components/graphics'
-import { Container } from '@/components/ui'
-import { buildPackages } from '@/lib/services'
+import { InstagramIcon, TikTokIcon } from '@/components/graphics'
+import { LockupFlat } from '@/components/logo'
+import { ButtonLink, Container } from '@/components/ui'
 import { site } from '@/lib/site'
 
-const services = [
-  'Website design',
-  'Website builds',
-  'Website management',
+/**
+ * Footer columns.
+ *
+ * Every href here is a real page or a real on-page anchor — the anchors are
+ * created in the pages themselves. The approved footer sketch also listed
+ * Insights, Careers, AI Pricing, Privacy, Terms and Cookies; those pages do
+ * not exist, and a link to a page that isn't there is worse than an absent
+ * link, so they are left out until there is something to point at. Add the
+ * entry at the same time as the page, never before.
+ */
+const columns = [
+  {
+    heading: 'Northbound.Web',
+    links: [
+      { href: '/web', label: 'Web services' },
+      { href: '/web/work', label: 'Our work' },
+      { href: '/web#pricing', label: 'Website packages' },
+      { href: '/web#management', label: 'Management' },
+      { href: '/web#improvements', label: 'Improvements' },
+    ],
+  },
+  {
+    heading: 'Northbound.AI',
+    links: [
+      { href: '/ai', label: 'AI employees' },
+      { href: '/ai#employees', label: 'Meet the employees' },
+      { href: '/ai#how-it-works', label: 'How it will work' },
+      { href: '/contact?interest=employees', label: 'Register interest' },
+    ],
+  },
+  {
+    heading: 'Company',
+    links: [
+      { href: '/about', label: 'About us' },
+      { href: '/about#process', label: 'Our process' },
+      { href: '/contact', label: 'Contact' },
+    ],
+  },
 ]
+
+const socialIcons = {
+  Instagram: InstagramIcon,
+  TikTok: TikTokIcon,
+} as const
 
 export function SiteFooter() {
   return (
-    <footer className="relative z-10 bg-green text-cream">
-      <Container className="pt-20 pb-12">
-        {/* The graphic statement — the footer is a poster, not a sitemap. */}
-        <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
-          <p className="display text-[clamp(3.25rem,13vw,11rem)] text-cream">
-            Always
-            <br />
-            Moving
-            <br />
-            North<span className="text-accent">.</span>
-          </p>
-          <CompassDiagram className="w-32 shrink-0 text-cream/60 sm:w-44 lg:w-56" />
-        </div>
-
-        <div
-          aria-hidden
-          className="dotted-rule mt-16 opacity-40"
-          style={{ ['--line-strong' as string]: 'rgba(242,235,221,.5)' }}
-        />
-
-        <div className="mt-12 grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="border-t border-line bg-black text-chalk">
+      <Container className="pt-20 pb-10">
+        <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.2fr] lg:gap-10">
           <div>
-            <h2 className="label text-cream/70">What I do</h2>
-            <ul className="mt-5 space-y-2.5">
-              {services.map((s) => (
-                <li key={s} className="text-[15px] text-cream/85">
-                  {s}
-                </li>
-              ))}
+            <Link href="/" aria-label={`${site.name} — home`} className="inline-block">
+              <LockupFlat className="h-14 w-auto text-chalk" />
+            </Link>
+            <p className="mt-7 max-w-xs text-sm leading-relaxed text-chalk-muted">
+              Digital infrastructure for modern businesses. Web services now,
+              AI employees coming soon.
+            </p>
+            <ul className="mt-8 flex items-center gap-3">
+              {site.socials.map((s) => {
+                const Icon = socialIcons[s.label as keyof typeof socialIcons]
+                return (
+                  <li key={s.label}>
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="me noopener noreferrer"
+                      // 44px target, per the touch-target minimum.
+                      className="inline-flex h-11 w-11 items-center justify-center border border-line text-chalk-muted transition-colors hover:border-chalk hover:text-chalk"
+                    >
+                      <span className="sr-only">
+                        {s.label} — {s.handle}
+                      </span>
+                      <Icon />
+                    </a>
+                  </li>
+                )
+              })}
             </ul>
-          </div>
-
-          <nav aria-label="Packages">
-            <h2 className="label text-cream/70">Packages</h2>
-            <ul className="mt-5 space-y-2.5">
-              {buildPackages.map((pkg) => (
-                <li key={pkg.slug}>
-                  <Link
-                    href={`/services#${pkg.slug}`}
-                    className="text-[15px] text-cream/85 transition-colors hover:text-accent"
-                  >
-                    {pkg.name}
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <Link
-                  href="/services#management"
-                  className="text-[15px] text-cream/85 transition-colors hover:text-accent"
-                >
-                  Management plans
-                </Link>
-              </li>
-            </ul>
-          </nav>
-
-          <nav aria-label="Site">
-            <h2 className="label text-cream/70">Northbound Web</h2>
-            <ul className="mt-5 space-y-2.5">
-              {site.nav.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-[15px] text-cream/85 transition-colors hover:text-accent"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <div>
-            <h2 className="label text-cream/70">Elsewhere</h2>
-            <ul className="mt-5 space-y-2.5">
+            <ul className="mt-5 space-y-1">
               {site.socials.map((s) => (
-                <li key={s.label}>
+                <li key={s.label} className="text-sm text-chalk-muted">
+                  <span className="text-chalk-faint">{s.label}</span>{' '}
                   <a
                     href={s.href}
-                    className="text-[15px] text-cream/85 transition-colors hover:text-accent"
-                    rel="me noopener noreferrer"
                     target="_blank"
+                    rel="me noopener noreferrer"
+                    className="text-chalk transition-colors hover:text-orange"
                   >
-                    {s.label} — {s.handle}
+                    {s.handle}
                   </a>
                 </li>
               ))}
-              <li>
-                <a
-                  href={`mailto:${site.email}`}
-                  className="text-[15px] text-accent transition-colors hover:text-cream"
-                >
-                  {site.email}
-                </a>
-              </li>
             </ul>
+          </div>
+
+          {columns.map((col) => (
+            <nav key={col.heading} aria-label={col.heading}>
+              <h2 className="label text-chalk">{col.heading}</h2>
+              <ul className="mt-6 space-y-3">
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-chalk-muted transition-colors hover:text-chalk"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+
+          <div>
+            <h2 className="label text-chalk">Let&rsquo;s talk</h2>
+            <p className="mt-6 text-sm leading-relaxed text-chalk-muted">
+              Have a project, or want to know more about what Northbound is
+              building?
+            </p>
+            <ButtonLink href="/contact" variant="outline" className="mt-7 w-full">
+              Get in touch
+            </ButtonLink>
+            <a
+              href={`mailto:${site.email}`}
+              className="mt-5 block text-sm text-chalk-muted transition-colors hover:text-chalk"
+            >
+              {site.email}
+            </a>
           </div>
         </div>
 
-        <div className="label mt-16 flex flex-col gap-3 border-t border-cream/20 pt-8 text-cream/70 sm:flex-row sm:items-center sm:justify-between">
+        <div className="label mt-16 flex flex-col gap-4 border-t border-line pt-8 text-chalk-faint sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} {site.name}
+            © {new Date().getFullYear()} {site.legalName}. All rights reserved.
           </p>
           <p>Built and hosted in the {site.location}</p>
         </div>

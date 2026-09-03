@@ -1,349 +1,303 @@
 import Link from 'next/link'
-import {
-  BrowserFrame,
-  CompassDiagram,
-  Crosshair,
-  CursorArrow,
-  RouteMarker,
-  TravellingLine,
-  Wireframe,
-} from '@/components/graphics'
+import { GrowthIcon, PeopleIcon, ShieldIcon, WindowIcon } from '@/components/graphics'
+import { Mark } from '@/components/logo'
+import { MountainPlate } from '@/components/mountain'
 import {
   ArrowLink,
   ButtonLink,
-  CardCta,
+  ComingSoon,
   Container,
   Display,
   Label,
+  Rail,
   Section,
-  StatementBand,
   cn,
 } from '@/components/ui'
-import { currency, site } from '@/lib/site'
-import {
-  ADVANCED_MANAGEMENT_PRICE,
-  COMPLIMENTARY_MONTH_TERMS,
-  buildPackages,
-  managementPlans,
-} from '@/lib/services'
+import { divisions } from '@/lib/site'
+import { WORK_PLACEHOLDER, work, workKindLabel } from '@/lib/work'
 
-/** The editorial run: one idea, one word, one diagram per spread. */
-const spreads = [
+/**
+ * Hero credentials.
+ *
+ * The approved mockup showed "200+ websites" and "trusted by UK businesses".
+ * Neither figure has been verified, so neither is published. These are
+ * statements that are true without counting anything.
+ */
+const credentials = [
+  { label: 'Based in', value: 'The UK' },
+  { label: 'Built for', value: 'Small business' },
+  { label: 'Focused on', value: 'Results' },
+]
+
+const pillars = [
   {
-    index: '01',
-    word: 'Missed',
-    copy: 'If they do not understand what you do in five seconds, they leave.',
-    Graphic: CursorArrow,
-    tint: 'text-ink',
+    icon: WindowIcon,
+    title: 'Web services',
+    body: 'Strategy, design, build and management for websites that perform.',
   },
   {
-    index: '02',
-    word: 'Seen',
-    copy: 'Social media gets attention. A website builds trust.',
-    Graphic: Crosshair,
-    tint: 'text-olive',
+    icon: PeopleIcon,
+    title: 'AI employees',
+    body: 'Digital employees designed to handle the work, so you can focus on what matters.',
+    comingSoon: true,
   },
   {
-    index: '03',
-    word: 'Clear',
-    copy: 'What do you offer? Who is it for? What is the next step?',
-    Graphic: Wireframe,
-    tint: 'text-cobalt',
+    icon: GrowthIcon,
+    title: 'Growth focused',
+    body: 'Built around real outcomes, and changed on the strength of what the numbers show.',
   },
   {
-    index: '04',
-    word: 'Found',
-    copy: 'A good website works for you around the clock. Even when you do not.',
-    Graphic: RouteMarker,
-    tint: 'text-mustard',
+    icon: ShieldIcon,
+    title: 'Secure & reliable',
+    body: 'Your data, your business. Secure systems and clear control at every step.',
   },
 ]
 
 export default function HomePage() {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'ProfessionalService',
-    name: site.name,
-    description: site.description,
-    url: site.url,
-    email: site.email,
-    areaServed: site.location,
-    hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: 'Website packages',
-      itemListElement: buildPackages.map((pkg) => ({
-        '@type': 'Offer',
-        name: pkg.name,
-        price: pkg.price,
-        priceCurrency: 'GBP',
-        description: pkg.summary,
-      })),
-    },
-  }
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {/* ---------------------------------------------------------------- 01 */}
+      <section className="relative overflow-hidden">
+        {/* The plate bleeds off the right edge, behind the type. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 w-full opacity-90 sm:w-[70%] lg:w-[58%]"
+        >
+          <MountainPlate className="h-full w-full" />
+        </div>
 
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-line">
-        <Container className="pt-16 pb-20 sm:pt-20 sm:pb-28">
-          <div className="flex items-start justify-between">
-            <Label>Web development · {site.location}</Label>
-            <span className="label text-accent">01</span>
-          </div>
+        <Container className="relative">
+          <div className="flex gap-8 lg:gap-14">
+            <Rail index="01" />
 
-          <div className="mt-10 grid gap-12 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
-            <div className="rise-in">
-              <Display as="h1">Northbound</Display>
-              <p className="mt-8 max-w-lg text-lg leading-relaxed text-ink-muted sm:text-xl">
-                Your website is often your first impression. Make it a good one.
-                Websites built for small businesses that want to look the part.
-              </p>
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-                <ButtonLink href="/contact" size="lg">
-                  Start a project
-                </ButtonLink>
-                <ArrowLink href="/services">See packages and prices</ArrowLink>
+            <div className="min-w-0 flex-1 pt-14 pb-20 sm:pt-20 lg:pt-24 lg:pb-32">
+              <Label>Welcome to Northbound</Label>
+
+              <Display as="h1" size="lg" className="mt-9 max-w-4xl text-cream">
+                Digital infrastructure
+                <br />
+                for modern businesses
+              </Display>
+
+              <div className="mt-9 max-w-md space-y-1.5 text-[15px] leading-relaxed text-chalk-muted sm:text-base">
+                <p>Web services that grow your business.</p>
+                <p>AI employees that work for your business.</p>
+                <p className="text-yellow">Choose your direction.</p>
               </div>
             </div>
 
-            <div className="lg:pb-4">
-              <BrowserFrame className="w-full text-ink" />
-              <TravellingLine className="mt-6" />
+            {/* Credentials rail — desktop only, as in the composition. */}
+            <div className="hidden w-44 shrink-0 flex-col justify-center py-24 xl:flex">
+              {credentials.map((c, i) => (
+                <div
+                  key={c.label}
+                  className={cn(
+                    'py-6',
+                    i > 0 && 'border-t border-line'
+                  )}
+                >
+                  <p className="label text-chalk-faint">{c.label}</p>
+                  <p className="display mt-2 text-3xl text-cream">{c.value}</p>
+                </div>
+              ))}
             </div>
           </div>
-
-          <dl className="mt-16 grid grid-cols-2 gap-x-8 gap-y-10 border-t border-line pt-10 lg:grid-cols-4">
-            {[
-              { t: 'Pricing', d: 'Fixed package prices, £199 to £399' },
-              { t: 'Replies', d: 'Usually within one working day' },
-              { t: 'Ownership', d: 'Your code, your repository, your domain' },
-              { t: 'Aftercare', d: 'Optional plans, £39 to £149/month' },
-            ].map((item) => (
-              <div key={item.t}>
-                <dt className="label text-accent">{item.t}</dt>
-                <dd className="mt-3 text-[15px] leading-relaxed text-ink-muted">
-                  {item.d}
-                </dd>
-              </div>
-            ))}
-          </dl>
         </Container>
       </section>
 
-      {/* ── Editorial spreads ────────────────────────────────── */}
-      {spreads.map((s, i) => (
-        <section
-          key={s.word}
-          className={cn(
-            'border-b border-line',
-            i % 2 === 1 && 'bg-paper-sunk'
-          )}
-        >
-          <Container className="py-20 sm:py-28">
-            <div className="reveal">
-              <div
+      {/* ------------------------------------------------- division cards */}
+      <Container className="relative pb-20 sm:pb-28">
+        <div className="grid gap-5 lg:grid-cols-2 lg:gap-6">
+          {divisions.map((d) => {
+            const web = d.accent === 'orange'
+            return (
+              <article
+                key={d.id}
                 className={cn(
-                  'grid items-center gap-12 lg:grid-cols-[1fr_auto]',
-                  i % 2 === 1 && 'lg:grid-flow-dense'
+                  'group relative flex flex-col border-l-[3px] p-8 transition-transform duration-300 sm:p-10 lg:hover:-translate-y-1',
+                  web
+                    ? 'border-l-orange bg-cream text-ink'
+                    : 'border-l-yellow bg-char-raised text-chalk'
                 )}
               >
-                <div className={cn(i % 2 === 1 && 'lg:col-start-2')}>
-                  <Label index={s.index} />
-                  <Display className="mt-6">{s.word}</Display>
-                  <p className="mt-8 max-w-md text-lg leading-relaxed text-ink-muted">
-                    {s.copy}
-                  </p>
-                </div>
-                <div
-                  className={cn(
-                    'w-44 justify-self-start sm:w-56 lg:w-72',
-                    i % 2 === 1 && 'lg:col-start-1 lg:justify-self-end',
-                    s.tint
-                  )}
-                >
-                  <s.Graphic />
-                </div>
-              </div>
-            </div>
-          </Container>
-        </section>
-      ))}
-
-      {/* ── Judged ───────────────────────────────────────────── */}
-      <StatementBand
-        index="05"
-        aside="Northbound"
-        word="Judged"
-        lede="People decide whether to trust a business before they read a word of it. A site that looks considered says the business is."
-      >
-        <div className="mt-10">
-          <ButtonLink href="/contact" variant="inverse" size="lg">
-            Start a project
-          </ButtonLink>
-        </div>
-      </StatementBand>
-
-      {/* ── Packages ─────────────────────────────────────────── */}
-      <Section id="packages" className="scroll-mt-20 border-b border-line">
-        <Container>
-          <div className="flex items-start justify-between">
-            <Label index="06">Packages</Label>
-            <span className="label text-ink-faint">Fixed prices</span>
-          </div>
-
-          <Display className="mt-6">Built</Display>
-
-          <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted">
-            You should not have to sit through a sales call to find out what a
-            website costs. Pick the size that fits, or ask me which one does.
-          </p>
-
-          <ul className="mt-16 grid border-t border-l border-line sm:grid-cols-2 lg:grid-cols-4">
-            {buildPackages.map((pkg) => (
-              <li
-                key={pkg.slug}
-                className="group relative flex flex-col border-r border-b border-line p-7 transition-colors hover:bg-paper-raised focus-within:bg-paper-raised"
-              >
-                {/* Reserved row so the badge never knocks one price out of
-                    alignment with the others. */}
-                <div className="mb-4 flex h-5 items-center">
-                  {pkg.badge ? (
-                    <span className="label flex items-center gap-2 text-accent">
-                      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
-                      {pkg.badge}
-                    </span>
-                  ) : null}
-                </div>
-
-                <h3 className="label text-ink-faint">{pkg.name}</h3>
-
-                <p className="display mt-3 text-[clamp(2.75rem,6vw,4rem)] text-ink">
-                  {pkg.variable ? (
-                    <>
-                      <span className="block text-sm tracking-[0.16em] text-ink-faint">
-                        From
-                      </span>
-                      {currency.format(pkg.price)}
-                    </>
-                  ) : (
-                    currency.format(pkg.price)
-                  )}
-                </p>
-
-                <p className="mt-5 flex-1 text-[15px] leading-relaxed text-ink-muted">
-                  {pkg.summary}
-                </p>
-
-                {pkg.freeAdvancedMonth ? (
-                  <p className="mt-5 text-[13px] leading-relaxed text-ink-faint">
-                    Includes 1 complimentary month of Advanced Management, worth{' '}
-                    {currency.format(ADVANCED_MANAGEMENT_PRICE)}.
-                  </p>
-                ) : null}
-
-                <CardCta
-                  href={`/contact?package=${pkg.enquiryParam}`}
-                  className="mt-7"
-                >
-                  {pkg.cta}
-                </CardCta>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mt-8 text-sm text-ink-muted">
-            <Link href="/services" className="text-accent underline-offset-4 hover:underline">
-              See what each package includes
-            </Link>{' '}
-            — page limits, revision rounds and timescales.
-          </p>
-        </Container>
-      </Section>
-
-      {/* ── Management: green band, then the plans on paper ──── */}
-      <StatementBand
-        index="07"
-        eyebrow="After launch"
-        aside="Optional"
-        word="Kept"
-        lede="Optional, and not a condition of the build. Plans are rolling — cancel before your next billing date and future renewals stop."
-      />
-
-      <Section className="border-b border-line">
-        <Container>
-          <ul className="grid border-t border-l border-line sm:grid-cols-3">
-            {managementPlans.map((plan) => (
-              <li
-                key={plan.slug}
-                className="group relative flex flex-col border-r border-b border-line p-7 transition-colors hover:bg-paper-raised focus-within:bg-paper-raised"
-              >
-                <h3 className="label text-ink-faint">{plan.name}</h3>
-                <p className="display mt-3 text-[clamp(2.5rem,5.5vw,3.5rem)] text-ink">
-                  {currency.format(plan.price)}
-                  <span className="label ml-1 align-middle text-ink-faint">
-                    /mo
-                  </span>
-                </p>
-                <p className="mt-5 flex-1 text-[15px] leading-relaxed text-ink-muted">
-                  {plan.summary}
-                </p>
-                <p className="mt-6 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
-                  {plan.changeTime}
-                </p>
-                <CardCta
-                  href={`/contact?package=${plan.enquiryParam}`}
-                  className="mt-6"
-                >
-                  {plan.cta}
-                </CardCta>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-faint">
-            The Advanced and Custom builds each include one complimentary month
-            of Advanced Management, worth{' '}
-            {currency.format(ADVANCED_MANAGEMENT_PRICE)}.{' '}
-            {COMPLIMENTARY_MONTH_TERMS}
-          </p>
-        </Container>
-      </Section>
-
-      {/* ── Closing ──────────────────────────────────────────── */}
-      <Section>
-        <Container>
-          <div className="reveal">
-            <div className="grid items-end gap-12 lg:grid-cols-[1fr_auto]">
-              <div>
-                <Label index="08" />
-                <Display className="mt-6">Northbound</Display>
-                <p className="display mt-8 text-2xl leading-tight text-ink-muted sm:text-3xl">
-                  Rebuild. Rebrand. Relaunch.
-                </p>
-                <p className="mt-8 max-w-lg text-lg leading-relaxed text-ink-muted">
-                  Websites for small businesses that want to look the part. Tell
-                  me what you are trying to do and I will tell you which package
-                  fits.
-                </p>
-                <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-                  <ButtonLink href="/contact" size="lg">
-                    Start a project
-                  </ButtonLink>
-                  <a
-                    href={`mailto:${site.email}`}
-                    className="label text-ink-muted underline-offset-4 hover:text-accent hover:underline"
+                <div className="flex items-center gap-5">
+                  <span
+                    className={cn(
+                      'display text-2xl',
+                      web ? 'text-ink' : 'text-yellow'
+                    )}
                   >
-                    {site.email}
-                  </a>
+                    {d.index}
+                  </span>
+                  <span
+                    aria-hidden
+                    className={cn(
+                      'h-px flex-1',
+                      web ? 'bg-line-ink-strong' : 'bg-line-strong'
+                    )}
+                  />
+                  <span
+                    aria-hidden
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
+                      <path d="M3 12h17M14 5l7 7-7 7" />
+                    </svg>
+                  </span>
                 </div>
-              </div>
-              <CompassDiagram className="w-40 justify-self-start text-ink sm:w-56 lg:w-64" />
+
+                <Display as="h2" size="md" className="mt-10">
+                  {d.name}
+                </Display>
+
+                <p
+                  className={cn(
+                    'mt-5 text-sm font-semibold tracking-wide uppercase',
+                    web ? 'text-ink' : 'text-yellow'
+                  )}
+                >
+                  {d.headline}
+                </p>
+
+                {!d.available ? <ComingSoon className="mt-6 self-start" /> : null}
+
+                <p
+                  className={cn(
+                    'mt-6 max-w-md text-[15px] leading-relaxed',
+                    web ? 'text-ink-muted' : 'text-chalk-muted'
+                  )}
+                >
+                  {d.body}
+                </p>
+
+                <div className="mt-10 pt-2">
+                  <ButtonLink
+                    href={d.href}
+                    variant={web ? 'solid' : 'yellow'}
+                    // Stretches over the whole card; see CardCta's note.
+                    className="relative z-10 after:absolute after:inset-0 after:content-['']"
+                  >
+                    {d.cta}
+                  </ButtonLink>
+                </div>
+              </article>
+            )
+          })}
+        </div>
+
+        {/* Replaces the mockup's "NB" lettermark plate with the approved mark. */}
+        <div className="mt-8 hidden items-center gap-4 border border-line px-5 py-4 lg:inline-flex">
+          <Mark className="h-6 w-auto" />
+          <p className="label text-chalk-muted">
+            Northbound.
+            <br />
+            Built to last.
+          </p>
+        </div>
+      </Container>
+
+      {/* ---------------------------------------------------------------- 02 */}
+      <Section className="bg-cream text-ink">
+        <Container>
+          <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
+            <div>
+              <Label tone="light">What we do</Label>
+              <Display as="h2" size="md" className="mt-8 text-ink">
+                Two divisions.
+                <br />
+                One Northbound.
+              </Display>
+              <p className="mt-8 max-w-md text-[15px] leading-relaxed text-ink-muted sm:text-base">
+                Northbound.Web builds and manages the digital infrastructure a
+                business runs on — the site, the hosting, the upkeep and the
+                improvements that follow.
+              </p>
+              <p className="mt-4 max-w-md text-[15px] leading-relaxed text-ink-muted sm:text-base">
+                Northbound.AI will provide digital employees designed to help
+                businesses operate, grow and save time. That side is still being
+                built, and it is marked as such everywhere on this site.
+              </p>
+              <ButtonLink href="/about" variant="solid" className="mt-10">
+                Learn more about us
+              </ButtonLink>
             </div>
+
+            <ul className="grid gap-px self-start bg-line-ink sm:grid-cols-2">
+              {pillars.map((p) => (
+                <li key={p.title} className="bg-cream p-7 sm:p-8">
+                  <p.icon className="h-7 w-7 text-ink" />
+                  <h3 className="label mt-6 text-ink">{p.title}</h3>
+                  {p.comingSoon ? (
+                    <p className="label mt-3 text-ink-faint">Coming soon</p>
+                  ) : null}
+                  <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                    {p.body}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Container>
+      </Section>
+
+      {/* ---------------------------------------------------------------- 03 */}
+      <Section className="bg-black">
+        <Container>
+          <div className="grid gap-14 lg:grid-cols-2 lg:gap-16">
+            <div>
+              <Label>Recent work</Label>
+              <Display as="h2" size="md" className="mt-8 text-cream">
+                Built for business.
+                <br />
+                Designed to perform.
+              </Display>
+              <ArrowLink href="/web/work" className="mt-10">
+                View our work
+              </ArrowLink>
+            </div>
+
+            <ul className="grid gap-6 sm:grid-cols-2">
+              {work.slice(0, 2).map((item) => (
+                <li key={item.slug} className="group">
+                  <div className="relative aspect-4/3 overflow-hidden border border-line bg-char">
+                    <MountainPlate className="h-full w-full opacity-60 transition-opacity duration-300 group-hover:opacity-80" />
+                    <span className="label absolute top-3 left-3 border border-line-strong bg-black/80 px-2.5 py-1 text-chalk">
+                      {workKindLabel[item.kind]}
+                    </span>
+                  </div>
+                  <h3 className="mt-4 text-[15px] text-cream">{item.title}</h3>
+                  <p className="mt-1 text-sm text-chalk-faint">{item.category}</p>
+                </li>
+              ))}
+
+              {/*
+                The remaining slots are an honest placeholder. The approved
+                mockup filled them with named companies; those are not clients,
+                so the grid says what is actually true instead.
+              */}
+              <li>
+                <Link
+                  href={WORK_PLACEHOLDER.href}
+                  className="group flex aspect-4/3 flex-col justify-between border border-dashed border-line-strong p-5 transition-colors hover:border-chalk"
+                >
+                  <span className="label text-chalk-faint">In progress</span>
+                  <span>
+                    <span className="block text-[15px] text-cream">
+                      {WORK_PLACEHOLDER.title}
+                    </span>
+                    <span className="mt-2 block text-sm leading-relaxed text-chalk-muted">
+                      {WORK_PLACEHOLDER.body}
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            </ul>
           </div>
         </Container>
       </Section>

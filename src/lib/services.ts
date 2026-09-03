@@ -1,19 +1,23 @@
 /**
- * Northbound Web's offer: fixed-price website builds and monthly management
+ * Northbound.Web's offer: fixed-price website builds and monthly management
  * plans.
  *
  * These are the real advertised prices, not illustrations. Only the Custom
  * build is variable ("from £499"), because its scope is agreed per project.
  * Do not reintroduce "example price" or "starting from" framing around the
- * £199, £299 and £399 packages — they are the advertised prices.
+ * £249, £299 and £389 packages — they are the advertised prices.
+ *
+ * The superseded tiers (Basic £199, Standard £299, Advanced £399, and the
+ * £39/£80/£149 management plans) are retired. Do not reinstate those names or
+ * figures anywhere public.
  *
  * Everything a customer is promised lives in this file. Do not add
  * deliverables here that have not been agreed as part of the offer, and do not
  * promise unlimited fixes, updates or support anywhere.
  */
 
-/** Advanced Management's monthly price, quoted wherever the free month is mentioned. */
-export const ADVANCED_MANAGEMENT_PRICE = 80
+/** Pro Management's monthly price, quoted wherever the free month is mentioned. */
+export const PRO_MANAGEMENT_PRICE = 60
 
 export type BuildPackage = {
   slug: string
@@ -33,22 +37,22 @@ export type BuildPackage = {
   /**
    * Query-string value used by /contact?package=… to preselect this package in
    * the enquiry form. Deliberately separate from `slug`, which is a live page
-   * anchor (/services#advanced) and must not change.
+   * anchor (/web#pro) and must not change.
    */
   enquiryParam: string
   /** Label for the card's call to action. */
   cta: string
   /** Shown as small print under the package — used to bound what is included. */
   note?: string
-  /** Whether the package bundles a complimentary month of Advanced Management. */
-  freeAdvancedMonth?: boolean
+  /** Whether the package bundles a complimentary month of Pro Management. */
+  freeProMonth?: boolean
 }
 
 export const buildPackages: BuildPackage[] = [
   {
-    slug: 'basic',
-    name: 'Basic',
-    price: 199,
+    slug: 'starter',
+    name: 'Starter',
+    price: 249,
     summary:
       'A small, well-built site that tells people who you are, what you do and how to reach you.',
     bestFor:
@@ -57,16 +61,16 @@ export const buildPackages: BuildPackage[] = [
       'Up to 3 pages',
       'Mobile responsive',
       'Contact form',
-      'Basic SEO setup',
+      'Search engine setup',
       '1 revision round',
     ],
     timeline: 'Approximately 5–7 working days',
-    enquiryParam: 'basic',
-    cta: 'Choose Basic',
+    enquiryParam: 'starter',
+    cta: 'Choose Starter',
   },
   {
-    slug: 'standard',
-    name: 'Standard',
+    slug: 'advanced',
+    name: 'Advanced',
     price: 299,
     badge: 'Most popular',
     summary:
@@ -74,35 +78,35 @@ export const buildPackages: BuildPackage[] = [
     bestFor:
       'Established businesses with a few distinct services or locations to cover.',
     includes: [
-      'Everything in Basic',
+      'Everything in Starter',
       'Up to 5 pages',
       'Analytics setup',
       'Google Business link or integration, where applicable',
       '2 revision rounds',
     ],
     timeline: 'Approximately 7–10 working days',
-    enquiryParam: 'standard',
-    cta: 'Choose Standard',
+    enquiryParam: 'advanced',
+    cta: 'Choose Advanced',
   },
   {
-    slug: 'advanced',
-    name: 'Advanced',
-    price: 399,
-    freeAdvancedMonth: true,
+    slug: 'pro',
+    name: 'Pro',
+    price: 389,
+    freeProMonth: true,
     summary:
       'A larger site, with the option of a third-party booking tool connected where that suits how you work.',
     bestFor:
       'Businesses taking bookings or enquiries regularly, or with more to say.',
     includes: [
-      'Everything in Standard',
+      'Everything in Advanced',
       'Up to 8 pages',
       'One standard third-party booking integration, where compatible and appropriate',
       '3 revision rounds',
-      `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
+      `1 complimentary month of Pro Management, worth £${PRO_MANAGEMENT_PRICE}`,
     ],
     timeline: 'Approximately 10–15 working days',
-    enquiryParam: 'advanced-build',
-    cta: 'Choose Advanced',
+    enquiryParam: 'pro',
+    cta: 'Choose Pro',
     note: 'The booking integration means connecting or embedding a suitable booking service you already use, or one we pick together. Building a booking system from scratch — complex availability rules, custom payment flows, customer accounts or automated booking workflows — is a bigger job, so that gets scoped and quoted separately.',
   },
   {
@@ -110,7 +114,7 @@ export const buildPackages: BuildPackage[] = [
     name: 'Custom',
     price: 499,
     variable: true,
-    freeAdvancedMonth: true,
+    freeProMonth: true,
     summary:
       'For projects that do not fit a package. We agree the requirements and scope together, and the price is quoted from that.',
     bestFor:
@@ -119,11 +123,11 @@ export const buildPackages: BuildPackage[] = [
       'Requirements and scope agreed individually',
       'No fixed page cap',
       'Revision allowance agreed in the project quote',
-      `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
+      `1 complimentary month of Pro Management, worth £${PRO_MANAGEMENT_PRICE}`,
     ],
     timeline: 'Agreed individually in your written quote',
     enquiryParam: 'custom',
-    cta: 'Discuss a Custom Build',
+    cta: 'Discuss a Custom build',
     note: '£499 is where a custom project starts, not what every custom project costs. Substantial functionality — user accounts, databases, payments, customer portals, ecommerce and the like — is not included in that starting price. Anything of that kind is scoped and quoted separately before any work begins.',
   },
 ]
@@ -148,52 +152,38 @@ export type ManagementPlan = {
 
 export const managementPlans: ManagementPlan[] = [
   {
-    slug: 'essential',
-    name: 'Essential',
-    price: 39,
+    slug: 'pro-management',
+    name: 'Pro Management',
+    price: PRO_MANAGEMENT_PRICE,
     summary:
-      'Keeps the site online, secure and up to date, without you having to think about it.',
+      'Keeps the site online, secure and up to date, with a regular check on how it is actually performing.',
     includes: [
       'Hosting and technical maintenance',
       'Security and dependency maintenance, where applicable',
       'Uptime monitoring',
-    ],
-    changeTime:
-      'Includes up to 30 minutes of requested website changes per billing month.',
-    enquiryParam: 'essential-management',
-    cta: 'Choose Essential',
-  },
-  {
-    slug: 'advanced-management',
-    name: 'Advanced',
-    price: ADVANCED_MANAGEMENT_PRICE,
-    summary:
-      'Adds a regular check on how the site is actually performing, and moves your requests up the queue.',
-    includes: [
-      'Everything in Essential',
       'Analytics and performance check',
-      'Priority support — your requests go ahead of Essential ones in the queue',
     ],
     changeTime:
       'Includes up to 1 hour of requested website changes per billing month.',
-    enquiryParam: 'advanced-management',
-    cta: 'Choose Advanced Management',
+    enquiryParam: 'pro-management',
+    cta: 'Choose Pro Management',
   },
   {
-    slug: 'complete',
-    name: 'Complete',
-    price: 149,
+    slug: 'ultimate-management',
+    name: 'Ultimate Management',
+    price: 69,
     summary:
-      'The site reviewed and reported on properly, so you can see how it is doing rather than guess.',
+      'Adds a proper review and a written report, and moves your requests up the queue.',
     includes: [
-      'Everything in Advanced',
+      'Everything in Pro Management',
       'Performance and SEO review',
       'Simple monthly performance report',
+      'Priority support — your requests go ahead of Pro ones in the queue',
     ],
     changeTime:
       'Includes up to 2 hours of requested website changes per billing month.',
-    enquiryParam: 'complete-management',
-    cta: 'Choose Complete',
+    enquiryParam: 'ultimate-management',
+    cta: 'Choose Ultimate Management',
   },
 ]
 
@@ -204,7 +194,7 @@ export const managementPlans: ManagementPlan[] = [
 export const managementTerms = [
   'Unused change time does not roll over from one billing month to the next.',
   'Additional work beyond the included allowance can be quoted separately.',
-  'Priority support means Advanced and Complete requests are handled ahead of Essential ones. It is a place in the queue rather than a guaranteed response time.',
+  'Priority support means Ultimate requests are handled ahead of Pro ones. It is a place in the queue rather than a guaranteed response time.',
   'You can cancel before your next billing date, which stops future renewals. Amounts already charged for the current billing period are not partially refunded if you cancel part-way through it.',
   'If you end a plan, I will set out your options — either continuing hosting separately, where that is available, or transferring the website to another suitable hosting provider.',
   'A management plan is optional. It is not a condition of having a website built.',
@@ -223,9 +213,28 @@ export const TIMELINE_TERMS =
   'Estimates, not guarantees. The clock starts once the deposit has been received and I have the information, content and assets needed to begin. Delays in content, feedback or approvals can move the completion date.'
 
 /**
- * The practical commercial terms, shown on the services page. Wording here is
- * deliberately bounded — read the constraints at the top of this file before
- * editing any of it.
+ * Ongoing improvement work, sold as part of a management plan rather than as a
+ * separate product. Anchored at /web#improvements.
+ */
+export const improvements = [
+  {
+    title: 'Measured, then changed',
+    body: 'Changes come from what the analytics actually show — which pages people leave, which ones bring enquiries — rather than from redesigning things that are working.',
+  },
+  {
+    title: 'Small and continuous',
+    body: 'Copy, layout, page speed and forms, adjusted a piece at a time within your plan’s included change time. No rebuild required to fix something that is underperforming.',
+  },
+  {
+    title: 'Reported plainly',
+    body: 'On Ultimate Management you get a simple monthly note on what changed and what it did. No dashboard you have to learn to read.',
+  },
+]
+
+/**
+ * The practical commercial terms, shown on the web services page. Wording here
+ * is deliberately bounded — read the constraints at the top of this file
+ * before editing any of it.
  */
 export const commercialTerms: { title: string; points: string[] }[] = [
   {
@@ -238,9 +247,9 @@ export const commercialTerms: { title: string; points: string[] }[] = [
   {
     title: 'Timescales',
     points: [
-      'Basic — approximately 5–7 working days.',
-      'Standard — approximately 7–10 working days.',
-      'Advanced — approximately 10–15 working days.',
+      'Starter — approximately 5–7 working days.',
+      'Advanced — approximately 7–10 working days.',
+      'Pro — approximately 10–15 working days.',
       'Custom — agreed individually in your written quote.',
       TIMELINE_TERMS,
     ],
@@ -248,7 +257,7 @@ export const commercialTerms: { title: string; points: string[] }[] = [
   {
     title: 'Revisions and feedback',
     points: [
-      'Each package includes a set number of revision rounds — one on Basic, two on Standard, three on Advanced. Custom is agreed in your quote.',
+      'Each package includes a set number of revision rounds — one on Starter, two on Advanced, three on Pro. Custom is agreed in your quote.',
       'Please send the feedback for each round within 10 working days of getting the preview link.',
       'If it arrives later than that, the project may be paused and the estimated completion date may move.',
       'Silence is never treated as approval. If I have not heard from you, I will follow up rather than sign the work off on your behalf.',
@@ -273,7 +282,7 @@ export const commercialTerms: { title: string; points: string[] }[] = [
   },
 ]
 
-/** The steps a project actually runs through, used on the home and approach pages. */
+/** The steps a project actually runs through. */
 export const process = [
   {
     step: '01',
@@ -298,7 +307,7 @@ export const process = [
   {
     step: '05',
     title: 'Revisions',
-    body: 'Your package includes a set number of revision rounds — one on Basic, two on Standard, three on Advanced. A round means you collect your changes, send them over, and I work through them together. Feedback within 10 working days of the preview keeps things moving; later than that and the finish date can shift. I will never take silence as approval.',
+    body: 'Your package includes a set number of revision rounds — one on Starter, two on Advanced, three on Pro. A round means you collect your changes, send them over, and I work through them together. Feedback within 10 working days of the preview keeps things moving; later than that and the finish date can shift. I will never take silence as approval.',
   },
   {
     step: '06',

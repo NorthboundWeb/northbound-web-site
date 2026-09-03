@@ -1,86 +1,78 @@
 @import 'tailwindcss';
 
 /*
-  Northbound print system.
+  Northbound — premium industrial editorial.
 
-  Warm cream paper, deep bottle-green ink, burnt-orange as the one interaction
-  colour. Olive, mustard, cobalt and dusty pink are editorial accents used
-  sparingly — never as UI states. No purple, no gradients, no gloss.
+  Near-black ground, warm cream sections, condensed uppercase display type and
+  thin rules. Two division accents carry the brand split and are never mixed:
+  burnt orange is Northbound.Web, signal yellow is Northbound.AI.
+
+  Contrast note: --orange clears AA on the near-black ground but NOT on cream
+  (3.3:1), so on cream it is permitted for rules, bars and large display type
+  only. Small orange TEXT on cream must use --orange-ink. Yellow is the
+  reverse: it clears AA comfortably on dark and is never used as text on cream.
 */
 :root {
+  color-scheme: dark;
+
+  /* Ground */
+  --black: #0e0e0e;
+  --char: #141414;
+  --char-raised: #1a1a1a;
+  --char-sunk: #0a0a0a;
+
   /* Paper */
-  --cream: #f2ebdd;
-  --paper: #f2ebdd;
-  --paper-sunk: #ede5d6;
-  --paper-raised: #f7f2e7;
+  --cream: #f2efe9;
+  --cream-sunk: #e9e5dc;
 
-  /* Ink — deep green carries the brand, not neutral black */
-  --green: #0d2a24;
-  --green-deep: #112f29;
-  --black: #111111;
-  --ink: #0d2a24;
-  --ink-muted: #3d564e;
-  /* Darkened from #6B8078 (3.55:1) to clear WCAG AA at small sizes on cream. */
-  --ink-faint: #55675f;
+  /* Type */
+  --ink: #111111;
+  --ink-muted: #4a4a48;
+  --ink-faint: #63625e;
 
-  /* Interaction */
-  --orange: #f04a0a;
-  --orange-lit: #f25a14;
-  --accent: #f04a0a;
-  --accent-ink: #f2ebdd;
-  --accent-wash: #f7e3d5;
+  --chalk: #f2efe9;
+  --chalk-muted: #a8a7a3;
+  /* Lightened until small text on --black clears AA (4.9:1). */
+  --chalk-faint: #8a8985;
 
-  /* Editorial accents — sparing, decorative only */
-  --olive: #7d8242;
-  --mustard: #d49a17;
-  --cobalt: #3047a8;
-  --pink: #e7b1aa;
+  /* Division accents */
+  --orange: #dd5a22;
+  --orange-lit: #e8672e;
+  /* Orange dark enough to clear AA as small text on cream (5.4:1) and on
+     cream-sunk (5.1:1). --orange itself is only 3.3:1 there. */
+  --orange-ink: #a83c13;
+  --yellow: #f0b429;
+  --yellow-lit: #f7c246;
 
-  --line: rgba(13, 42, 36, 0.2);
-  --line-strong: rgba(13, 42, 36, 0.42);
-}
-
-/* Dark mode is the same brand inverted: green paper, cream ink. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #0d2a24;
-    --paper-sunk: #0a211c;
-    --paper-raised: #112f29;
-
-    --ink: #f2ebdd;
-    --ink-muted: #c2cec7;
-    --ink-faint: #8ba095;
-
-    --accent: #f25a14;
-    --accent-ink: #0d2a24;
-    --accent-wash: #1b3a32;
-
-    --line: rgba(242, 235, 221, 0.2);
-    --line-strong: rgba(242, 235, 221, 0.4);
-  }
+  /* Rules */
+  --line: rgba(242, 239, 233, 0.14);
+  --line-strong: rgba(242, 239, 233, 0.3);
+  --line-ink: rgba(17, 17, 17, 0.16);
+  --line-ink-strong: rgba(17, 17, 17, 0.34);
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-paper-sunk: var(--paper-sunk);
-  --color-paper-raised: var(--paper-raised);
-  --color-cream: var(--cream);
-  --color-green: var(--green);
-  --color-green-deep: var(--green-deep);
   --color-black: var(--black);
+  --color-char: var(--char);
+  --color-char-raised: var(--char-raised);
+  --color-char-sunk: var(--char-sunk);
+  --color-cream: var(--cream);
+  --color-cream-sunk: var(--cream-sunk);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-ink-faint: var(--ink-faint);
-  --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
-  --color-accent-wash: var(--accent-wash);
+  --color-chalk: var(--chalk);
+  --color-chalk-muted: var(--chalk-muted);
+  --color-chalk-faint: var(--chalk-faint);
   --color-orange: var(--orange);
-  --color-olive: var(--olive);
-  --color-mustard: var(--mustard);
-  --color-cobalt: var(--cobalt);
-  --color-pink: var(--pink);
+  --color-orange-lit: var(--orange-lit);
+  --color-orange-ink: var(--orange-ink);
+  --color-yellow: var(--yellow);
+  --color-yellow-lit: var(--yellow-lit);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-line-ink: var(--line-ink);
+  --color-line-ink-strong: var(--line-ink-strong);
 
   --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', sans-serif;
@@ -91,22 +83,29 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* Anchors clear the sticky header rather than hiding under it. */
+    scroll-padding-top: 6rem;
   }
 
   body {
-    background-color: var(--paper);
-    color: var(--ink);
+    background-color: var(--black);
+    color: var(--chalk);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    /* Nothing may push the page sideways at 390px. */
+    overflow-x: hidden;
   }
 
-  /* Display type is a graphic element: condensed, uppercase, tight. */
   .display {
     font-family: var(--font-display);
     text-transform: uppercase;
-    line-height: 0.82;
-    letter-spacing: -0.015em;
+    /* Anton's glyphs overhang their line box; below ~0.9 successive lines
+       collide and the last line's bottom is clipped by the parent. */
+    line-height: 0.92;
+    letter-spacing: 0.005em;
     font-weight: 400;
+    /* Keeps the tail of the final line inside the element's own box. */
+    padding-bottom: 0.06em;
   }
 
   p {
@@ -114,105 +113,79 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--yellow);
     outline-offset: 3px;
   }
 
   ::selection {
-    background-color: var(--accent);
+    background-color: var(--orange);
     color: var(--cream);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
   }
 }
 
-/* Small technical label — the recurring print annotation. */
+/* Small technical annotation — the recurring editorial detail. */
 @utility label {
   font-family: var(--font-sans);
   font-size: 0.6875rem;
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
-/*
-  Paper grain. A single tiled 120×120 SVG turbulence, ~1.5KB inline, drawn
-  once into a fixed pseudo-element so it costs no layout and never repaints on
-  scroll. Kept faint enough to read as texture rather than dirt.
-*/
-@utility grain {
-  position: relative;
-}
-
-@utility grain-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.5;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
-}
-
-@media (prefers-color-scheme: dark) {
-  .grain-overlay {
-    mix-blend-mode: screen;
-    opacity: 0.28;
-  }
-}
-
-/* Faint technical grid, as on the reference sheets. */
+/* Faint technical grid used behind dark sections. */
 @utility gridlines {
   background-image: linear-gradient(var(--line) 1px, transparent 1px),
     linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 64px 64px;
+  background-size: 72px 72px;
   background-position: -1px -1px;
 }
 
-/* Dotted rule used between editorial blocks. */
-@utility dotted-rule {
-  background-image: radial-gradient(
-    circle,
-    var(--line-strong) 1px,
-    transparent 1px
-  );
-  background-size: 8px 2px;
-  background-repeat: repeat-x;
-  height: 2px;
-}
+/*
+  Brushed-metal fill for the logo.
 
-/* An orange point travelling a line — the recurring motion motif. */
-@keyframes travel {
-  0% {
-    left: 0;
+  The logo geometry never moves. A wide gradient sheet is drawn behind the
+  logo's own mask and translated across it, so only the light travelling over
+  the material animates. transform-only, composited on the GPU, no layout.
+*/
+@keyframes nb-sheen {
+  from {
+    transform: translateX(-38%);
   }
-  50% {
-    left: calc(100% - 8px);
-  }
-  100% {
-    left: 0;
+  to {
+    transform: translateX(0%);
   }
 }
 
-@utility travelling-dot {
-  animation: travel 6s ease-in-out infinite;
+@utility nb-sheen {
+  animation: nb-sheen 12s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Hero: one slightly livelier pass on load, then the ambient drift. */
+@utility nb-sheen-hero {
+  animation: nb-sheen 9s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Desktop hover lifts the pace a little. Never required for the effect. */
+@media (hover: hover) and (pointer: fine) {
+  .nb-logo:hover .nb-sheen,
+  .nb-logo:hover .nb-sheen-hero {
+    animation-duration: 4.5s;
+  }
+}
+
+/* Mobile keeps the metal but drops the continuous filter cost. */
+@media (max-width: 767px) {
+  .nb-grain {
+    display: none;
+  }
 }
 
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -220,24 +193,35 @@
   }
 }
 
-@utility rise-in {
-  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) both;
-}
-
 /*
-  Scroll-driven reveal, CSS only.
-
-  Content is visible by default, so it is never hidden when JavaScript is off
-  or when the browser lacks scroll-timeline support — the animation is pure
-  enhancement layered on top. Chromium animates it on entry; Safari and Firefox
-  simply show the content. No observer, no client component, no hydration risk.
+  Scroll-driven reveal, CSS only. Content is visible by default so it is never
+  hidden when JavaScript is off or the browser lacks scroll-timeline support.
 */
 @utility reveal {
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       animation: rise linear both;
       animation-timeline: view();
-      animation-range: entry 0% entry 45%;
+      animation-range: entry 0% entry 40%;
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* The metal stays — it simply stops travelling. */
+  .nb-sheen,
+  .nb-sheen-hero {
+    animation: none !important;
+    transform: translateX(-19%);
   }
 }

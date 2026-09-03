@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import { MARK_PATH, MARK_VIEWBOX } from '@/components/logo-paths'
 import { site } from '@/lib/site'
 
 export const alt = `${site.name} — ${site.tagline}`
@@ -7,7 +8,8 @@ export const contentType = 'image/png'
 
 /**
  * Rendered at build time. Uses no custom font so the image never depends on a
- * network fetch succeeding during the build.
+ * network fetch succeeding during the build, and draws the approved mark from
+ * the same path data as every other logo on the site.
  */
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -19,44 +21,42 @@ export default function OpengraphImage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          backgroundColor: '#0D2A24',
+          backgroundColor: '#0E0E0E',
           padding: '80px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <svg width="52" height="52" viewBox="0 0 32 32">
-            <circle
-              cx="16"
-              cy="16"
-              r="14"
-              stroke="#F2EBDD"
-              strokeWidth="1.5"
-              fill="none"
-              opacity="0.4"
-            />
-            <path d="M16 4.5 22 20 16 16.6 10 20Z" fill="#F04A0A" />
-            <path d="M16 27.5 10 20l6 3.4 6-3.4Z" fill="#F04A0A" opacity="0.45" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <svg width="96" height="40" viewBox={MARK_VIEWBOX}>
+            <path d={MARK_PATH} fill="#F2EFE9" />
           </svg>
-          <div style={{ color: '#F2EBDD', fontSize: 34, letterSpacing: '-0.02em' }}>
-            Northbound Web
+          <div
+            style={{
+              color: '#F2EFE9',
+              fontSize: 32,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Northbound
           </div>
         </div>
 
         <div
           style={{
             display: 'flex',
-            fontSize: 82, textTransform: 'uppercase',
-            lineHeight: 1.1,
-            color: '#F2EBDD',
-            letterSpacing: '-0.03em',
-            maxWidth: 900,
+            fontSize: 86,
+            textTransform: 'uppercase',
+            lineHeight: 1.05,
+            color: '#F2EFE9',
+            letterSpacing: '-0.01em',
+            maxWidth: 940,
           }}
         >
-          Websites for small businesses that want to look the part.
+          Digital infrastructure for modern businesses
         </div>
 
-        <div style={{ display: 'flex', fontSize: 28, color: 'rgba(242,235,221,0.65)' }}>
-          Design · Development · Management · {site.location}
+        <div style={{ display: 'flex', fontSize: 26, color: 'rgba(242,239,233,0.62)' }}>
+          Web services · AI employees coming soon · {site.location}
         </div>
       </div>
     ),

@@ -14,209 +14,189 @@ export function Container({
   children: ReactNode
 }) {
   return (
-    <div className={cn('mx-auto w-full max-w-[88rem] px-6 lg:px-12', className)}>
+    <div className={cn('mx-auto w-full max-w-[90rem] px-6 lg:px-12', className)}>
       {children}
     </div>
   )
 }
 
-export function Section({
-  className,
-  children,
-  ...props
-}: ComponentProps<'section'>) {
+export function Section({ className, children, ...props }: ComponentProps<'section'>) {
   return (
-    <section className={cn('py-24 sm:py-32', className)} {...props}>
+    <section className={cn('py-20 sm:py-28 lg:py-32', className)} {...props}>
       {children}
     </section>
   )
 }
 
-/** Technical annotation: a rule, an index number, a label. */
+/**
+ * Editorial eyebrow: a small tracked label closed by a thin rule.
+ *
+ * `tone` names the surface rather than being overridden through className —
+ * two colour utilities of equal specificity are resolved by stylesheet order,
+ * not by the order they appear in the class attribute.
+ */
 export function Label({
-  index,
   children,
   className,
   tone = 'dark',
 }: {
-  index?: string
-  children?: ReactNode
+  children: ReactNode
   className?: string
-  /** Same reason as CardCta's tone: colour utilities of equal specificity are
-   *  resolved by stylesheet order, so the surface is declared, not overridden. */
+  /** 'dark' = on the near-black ground. 'light' = on cream. */
   tone?: 'dark' | 'light'
 }) {
   return (
     <p
       className={cn(
-        'label flex items-center gap-3',
-        tone === 'light' ? 'text-cream/60' : 'text-ink-faint',
+        'label flex items-center gap-4',
+        tone === 'light' ? 'text-ink-faint' : 'text-chalk-muted',
         className
       )}
     >
-      {index ? <span className="text-accent">{index}</span> : null}
+      {children}
       <span
         aria-hidden
         className={cn(
-          'h-px w-8',
-          tone === 'light' ? 'bg-cream/40' : 'bg-line-strong'
+          'h-px w-10 sm:w-16',
+          tone === 'light' ? 'bg-line-ink-strong' : 'bg-line-strong'
         )}
       />
-      {children}
     </p>
   )
 }
 
-/**
- * A compact full-bleed green band carrying one statement.
- *
- * Green is used as punctuation between cream sections rather than as a field
- * behind dense content: the band states the idea, and the grid that follows
- * sits on paper. That keeps the page light while preserving a hard
- * cream → green → cream rhythm.
- */
-export function StatementBand({
-  index,
-  eyebrow,
-  word,
-  lede,
-  aside,
-  children,
-  id,
-  className,
-}: {
-  index?: string
-  eyebrow?: string
-  word: string
-  lede?: ReactNode
-  aside?: string
-  children?: ReactNode
-  id?: string
-  className?: string
-}) {
-  return (
-    <section id={id} className={cn('bg-green text-cream', className)}>
-      <Container className="py-16 sm:py-20">
-        <div className="flex items-start justify-between gap-6">
-          <Label index={index} tone="light">
-            {eyebrow}
-          </Label>
-          {aside ? <span className="label text-accent">{aside}</span> : null}
-        </div>
-        <p className="display mt-6 text-[clamp(3rem,11vw,8.5rem)] text-cream">
-          {word}
-          <span className="text-accent">.</span>
-        </p>
-        {lede ? (
-          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-cream/80">
-            {lede}
-          </p>
-        ) : null}
-        {children}
-      </Container>
-    </section>
-  )
-}
-
-/**
- * Poster headline. Renders as one enormous condensed word with an orange full
- * stop — the single most recognisable element of the system.
- */
+/** Poster headline — condensed, uppercase, tight. */
 export function Display({
   children,
-  stop = true,
   as: As = 'h2',
+  size = 'md',
   className,
 }: {
   children: ReactNode
-  /** The orange full stop. Off for headlines that continue in a sentence. */
-  stop?: boolean
-  as?: 'h1' | 'h2' | 'p'
+  as?: 'h1' | 'h2' | 'h3' | 'p'
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
+}) {
+  const sizes = {
+    sm: 'text-[clamp(1.75rem,4.5vw,2.75rem)]',
+    md: 'text-[clamp(2.25rem,6vw,4rem)]',
+    lg: 'text-[clamp(2.75rem,7.5vw,5.5rem)]',
+  }
+  return <As className={cn('display', sizes[size], className)}>{children}</As>
+}
+
+/**
+ * "Coming soon" marker.
+ *
+ * Used wherever Northbound Employees appear. Deliberately looks deliberate —
+ * a bordered technical badge in the division's own yellow, not a greyed-out
+ * disabled state that reads as broken.
+ */
+export function ComingSoon({
+  children = 'Coming soon',
+  className,
+}: {
+  children?: ReactNode
   className?: string
 }) {
   return (
-    <As
+    <span
       className={cn(
-        'display text-[clamp(3.5rem,15vw,13rem)] text-ink',
+        'label inline-flex items-center gap-2 border border-yellow/50 px-3 py-1.5 text-yellow',
         className
       )}
     >
+      <span aria-hidden className="h-1.5 w-1.5 bg-yellow" />
       {children}
-      {stop ? <span className="text-accent">.</span> : null}
-    </As>
+    </span>
   )
 }
 
 const base =
-  'group/btn inline-flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-[0.12em] transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60'
+  'group/btn inline-flex items-center justify-center gap-3 label transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60'
 
 const variants = {
-  /** Deep green block, cream text, orange arrow. */
-  primary: 'bg-ink text-paper hover:bg-accent hover:text-cream',
-  /** Outlined, for secondary weight. */
-  secondary: 'border border-line-strong text-ink hover:border-accent hover:text-accent',
-  /** Cream on green sections. */
-  inverse: 'bg-cream text-green hover:bg-accent hover:text-cream',
+  /** Near-black block with cream text — the primary action on cream. */
+  solid: 'bg-black text-cream hover:bg-char-raised',
+  /** Cream block with dark text — the primary action on the dark ground. */
+  light: 'bg-cream text-black hover:bg-white',
+  /** Signal yellow — Northbound.AI only. */
+  yellow: 'bg-yellow text-black hover:bg-yellow-lit',
+  /** Outlined on the dark ground. */
+  outline:
+    'border border-line-strong text-chalk hover:border-chalk hover:bg-chalk hover:text-black',
+  /** Outlined on cream. */
+  outlineInk:
+    'border border-line-ink-strong text-ink hover:border-ink hover:bg-black hover:text-cream',
 } as const
 
 const sizes = {
-  md: 'px-6 py-3',
-  lg: 'px-8 py-4 text-[0.9375rem]',
+  md: 'px-6 py-3.5',
+  lg: 'px-8 py-4.5',
 } as const
 
 type StyleProps = { variant?: keyof typeof variants; size?: keyof typeof sizes }
 
-export function buttonClass({
-  variant = 'primary',
-  size = 'md',
-}: StyleProps = {}) {
+export function buttonClass({ variant = 'solid', size = 'md' }: StyleProps = {}) {
   return cn(base, variants[variant], sizes[size])
 }
 
 export function ButtonLink({
   href,
-  variant = 'primary',
+  variant,
   size,
   className,
   children,
-}: StyleProps & { href: string; className?: string; children: ReactNode }) {
+  arrow = false,
+}: StyleProps & {
+  href: string
+  className?: string
+  children: ReactNode
+  arrow?: boolean
+}) {
   return (
     <Link href={href} className={cn(buttonClass({ variant, size }), className)}>
       {children}
-      <span
-        className={cn(
-          'transition-transform duration-200 group-hover/btn:translate-x-1',
-          variant === 'primary' || variant === 'inverse'
-            ? 'text-accent group-hover/btn:text-current'
-            : 'text-accent'
-        )}
-      >
-        <ArrowRight />
-      </span>
+      {arrow ? (
+        <span className="transition-transform duration-200 group-hover/btn:translate-x-1">
+          <ArrowRight />
+        </span>
+      ) : null}
     </Link>
   )
 }
 
-/** Text link with the orange arrow — secondary actions. */
+/** Text link closed with the directional arrow — secondary actions. */
 export function ArrowLink({
   href,
   children,
   className,
+  tone = 'orange',
 }: {
   href: string
   children: ReactNode
   className?: string
+  /** 'orange' is for the dark ground only; on cream use 'orangeInk'. */
+  tone?: 'orange' | 'orangeInk' | 'chalk' | 'ink' | 'yellow'
 }) {
+  const tones = {
+    orange: 'text-orange hover:text-orange-lit',
+    orangeInk: 'text-orange-ink hover:text-orange',
+    yellow: 'text-yellow hover:text-yellow-lit',
+    chalk: 'text-chalk hover:text-chalk-muted',
+    ink: 'text-ink hover:text-ink-muted',
+  }
   return (
     <Link
       href={href}
       className={cn(
-        'group/link label inline-flex items-center gap-2.5 text-ink hover:text-accent',
+        'group/link label inline-flex items-center gap-3 transition-colors',
+        tones[tone],
         className
       )}
     >
       {children}
-      <span className="text-accent transition-transform duration-200 group-hover/link:translate-x-1">
+      <span className="transition-transform duration-200 group-hover/link:translate-x-1">
         <ArrowRight />
       </span>
     </Link>
@@ -226,47 +206,57 @@ export function ArrowLink({
 /**
  * Call to action that also makes its whole card clickable.
  *
- * The card is the positioned ancestor; this link's ::after stretches across it,
- * so a mouse or thumb can hit anywhere on the card. Screen readers and keyboard
- * users still get one short, meaningful link ("Choose Standard") rather than a
- * link whose name is every word in the card.
+ * The card is the positioned ancestor; this link's ::after stretches across
+ * it, so a mouse or thumb can hit anywhere on the card. Screen readers and
+ * keyboard users still get one short, meaningful link rather than one whose
+ * name is every word in the card.
  *
- * The card needs `group relative`; other interactive elements inside it need
+ * The card needs `group relative`; anything else interactive inside it needs
  * `relative z-10` to sit above the overlay.
  */
 export function CardCta({
   href,
   children,
   className,
-  tone = 'dark',
+  tone = 'ink',
 }: {
   href: string
   children: ReactNode
   className?: string
-  /**
-   * Which surface the card sits on. Passed as a prop rather than overridden
-   * through className: two text colour utilities have equal specificity, so
-   * the stylesheet's order decides the winner, not the class attribute's —
-   * which silently rendered cream CTAs in near-invisible green.
-   */
-  tone?: 'dark' | 'light'
+  tone?: 'ink' | 'chalk'
 }) {
   return (
     <Link
       href={href}
       className={cn(
-        "label inline-flex items-center gap-2.5 after:absolute after:inset-0 after:content-[''] group-hover:text-accent",
-        tone === 'light' ? 'text-cream' : 'text-ink',
+        "label inline-flex items-center gap-3 after:absolute after:inset-0 after:content-['']",
+        tone === 'chalk' ? 'text-chalk' : 'text-ink',
         className
       )}
     >
       {children}
-      <span className="text-accent transition-transform duration-200 group-hover:translate-x-1">
-        <ArrowRight />
-      </span>
     </Link>
   )
 }
 
-/** Back-compat alias — some pages still import Arrow. */
-export { ArrowRight as Arrow }
+/**
+ * The numbered left rail from the approved composition — an index number and
+ * tick marks running down a hairline. Decorative, so hidden from assistive
+ * technology and dropped entirely on small screens where there is no room.
+ */
+export function Rail({ index, className }: { index: string; className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={cn('hidden w-px flex-col items-center bg-line lg:flex', className)}
+    >
+      <span className="h-16 w-px bg-line" />
+      <span className="label -rotate-0 bg-black py-3 text-yellow">{index}</span>
+      <span className="h-24 w-px bg-line" />
+      <span className="h-px w-3 bg-line-strong" />
+      <span className="h-8 w-px bg-line" />
+      <span className="h-px w-3 bg-line-strong" />
+      <span className="flex-1 w-px bg-line" />
+    </div>
+  )
+}

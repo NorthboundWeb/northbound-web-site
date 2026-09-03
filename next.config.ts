@@ -18,6 +18,15 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      // The site restructured around the two divisions. Both old routes were
+      // in the sitemap and carried canonical tags, so they are redirected
+      // permanently rather than dropped — the equity moves with them.
+      { source: '/services', destination: '/web', permanent: true },
+      { source: '/approach', destination: '/about#process', permanent: true },
+    ]
+  },
 }
 
 export default nextConfig

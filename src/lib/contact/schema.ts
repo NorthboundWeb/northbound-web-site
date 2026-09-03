@@ -2,13 +2,17 @@ import { z } from 'zod'
 import { buildPackages, managementPlans } from '@/lib/services'
 
 /**
- * Builds and management plans both have a tier called "Advanced", so the plan
- * names are suffixed here. Without it the dropdown shows two options reading
- * simply "Advanced", and the enquiry email cannot tell which one was picked.
+ * Builds and management plans both use the name "Advanced"/"Pro", so builds are
+ * suffixed " build" and plans carry their own "Management" suffix. Without that
+ * the dropdown shows two options reading simply "Pro", and the enquiry email
+ * cannot tell which one was picked.
  */
+export const EMPLOYEES_INTEREST = 'Northbound Employees — register interest'
+
 export const projectTypes = [
   ...buildPackages.map((pkg) => `${pkg.name} build`),
-  ...managementPlans.map((plan) => `${plan.name} management`),
+  ...managementPlans.map((plan) => plan.name),
+  EMPLOYEES_INTEREST,
   'Not sure yet',
   'Something else',
 ] as const
@@ -23,10 +27,7 @@ const packageParamToProjectType: Record<string, string> = {
     buildPackages.map((pkg) => [pkg.enquiryParam, `${pkg.name} build`])
   ),
   ...Object.fromEntries(
-    managementPlans.map((plan) => [
-      plan.enquiryParam,
-      `${plan.name} management`,
-    ])
+    managementPlans.map((plan) => [plan.enquiryParam, plan.name])
   ),
 }
 
@@ -43,6 +44,19 @@ export function projectTypeFromParam(
   return match && (projectTypes as readonly string[]).includes(match)
     ? match
     : undefined
+}
+
+/**
+ * Resolves `?interest=` to a form option.
+ *
+ * Northbound Employees are not for sale, so "register interest" cannot go to a
+ * checkout or a waitlist that does not exist. It lands here instead, on the
+ * working enquiry form, with the reason for writing already selected.
+ */
+export function interestFromParam(
+  param: string | string[] | undefined
+): string | undefined {
+  return param === 'employees' ? EMPLOYEES_INTEREST : undefined
 }
 
 /**

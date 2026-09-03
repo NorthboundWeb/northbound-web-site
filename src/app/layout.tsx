@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Anton, Inter } from 'next/font/google'
+import { LogoDefs } from '@/components/logo'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { site } from '@/lib/site'
@@ -30,9 +31,9 @@ export const metadata: Metadata = {
     'web design',
     'web development',
     'small business website',
-    'Next.js developer',
     'website maintenance',
     'UK web developer',
+    'AI employees',
   ],
   authors: [{ name: site.name }],
   creator: site.name,
@@ -64,12 +65,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en-GB" className={`${body.variable} ${display.variable}`}>
-      <body className="relative flex min-h-dvh flex-col bg-paper text-ink">
-        {/* Print grain, drawn once over the whole page. */}
-        <div aria-hidden className="grain-overlay" />
+      <body className="relative flex min-h-dvh flex-col bg-black text-chalk">
+        {/* Logo paths, masks and metal gradient — declared once per page. */}
+        <LogoDefs />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-ink"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-cream focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-black"
         >
           Skip to content
         </a>
