@@ -2,23 +2,30 @@
  * The hero mountain plate.
  *
  * PLACEHOLDER ASSET. The approved composition calls for dramatic black-and-
- * white mountain photography here. No licensed photograph was supplied with
- * the brand assets, and shipping an unlicensed stock image is not an option,
- * so this is a drawn stand-in: layered ridges under an atmospheric wash, in
- * the same monochrome register as the reference.
+ * white mountain photography here. No licensed photograph has been supplied,
+ * and shipping an unlicensed stock image is not an option, so this is a drawn
+ * stand-in: layered ridges under an atmospheric wash, in the same monochrome
+ * register as the reference.
  *
- * To swap in the real photograph, replace this component's body with the
+ * To swap in the real photograph, replace `MountainPlate`'s body with the
  * image and keep the same wrapper classes — every caller positions the plate
  * through those, not through anything internal.
+ *
+ * The gradients and filter live in `MountainDefs`, rendered ONCE from the root
+ * layout. The plate appears several times on a page (the hero and each work
+ * tile), and repeating its <defs> would put the same element id in the
+ * document three or four times — invalid HTML, and the kind of thing that
+ * makes one instance silently adopt another's paint. Same reasoning as
+ * LogoDefs, so the two follow the same pattern.
  */
-export function MountainPlate({ className = '' }: { className?: string }) {
+export function MountainDefs() {
   return (
     <svg
-      viewBox="0 0 800 900"
-      preserveAspectRatio="xMidYMax slice"
-      className={className}
       aria-hidden
       focusable="false"
+      width="0"
+      height="0"
+      className="pointer-events-none absolute"
     >
       <defs>
         {/* Cold light breaking behind the summit. */}
@@ -52,7 +59,19 @@ export function MountainPlate({ className = '' }: { className?: string }) {
           </feComponentTransfer>
         </filter>
       </defs>
+    </svg>
+  )
+}
 
+export function MountainPlate({ className = '' }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 800 900"
+      preserveAspectRatio="xMidYMax slice"
+      className={className}
+      aria-hidden
+      focusable="false"
+    >
       <rect width="800" height="900" fill="url(#nb-sky)" />
 
       {/* Far range — hazy, low contrast. */}

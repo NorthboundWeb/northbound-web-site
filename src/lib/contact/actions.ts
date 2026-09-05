@@ -12,11 +12,34 @@ import {
 
 /** Bots fill every field they find, including ones a human never sees. */
 const HONEYPOT_FIELD = 'website'
-/** A genuine person does not read, think and type in under this many ms. */
-const MIN_FILL_MS = 3_000
+/**
+ * Below this, a submission is suspiciously fast.
+ *
+ * It is a SIGNAL, not a verdict. A password manager filling three fields and a
+ * quick click clears this easily, and the previous behaviour — returning a
+ * fake "success" and silently binning the message — meant a real enquiry could
+ * vanish while the sender was told it had been sent. Losing a customer's
+ * message is far worse than receiving a flagged one, so a fast submission is
+ * now delivered and marked, and the honeypot and the rate limit do the actual
+ * blocking.
+ */
+const FAST_FILL_MS = 3_000
 
 const GENERIC_ERROR =
   'Something went wrong sending your message. Please email me directly and I will pick it up.'
+
+/** Rejects rather than hanging, so the visitor always gets an answer. */
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`Timed out after ${ms}ms`)), ms)
+  })
+  try {
+    return await Promise.race([promise, timeout])
+  } finally {
+    clearTimeout(timer!)
+  }
+}
 
 function escapeHtml(value: string) {
   return value
@@ -54,11 +77,9 @@ export async function submitEnquiry(
   }
 
   const startedAt = Number(formData.get('startedAt') ?? 0)
-  if (Number.isFinite(startedAt) && startedAt > 0) {
-    if (Date.now() - startedAt < MIN_FILL_MS) {
-      return { status: 'success' }
-    }
-  }
+  const elapsed =
+    Number.isFinite(startedAt) && startedAt > 0 ? Date.now() - startedAt : null
+  const suspiciouslyFast = elapsed !== null && elapsed < FAST_FILL_MS
 
   // 2. Rate limit before doing any work.
   const limited = rateLimit(`contact:${await clientKey()}`, {
@@ -96,6 +117,9 @@ export async function submitEnquiry(
   }
 
   const enquiry = parsed.data
+  // What the visitor was actually looking at when they wrote to us.
+  const currency = String(formData.get('currency') ?? 'GBP')
+  const language = String(formData.get('language') ?? 'en-GB')
 
   // 4. Send. Configuration problems are logged server-side but never described
   //    to the visitor — an error page is not the place to leak setup detail.
@@ -110,9 +134,9 @@ export async function submitEnquiry(
     return { status: 'error', message: GENERIC_ERROR }
   }
 
-  const subject = `New enquiry — ${headerSafe(enquiry.name)}${
-    enquiry.business ? ` (${headerSafe(enquiry.business)})` : ''
-  }`
+  const subject = `${suspiciouslyFast ? '[fast] ' : ''}New enquiry — ${headerSafe(
+    enquiry.name
+  )}${enquiry.business ? ` (${headerSafe(enquiry.business)})` : ''}`
 
   const lines = [
     ['Name', enquiry.name],
@@ -120,11 +144,20 @@ export async function submitEnquiry(
     ['Business', enquiry.business ?? '—'],
     ['Project type', enquiry.projectType ?? '—'],
     ['Budget', enquiry.budget ?? '—'],
+    ['Language', language],
+    ['Currency shown', currency],
+    // Surfaced rather than acted on, so a false positive costs an eyebrow
+    // rather than a customer.
+    ...(suspiciouslyFast
+      ? ([['Note', `Submitted in ${elapsed}ms — faster than a person usually types. Possibly automated, possibly autofill.`]] as const)
+      : []),
   ] as const
 
   try {
     const resend = new Resend(apiKey)
-    const { error } = await resend.emails.send({
+    // Without a bound, a hung connection holds the request open until the
+    // platform kills it and the visitor sees nothing at all.
+    const { error } = await withTimeout(resend.emails.send({
       from,
       to,
       replyTo: enquiry.email,
@@ -150,7 +183,7 @@ export async function submitEnquiry(
           enquiry.message
         )}</p>
       `,
-    })
+    }), 10_000)
 
     if (error) {
       console.error('Resend rejected the enquiry:', error)

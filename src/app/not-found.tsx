@@ -1,5 +1,14 @@
+import type { Metadata } from 'next'
 import { ButtonLink, Container, Display, Label, Section } from '@/components/ui'
 import { site } from '@/lib/site'
+
+export const metadata: Metadata = {
+  title: 'Page not found',
+  description: 'That page does not exist on the Northbound website.',
+  // A 404 has nothing to rank for, and indexing one splits crawl budget
+  // across URLs that are gone.
+  robots: { index: false, follow: true },
+}
 
 export default function NotFound() {
   return (

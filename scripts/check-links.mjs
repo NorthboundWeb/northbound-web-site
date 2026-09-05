@@ -17,7 +17,16 @@
 const BASE = (process.argv[2] ?? 'http://localhost:3000').replace(/\/$/, '')
 
 /** Pages to crawl. Everything else is discovered from the links on these. */
-const SEEDS = ['/', '/web', '/web/work', '/ai', '/about', '/contact', '/does-not-exist-404']
+const SEEDS = [
+  '/',
+  '/web',
+  '/web/work',
+  '/ai',
+  '/about',
+  '/contact',
+  '/privacy',
+  '/does-not-exist-404',
+]
 
 const failures = []
 const pages = new Map()

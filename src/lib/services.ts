@@ -2,14 +2,21 @@
  * Northbound.Web's offer: fixed-price website builds and monthly management
  * plans.
  *
+ * PRICES ARE STORED IN INTEGER GBP PENCE and formatted through
+ * `@/lib/money/currency`. Never write a price as a display string, and never
+ * store a converted EUR/USD figure — GBP is the contractual currency and every
+ * other currency on the site is a labelled approximation of these numbers.
+ *
  * These are the real advertised prices, not illustrations. Only the Custom
  * build is variable ("from £499"), because its scope is agreed per project.
  * Do not reintroduce "example price" or "starting from" framing around the
  * £249, £299 and £389 packages — they are the advertised prices.
  *
- * The superseded tiers (Basic £199, Standard £299, Advanced £399, and the
- * £39/£80/£149 management plans) are retired. Do not reinstate those names or
- * figures anywhere public.
+ * RETIRED — do not reinstate any of these names or figures anywhere public:
+ * Basic £199, Standard £199/£299, Advanced £399, Business, Extended, the £119
+ * and £999 packages, Essential Management, Complete Management, management at
+ * £60 or £69, and any change allowance described as 30 minutes, "an hour" or
+ * "double the change".
  *
  * Everything a customer is promised lives in this file. Do not add
  * deliverables here that have not been agreed as part of the offer, and do not
@@ -17,12 +24,13 @@
  */
 
 /** Pro Management's monthly price, quoted wherever the free month is mentioned. */
-export const PRO_MANAGEMENT_PRICE = 60
+export const PRO_MANAGEMENT_PENCE = 3_900
 
 export type BuildPackage = {
   slug: string
   name: string
-  price: number
+  /** Integer GBP pence. Formatted at render time; never stored converted. */
+  pricePence: number
   /** True only where the price is a floor rather than the advertised figure. */
   variable?: boolean
   badge?: string
@@ -52,7 +60,7 @@ export const buildPackages: BuildPackage[] = [
   {
     slug: 'starter',
     name: 'Starter',
-    price: 249,
+    pricePence: 24900,
     summary:
       'A small, well-built site that tells people who you are, what you do and how to reach you.',
     bestFor:
@@ -71,7 +79,7 @@ export const buildPackages: BuildPackage[] = [
   {
     slug: 'advanced',
     name: 'Advanced',
-    price: 299,
+    pricePence: 29900,
     badge: 'Most popular',
     summary:
       'Room to explain each of your services properly, with analytics so you can see what visitors do.',
@@ -91,7 +99,7 @@ export const buildPackages: BuildPackage[] = [
   {
     slug: 'pro',
     name: 'Pro',
-    price: 389,
+    pricePence: 38900,
     freeProMonth: true,
     summary:
       'A larger site, with the option of a third-party booking tool connected where that suits how you work.',
@@ -102,7 +110,7 @@ export const buildPackages: BuildPackage[] = [
       'Up to 8 pages',
       'One standard third-party booking integration, where compatible and appropriate',
       '3 revision rounds',
-      `1 complimentary month of Pro Management, worth £${PRO_MANAGEMENT_PRICE}`,
+      'One complimentary month of Pro Management, worth £39',
     ],
     timeline: 'Approximately 10–15 working days',
     enquiryParam: 'pro',
@@ -112,7 +120,7 @@ export const buildPackages: BuildPackage[] = [
   {
     slug: 'custom',
     name: 'Custom',
-    price: 499,
+    pricePence: 49900,
     variable: true,
     freeProMonth: true,
     summary:
@@ -123,7 +131,7 @@ export const buildPackages: BuildPackage[] = [
       'Requirements and scope agreed individually',
       'No fixed page cap',
       'Revision allowance agreed in the project quote',
-      `1 complimentary month of Pro Management, worth £${PRO_MANAGEMENT_PRICE}`,
+      'One complimentary month of Pro Management, worth £39',
     ],
     timeline: 'Agreed individually in your written quote',
     enquiryParam: 'custom',
@@ -135,7 +143,8 @@ export const buildPackages: BuildPackage[] = [
 export type ManagementPlan = {
   slug: string
   name: string
-  price: number
+  /** Integer GBP pence, per month. */
+  pricePence: number
   summary: string
   /**
    * The benefits of the plan. Change time is deliberately NOT listed here — a
@@ -154,38 +163,44 @@ export const managementPlans: ManagementPlan[] = [
   {
     slug: 'pro-management',
     name: 'Pro Management',
-    price: PRO_MANAGEMENT_PRICE,
+    pricePence: PRO_MANAGEMENT_PENCE,
     summary:
       'Keeps the site online, secure and up to date, with a regular check on how it is actually performing.',
     includes: [
       'Hosting and technical maintenance',
       'Security and dependency maintenance, where applicable',
       'Uptime monitoring',
-      'Analytics and performance check',
+      'Analytics and performance checks',
     ],
     changeTime:
-      'Includes up to 1 hour of requested website changes per billing month.',
+      'Includes up to 2 hours of requested website updates per billing month.',
     enquiryParam: 'pro-management',
     cta: 'Choose Pro Management',
   },
   {
     slug: 'ultimate-management',
     name: 'Ultimate Management',
-    price: 69,
+    pricePence: 5_900,
     summary:
       'Adds a proper review and a written report, and moves your requests up the queue.',
     includes: [
       'Everything in Pro Management',
-      'Performance and SEO review',
-      'Simple monthly performance report',
-      'Priority support — your requests go ahead of Pro ones in the queue',
+      'Faster queue priority',
+      'A monthly performance report',
     ],
     changeTime:
-      'Includes up to 2 hours of requested website changes per billing month.',
+      'Includes up to 4 hours of requested website updates per billing month.',
     enquiryParam: 'ultimate-management',
     cta: 'Choose Ultimate Management',
   },
 ]
+
+/**
+ * Management beyond the two published plans — several sites, or a workload the
+ * standard tiers cannot price. Quoted individually, so it is a floor and is
+ * always written as "from".
+ */
+export const CUSTOM_MANAGEMENT_FROM_PENCE = 5_900
 
 /**
  * The terms that bound every management plan. Shown wherever plans are, so the
@@ -194,7 +209,7 @@ export const managementPlans: ManagementPlan[] = [
 export const managementTerms = [
   'Unused change time does not roll over from one billing month to the next.',
   'Additional work beyond the included allowance can be quoted separately.',
-  'Priority support means Ultimate requests are handled ahead of Pro ones. It is a place in the queue rather than a guaranteed response time.',
+  'Faster queue priority means Ultimate requests are handled ahead of Pro ones. It is a place in the queue rather than a guaranteed response time.',
   'You can cancel before your next billing date, which stops future renewals. Amounts already charged for the current billing period are not partially refunded if you cancel part-way through it.',
   'If you end a plan, I will set out your options — either continuing hosting separately, where that is available, or transferring the website to another suitable hosting provider.',
   'A management plan is optional. It is not a condition of having a website built.',

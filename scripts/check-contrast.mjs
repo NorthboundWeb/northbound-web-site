@@ -13,7 +13,7 @@
 import { chromium } from 'playwright'
 const BASE = process.argv[2] ?? 'http://localhost:3000'
 const b = await chromium.launch({ ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}) })
-const routes=['/','/web','/ai','/web/work','/about','/contact']
+const routes=['/','/web','/ai','/web/work','/about','/contact','/privacy']
 const all=[]
 for (const vp of [{w:1440,h:900,n:'desktop'},{w:390,h:844,n:'mobile'}]) {
   const ctx=await b.newContext({viewport:{width:vp.w,height:vp.h}})

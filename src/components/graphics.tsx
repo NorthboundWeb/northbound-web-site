@@ -130,6 +130,115 @@ export function TikTokIcon({ className = 'h-5 w-5' }: G) {
   )
 }
 
+/* ------------------------------------------------------------------ */
+/* Northbound Employees.                                               */
+/* Each worker gets its own mark so the cards are told apart at a       */
+/* glance — a scope, a ranked report, a conversation, a build block, a  */
+/* watched window, a broadcast, a ledger. No robots, no emoji.          */
+/* ------------------------------------------------------------------ */
+
+/** Scout — a viewfinder sweeping a field. */
+export function ScoutIcon({ className }: G) {
+  return (
+    <Icon className={className}>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="M11 1.5v3M11 17.5v3M1.5 11h3M17.5 11h3" />
+      <path d="M9 11h4M11 9v4" />
+      <path d="M16 16l5.5 5.5" />
+    </Icon>
+  )
+}
+
+/** Audit — findings ranked, longest bar first. */
+export function AuditIcon({ className }: G) {
+  return (
+    <Icon className={className}>
+      <rect x="3.5" y="2.5" width="17" height="19" />
+      <path d="M7 8h10M7 12h7M7 16h4" />
+    </Icon>
+  )
+}
+
+/** Closer — a reply going back out. */
+export function CloserIcon({ className }: G) {
+  return (
+    <Icon className={className}>
+      <path d="M3 5.5h18v11H8l-5 4.5Z" />
+      <path d="M8 11h8M13 8l3 3-3 3" />
+    </Icon>
+  )
+}
+
+/** Forge — a page assembled from parts. */
+export function ForgeIcon({ className }: G) {
+  return (
+    <Icon className={className}>
+      <rect x="2.5" y="3.5" width="19" height="17" />
+      <path d="M2.5 9h19" />
+      <path d="M9 9v11.5" />
+      <path d="M12.5 13h5.5M12.5 16.5h3.5" />
+    </Icon>
+  )
+}
+
+/** Keeper — a window under watch. */
+export function KeeperIcon({ className }: G) {
+  return (
+    <Icon className={className}>
+      <rect x="2.5" y="3.5" width="19" height="14" />
+      <path d="M2.5 8h19" />
+      <path d="M7 21h10" />
+      <path d="M12 11.5l2.5 2.5 4-4.5" />
+    </Icon>
+  )
+}
+
+/** Signal — output broadcast outward. */
+export function SignalIcon({ className }: G) {
+  return (
+    <Icon className={className}>
+      <circle cx="12" cy="12" r="2.5" />
+      <path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 16.2a6 6 0 0 0 0-8.4" />
+      <path d="M4.8 4.8a10 10 0 0 0 0 14.4M19.2 19.2a10 10 0 0 0 0-14.4" />
+    </Icon>
+  )
+}
+
+/** Venture — a ledger with a rising column. */
+export function VentureIcon({ className }: G) {
+  return (
+    <Icon className={className}>
+      <path d="M3 21h18" />
+      <rect x="4" y="13" width="4" height="5" />
+      <rect x="10" y="9" width="4" height="9" />
+      <rect x="16" y="4" width="4" height="14" />
+    </Icon>
+  )
+}
+
+/** Director — the layer coordinating the rest. */
+export function DirectorIcon({ className }: G) {
+  return (
+    <Icon className={className}>
+      <rect x="9" y="2.5" width="6" height="6" />
+      <rect x="2.5" y="15.5" width="6" height="6" />
+      <rect x="15.5" y="15.5" width="6" height="6" />
+      <path d="M12 8.5v4M12 12.5H5.5v3M12 12.5h6.5v3" />
+    </Icon>
+  )
+}
+
+export const employeeIcons = {
+  scout: ScoutIcon,
+  audit: AuditIcon,
+  closer: CloserIcon,
+  forge: ForgeIcon,
+  keeper: KeeperIcon,
+  signal: SignalIcon,
+  venture: VentureIcon,
+  director: DirectorIcon,
+} as const
+
 /** A short rule used to terminate a label. */
 export function Rule({ className = 'h-px w-10 bg-line-strong' }: G) {
   return <span aria-hidden className={className} />

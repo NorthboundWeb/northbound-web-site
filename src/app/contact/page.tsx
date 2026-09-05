@@ -1,20 +1,22 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 import { ContactForm } from '@/components/contact-form'
 import { Container, Display, Label, Rail, Section } from '@/components/ui'
 import { interestFromParam, projectTypeFromParam } from '@/lib/contact/schema'
+import { getCurrency } from '@/lib/prefs/server'
 import { site } from '@/lib/site'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Contact',
-  description: `Tell ${site.name} about your project and get a written quote with a fixed scope and a fixed price. Replies usually within one working day.`,
-  alternates: { canonical: '/contact' },
-}
+  description: `Tell ${site.name} about your project and get a written quote with a fixed scope and a fixed price. Reply within one working day.`,
+  path: '/contact',
+})
 
 const answers = [
   {
     question: 'What happens after I send this?',
     answer:
-      'I read it properly and normally reply within one working day. If it looks like a fit, the next step is a short call to fill in the gaps — no charge and no obligation.',
+      'I read it properly and reply within one working day. If it looks like a fit, the next step is a short call to fill in the gaps — no charge and no obligation.',
   },
   {
     question: 'When do I find out the price?',
@@ -39,7 +41,7 @@ const answers = [
   {
     question: 'Do I have to take a management plan?',
     answer:
-      'No. Plans are optional and rolling, and the build price does not depend on taking one. The Pro and Custom builds include a complimentary month of Pro Management — it does not turn into a paid subscription on its own, so if you do nothing when it ends, nothing is charged.',
+      'No. Plans are optional and rolling, and the build price does not depend on taking one. The Pro and Custom builds include one complimentary month of Pro Management — it does not turn into a paid subscription on its own, so if you do nothing when it ends, nothing is charged.',
   },
 ]
 
@@ -49,6 +51,7 @@ export default async function ContactPage({
   searchParams: Promise<{ package?: string | string[]; interest?: string | string[] }>
 }) {
   const params = await searchParams
+  const currency = await getCurrency()
   // Resolved on the server so the right option is already selected in the HTML
   // — no flash of an empty select, and it still works without JavaScript.
   // A ?package= from a pricing card wins over a generic ?interest=.
@@ -64,7 +67,7 @@ export default async function ContactPage({
             <div className="min-w-0 flex-1 pt-14 pb-16 sm:pt-20 lg:pb-24">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <Label>Let&rsquo;s talk</Label>
-                <span className="label text-chalk-faint">Reply in 1 day</span>
+                <span className="label text-chalk-faint">Reply within one working day</span>
               </div>
               <Display as="h1" size="lg" className="mt-9 text-cream">
                 Start a project.
@@ -90,7 +93,7 @@ export default async function ContactPage({
         <Container>
           <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
             <div>
-              <ContactForm defaultProjectType={preselected} />
+              <ContactForm defaultProjectType={preselected} currency={currency} />
             </div>
 
             <aside>

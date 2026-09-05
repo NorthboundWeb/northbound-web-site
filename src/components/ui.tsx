@@ -94,19 +94,35 @@ export function Display({
  */
 export function ComingSoon({
   children = 'Coming soon',
+  tone = 'dark',
   className,
 }: {
   children?: ReactNode
+  /**
+   * Which surface the badge sits on. Signal yellow is the Northbound.AI accent
+   * and reads correctly on the near-black ground, but it is only 1.6:1 on
+   * cream — nowhere near legible. On cream the badge keeps its shape and
+   * deliberate look in ink, and yellow survives only as the marker square,
+   * which carries no information on its own.
+   */
+  tone?: 'dark' | 'light'
   className?: string
 }) {
+  const light = tone === 'light'
   return (
     <span
       className={cn(
-        'label inline-flex items-center gap-2 border border-yellow/50 px-3 py-1.5 text-yellow',
+        'label inline-flex items-center gap-2 border px-3 py-1.5',
+        light
+          ? 'border-line-ink-strong text-ink'
+          : 'border-yellow/50 text-yellow',
         className
       )}
     >
-      <span aria-hidden className="h-1.5 w-1.5 bg-yellow" />
+      <span
+        aria-hidden
+        className={cn('h-1.5 w-1.5', light ? 'bg-orange' : 'bg-yellow')}
+      />
       {children}
     </span>
   )

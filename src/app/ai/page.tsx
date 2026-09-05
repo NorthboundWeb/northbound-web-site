@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
+import { employeeIcons } from '@/components/graphics'
 import { MountainPlate } from '@/components/mountain'
 import {
+  ArrowLink,
   ButtonLink,
   ComingSoon,
   Container,
@@ -9,14 +12,18 @@ import {
   Rail,
   Section,
 } from '@/components/ui'
-import { AI_PUBLIC_STATUS, employees, statusLabel } from '@/lib/employees'
+import {
+  AI_PUBLIC_STATUS,
+  director,
+  employees,
+  statusLabel,
+} from '@/lib/employees'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'AI employees',
-  description:
-    'Northbound Employees are coming soon — AI-powered digital workers designed around actual business jobs. A preview of what is being built, and how to register interest.',
-  alternates: { canonical: '/ai' },
-}
+  description: 'Northbound Employees are coming soon — AI-powered digital workers designed around actual business jobs. A preview of what is being built, and how to register interest.',
+  path: '/ai',
+})
 
 /**
  * How the employees are intended to work.
@@ -101,44 +108,84 @@ export default function AiPage() {
               </Display>
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-chalk-muted">
-              Concepts in development. None of these is available to buy or hire
-              yet, and each one says where it actually stands.
+              Seven workers, each with its own job. None is available to buy or
+              hire yet, and every card says exactly where it stands.
             </p>
           </div>
 
           <ul className="mt-14 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
-            {employees.map((emp) => (
-              <li key={emp.slug} className="flex flex-col bg-black p-7 sm:p-8">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="display text-3xl text-cream">{emp.name}</h3>
-                    <p className="label mt-2 text-chalk-faint">{emp.role}</p>
+            {employees.map((emp) => {
+              const Icon = employeeIcons[emp.icon]
+              return (
+                <li
+                  key={emp.slug}
+                  id={emp.slug}
+                  className="group flex scroll-mt-24 flex-col bg-black p-7 transition-colors hover:bg-char sm:p-8"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <Icon className="h-8 w-8 text-yellow" />
+                    <span className="label text-chalk-faint">
+                      {statusLabel[emp.status]}
+                    </span>
                   </div>
-                </div>
 
-                <ComingSoon className="mt-6 self-start">
-                  {statusLabel[emp.status]}
-                </ComingSoon>
+                  <h3 className="display mt-7 text-3xl text-cream">{emp.name}</h3>
+                  <p className="label mt-2 text-yellow">{emp.role}</p>
 
-                <p className="mt-6 text-sm leading-relaxed text-chalk-muted">
-                  {emp.summary}
-                </p>
+                  <p className="mt-6 text-sm leading-relaxed text-chalk-muted">
+                    {emp.problem}
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-cream">
+                    {emp.benefit}
+                  </p>
 
-                <p className="label mt-7 text-chalk-faint">Intended to help</p>
-                <ul className="mt-4 flex-1 space-y-2.5">
-                  {emp.benefits.map((b) => (
-                    <li
-                      key={b}
-                      className="flex gap-3 text-sm leading-relaxed text-chalk-muted"
-                    >
-                      <span aria-hidden className="mt-2 h-px w-3 shrink-0 bg-yellow" />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
+                  <p className="label mt-7 text-chalk-faint">For example</p>
+                  <ul className="mt-4 flex-1 space-y-2.5">
+                    {emp.tasks.map((task) => (
+                      <li
+                        key={task}
+                        className="flex gap-3 text-sm leading-relaxed text-chalk-muted"
+                      >
+                        <span aria-hidden className="mt-2 h-px w-3 shrink-0 bg-yellow" />
+                        {task}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <ArrowLink
+                    href={AI_PUBLIC_STATUS.interestHref}
+                    tone="yellow"
+                    className="mt-8"
+                  >
+                    <span>
+                      Register interest
+                      <span className="sr-only"> in {emp.name}</span>
+                    </span>
+                  </ArrowLink>
+                </li>
+              )
+            })}
           </ul>
+
+          {/* Director sits above the workers, so it is presented apart. */}
+          <div className="mt-6 flex flex-col gap-6 border border-line p-7 sm:flex-row sm:items-start sm:p-8">
+            {(() => {
+              const Icon = employeeIcons[director.icon]
+              return <Icon className="h-8 w-8 shrink-0 text-chalk-muted" />
+            })()}
+            <div>
+              <div className="flex flex-wrap items-center gap-4">
+                <h3 className="display text-2xl text-cream">{director.name}</h3>
+                <span className="label text-chalk-faint">
+                  {statusLabel[director.status]}
+                </span>
+              </div>
+              <p className="label mt-2 text-chalk-muted">{director.role}</p>
+              <p className="mt-5 max-w-2xl text-sm leading-relaxed text-chalk-muted">
+                {director.summary}
+              </p>
+            </div>
+          </div>
 
           <p className="mt-10 border-t border-line pt-8 text-xs leading-relaxed text-chalk-faint">
             Every employee above is in development. Nothing on this page

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 import { MountainPlate } from '@/components/mountain'
 import {
   ArrowLink,
@@ -10,6 +11,10 @@ import {
   Section,
   cn,
 } from '@/components/ui'
+import { CurrencySelect } from '@/components/currency-select'
+import { formatMoney, isApproximate } from '@/lib/money/currency'
+import { getRates } from '@/lib/money/rates'
+import { getCurrency } from '@/lib/prefs/server'
 import {
   COMPLIMENTARY_MONTH_TERMS,
   TIMELINE_TERMS,
@@ -20,16 +25,19 @@ import {
   managementTerms,
   standards,
 } from '@/lib/services'
-import { currency, site } from '@/lib/site'
+import { site } from '@/lib/site'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Web services',
-  description:
-    'Fixed-price website builds from £249, and optional monthly management. Fast, accessible, secure sites for UK small businesses — the price you see is the price you pay.',
-  alternates: { canonical: '/web' },
-}
+  description: 'Fixed-price website builds from £249, and optional monthly management. Fast, accessible, secure sites for UK small businesses — the price you see is the price you pay.',
+  path: '/web',
+})
 
-export default function WebPage() {
+export default async function WebPage() {
+  const currency = await getCurrency()
+  const rates = await getRates()
+  const approximate = isApproximate(currency)
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-line">
@@ -79,11 +87,23 @@ export default function WebPage() {
                 Fixed prices.
               </Display>
             </div>
-            <p className="max-w-sm text-sm leading-relaxed text-ink-muted">
-              These are the advertised prices, not estimates. Only a Custom
-              build varies, and its scope and figure are agreed in writing
-              first.
-            </p>
+            <div className="max-w-sm">
+              <p className="text-sm leading-relaxed text-ink-muted">
+                These are the advertised prices, not estimates. Only a Custom
+                build varies, and its scope and figure are agreed in writing
+                first.
+              </p>
+              <div className="mt-5 [&_label]:text-ink-faint [&_select]:border-line-ink [&_select]:text-ink [&_select]:hover:border-line-ink-strong">
+                <CurrencySelect value={currency} />
+              </div>
+              {approximate ? (
+                <p className="mt-4 text-xs leading-relaxed text-ink-muted">
+                  Amounts in {currency} are an approximate conversion, shown as
+                  a guide. Quotes, contracts and payments are agreed and settled
+                  in pounds sterling.
+                </p>
+              ) : null}
+            </div>
           </div>
 
           <ul className="mt-14 grid gap-px bg-line-ink sm:grid-cols-2 xl:grid-cols-4">
@@ -106,9 +126,11 @@ export default function WebPage() {
                       From{' '}
                     </span>
                   ) : null}
-                  {currency.format(pkg.price)}
+                  {formatMoney(pkg.pricePence, currency, rates)}
                 </p>
-                <p className="label mt-2 text-ink-faint">One-off build</p>
+                <p className="label mt-2 text-ink-faint">
+                  One-off build{approximate ? ' · approx.' : ''}
+                </p>
 
                 <p className="mt-6 text-sm leading-relaxed text-ink-muted">
                   {pkg.summary}
@@ -186,9 +208,9 @@ export default function WebPage() {
               >
                 <h3 className="display text-2xl text-cream">{plan.name}</h3>
                 <p className="display mt-5 text-5xl text-cream">
-                  {currency.format(plan.price)}
+                  {formatMoney(plan.pricePence, currency, rates)}
                   <span className="align-middle text-lg text-chalk-faint">
-                    /month
+                    /month{approximate ? ' · approx.' : ''}
                   </span>
                 </p>
                 <p className="mt-6 text-sm leading-relaxed text-chalk-muted">

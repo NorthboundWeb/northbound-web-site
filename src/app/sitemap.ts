@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/ai', priority: 0.8 },
     { path: '/about', priority: 0.6 },
     { path: '/contact', priority: 0.8 },
+    { path: '/privacy', priority: 0.3 },
   ]
 
   const lastModified = new Date()

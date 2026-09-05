@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import { InstagramIcon, TikTokIcon } from '@/components/graphics'
 import { LockupFlat } from '@/components/logo'
+import { CurrencySelect } from '@/components/currency-select'
 import { ButtonLink, Container } from '@/components/ui'
+import { getCurrency } from '@/lib/prefs/server'
 import { site } from '@/lib/site'
 
 /**
@@ -27,6 +29,9 @@ const columns = [
   },
   {
     heading: 'Northbound.AI',
+    // Marked at the top of the column so the whole division reads as
+    // forthcoming, rather than tagging every individual link.
+    note: 'Coming soon',
     links: [
       { href: '/ai', label: 'AI employees' },
       { href: '/ai#employees', label: 'Meet the employees' },
@@ -40,6 +45,7 @@ const columns = [
       { href: '/about', label: 'About us' },
       { href: '/about#process', label: 'Our process' },
       { href: '/contact', label: 'Contact' },
+      { href: '/privacy', label: 'Privacy' },
     ],
   },
 ]
@@ -49,7 +55,9 @@ const socialIcons = {
   TikTok: TikTokIcon,
 } as const
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const currency = await getCurrency()
+
   return (
     <footer className="border-t border-line bg-black text-chalk">
       <Container className="pt-20 pb-10">
@@ -103,6 +111,9 @@ export function SiteFooter() {
           {columns.map((col) => (
             <nav key={col.heading} aria-label={col.heading}>
               <h2 className="label text-chalk">{col.heading}</h2>
+              {'note' in col && col.note ? (
+                <p className="label mt-2 text-yellow">{col.note}</p>
+              ) : null}
               <ul className="mt-6 space-y-3">
                 {col.links.map((link) => (
                   <li key={link.href}>
@@ -136,11 +147,17 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="label mt-16 flex flex-col gap-4 border-t border-line pt-8 text-chalk-faint sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} {site.legalName}. All rights reserved.
-          </p>
-          <p>Built and hosted in the {site.location}</p>
+        <div className="mt-16 flex flex-col gap-6 border-t border-line pt-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap items-center gap-5">
+            <CurrencySelect value={currency} />
+          </div>
+          <div className="label flex flex-col gap-2 text-chalk-faint sm:flex-row sm:items-center sm:gap-6">
+            <p>
+              © {new Date().getFullYear()} {site.legalName}. All rights
+              reserved.
+            </p>
+            <p>Built and hosted in the {site.location}</p>
+          </div>
         </div>
       </Container>
     </footer>

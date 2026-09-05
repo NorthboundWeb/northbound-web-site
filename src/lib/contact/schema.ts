@@ -66,7 +66,7 @@ export function interestFromParam(
  */
 export const budgetBands = [
   'Not sure yet',
-  'Around £499',
+  'Under £500',
   '£500 – £1,000',
   '£1,000 – £2,500',
   'Over £2,500',

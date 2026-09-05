@@ -13,8 +13,10 @@ import {
   Section,
   cn,
 } from '@/components/ui'
+import { formatMoney } from '@/lib/money/currency'
+import { buildPackages } from '@/lib/services'
 import { divisions } from '@/lib/site'
-import { WORK_PLACEHOLDER, work, workKindLabel } from '@/lib/work'
+import { work, workKindLabel } from '@/lib/work'
 
 /**
  * Hero credentials.
@@ -53,6 +55,11 @@ const pillars = [
   },
 ]
 
+/** The entry price, read from the pricing data rather than typed into copy. */
+const cheapestBuild = buildPackages.reduce((cheapest, pkg) =>
+  pkg.pricePence < cheapest.pricePence ? pkg : cheapest
+)
+
 export default function HomePage() {
   return (
     <>
@@ -79,11 +86,33 @@ export default function HomePage() {
                 for modern businesses
               </Display>
 
-              <div className="mt-9 max-w-md space-y-1.5 text-[15px] leading-relaxed text-chalk-muted sm:text-base">
-                <p>Web services that grow your business.</p>
-                <p>AI employees that work for your business.</p>
-                <p className="text-yellow">Choose your direction.</p>
+              <p className="mt-9 max-w-lg text-[15px] leading-relaxed text-chalk-muted sm:text-base">
+                Northbound builds, hosts and manages websites for small
+                businesses. Fixed prices from{' '}
+                <strong className="font-semibold text-cream">
+                  {formatMoney(cheapestBuild.pricePence)}
+                </strong>
+                , and none of the technical side lands on you.
+              </p>
+
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                <ButtonLink href="/web#pricing" variant="light" size="lg">
+                  See website packages
+                </ButtonLink>
+                <ButtonLink href="/contact" variant="outline" size="lg">
+                  Start a project
+                </ButtonLink>
               </div>
+
+              <p className="mt-8 max-w-md text-sm leading-relaxed text-chalk-faint">
+                AI employees that work for your business are coming soon.{' '}
+                <Link
+                  href="/ai"
+                  className="text-yellow underline-offset-4 hover:underline"
+                >
+                  See what&rsquo;s coming
+                </Link>
+              </p>
             </div>
 
             {/* Credentials rail — desktop only, as in the composition. */}
@@ -176,6 +205,12 @@ export default function HomePage() {
                   {d.body}
                 </p>
 
+                {web ? (
+                  <p className="label mt-6 text-ink">
+                    Available now · from {formatMoney(cheapestBuild.pricePence)}
+                  </p>
+                ) : null}
+
                 <div className="mt-10 pt-2">
                   <ButtonLink
                     href={d.href}
@@ -263,39 +298,34 @@ export default function HomePage() {
             </div>
 
             <ul className="grid gap-6 sm:grid-cols-2">
-              {work.slice(0, 2).map((item) => (
+              {work.map((item) => (
                 <li key={item.slug} className="group">
-                  <div className="relative aspect-4/3 overflow-hidden border border-line bg-char">
-                    <MountainPlate className="h-full w-full opacity-60 transition-opacity duration-300 group-hover:opacity-80" />
-                    <span className="label absolute top-3 left-3 border border-line-strong bg-black/80 px-2.5 py-1 text-chalk">
-                      {workKindLabel[item.kind]}
-                    </span>
-                  </div>
-                  <h3 className="mt-4 text-[15px] text-cream">{item.title}</h3>
-                  <p className="mt-1 text-sm text-chalk-faint">{item.category}</p>
+                  <Link href="/web/work" className="block">
+                    <div className="relative aspect-4/3 overflow-hidden border border-line bg-char">
+                      <MountainPlate className="h-full w-full opacity-60 transition-opacity duration-300 group-hover:opacity-80" />
+                      <span className="label absolute top-3 left-3 border border-line-strong bg-black/80 px-2.5 py-1 text-chalk">
+                        {workKindLabel[item.kind]}
+                      </span>
+                    </div>
+                    <h3 className="mt-4 text-[15px] text-cream">{item.title}</h3>
+                    <p className="mt-1 text-sm text-chalk-faint">{item.category}</p>
+                  </Link>
                 </li>
               ))}
 
               {/*
-                The remaining slots are an honest placeholder. The approved
-                mockup filled them with named companies; those are not clients,
-                so the grid says what is actually true instead.
+                No filler card. The portfolio is genuinely short, so the second
+                cell says so and offers the real next step rather than padding
+                the grid with a project that does not exist.
               */}
-              <li>
-                <Link
-                  href={WORK_PLACEHOLDER.href}
-                  className="group flex aspect-4/3 flex-col justify-between border border-dashed border-line-strong p-5 transition-colors hover:border-chalk"
-                >
-                  <span className="label text-chalk-faint">In progress</span>
-                  <span>
-                    <span className="block text-[15px] text-cream">
-                      {WORK_PLACEHOLDER.title}
-                    </span>
-                    <span className="mt-2 block text-sm leading-relaxed text-chalk-muted">
-                      {WORK_PLACEHOLDER.body}
-                    </span>
-                  </span>
-                </Link>
+              <li className="flex flex-col justify-center border-l border-line pl-6">
+                <p className="text-[15px] leading-relaxed text-chalk-muted">
+                  More projects are added as they go live. Recent client sites
+                  can be shared on request — some are under wraps until launch.
+                </p>
+                <ArrowLink href="/contact" className="mt-6">
+                  Ask to see examples
+                </ArrowLink>
               </li>
             </ul>
           </div>

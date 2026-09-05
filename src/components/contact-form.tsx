@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useActionState, useEffect, useRef } from 'react'
 import { useFormStatus } from 'react-dom'
 import { ArrowRight } from '@/components/graphics'
@@ -65,9 +66,15 @@ function SubmitButton() {
 
 export function ContactForm({
   defaultProjectType,
+  currency = 'GBP',
+  language = 'en-GB',
 }: {
   /** Preselected from /contact?package=… — the visitor can still change it. */
   defaultProjectType?: string
+  /** What the visitor was seeing prices in, sent with the enquiry. */
+  currency?: string
+  /** The locale the visitor was reading, sent with the enquiry. */
+  language?: string
 }) {
   const [state, formAction] = useActionState(submitEnquiry, initialContactState)
   const formRef = useRef<HTMLFormElement>(null)
@@ -230,19 +237,50 @@ export function ContactForm({
         <FieldError id="message-error" message={state.errors?.message} />
       </div>
 
-      {/* Honeypot. Hidden from sight and from assistive tech, but present in
-          the DOM for anything that fills fields indiscriminately. */}
-      <div aria-hidden className="absolute left-[-9999px] h-px w-px overflow-hidden">
+      {/*
+        Honeypot. Present in the DOM for anything that fills fields
+        indiscriminately, but out of sight, out of the tab order and out of the
+        accessibility tree for everyone else.
+
+        The position is set inline rather than only through a class: if the
+        stylesheet fails to load, a class-only rule would put a field labelled
+        "Do not fill this in" in the middle of the form. The inline style is
+        part of the document, so it cannot go missing separately.
+      */}
+      <div
+        aria-hidden
+        className="absolute left-[-9999px] h-px w-px overflow-hidden"
+        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}
+      >
         <label htmlFor="website">Do not fill this in</label>
-        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+        <input
+          id="website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          // Belt and braces: nothing should reach it, but if anything does,
+          // it must not be announced or reported as a required field.
+          aria-hidden
+        />
       </div>
       <input ref={startedAtRef} type="hidden" name="startedAt" defaultValue="" />
+      {/* Context for whoever reads the enquiry: what they saw, in what. */}
+      <input type="hidden" name="currency" value={currency} readOnly />
+      <input type="hidden" name="language" value={language} readOnly />
 
       <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
         <SubmitButton />
         <p className="max-w-xs text-xs leading-relaxed text-ink-faint">
           Your details are used only to reply to this enquiry. Nothing is added
-          to a mailing list and nothing is passed on.
+          to a mailing list and nothing is passed on.{' '}
+          <Link
+            href="/privacy"
+            className="text-orange-ink underline underline-offset-4"
+          >
+            How your data is handled
+          </Link>
+          .
         </p>
       </div>
     </form>

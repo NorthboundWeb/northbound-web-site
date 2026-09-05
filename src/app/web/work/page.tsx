@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { pageMetadata } from '@/lib/seo'
+import Image from 'next/image'
 import { MountainPlate } from '@/components/mountain'
 import {
   ArrowLink,
@@ -11,13 +12,74 @@ import {
   Section,
 } from '@/components/ui'
 import { standards } from '@/lib/services'
-import { WORK_PLACEHOLDER, work, workKindLabel } from '@/lib/work'
+import { work, workKindLabel, type WorkItem } from '@/lib/work'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Our work',
-  description:
-    'Selected Northbound.Web projects. Every piece is labelled for what it actually is — client project, concept or internal work — with no invented case studies.',
-  alternates: { canonical: '/web/work' },
+  description: 'Selected Northbound.Web projects. Every piece is labelled for what it actually is — client project, demo, internal work or concept — with no invented case studies.',
+  path: '/web/work',
+})
+
+function CaseStudy({ item }: { item: WorkItem }) {
+  const shot = item.shots?.desktop
+
+  return (
+    <article className="grid gap-10 border-t border-line pt-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
+      <div>
+        <span className="label border border-line-strong px-2.5 py-1 text-chalk">
+          {workKindLabel[item.kind]}
+        </span>
+        <Display as="h2" size="md" className="mt-7 text-cream">
+          {item.title}
+        </Display>
+        <p className="label mt-3 text-chalk-faint">{item.category}</p>
+        <p className="mt-7 text-[15px] leading-relaxed text-chalk-muted">
+          {item.brief}
+        </p>
+
+        <h3 className="label mt-9 text-chalk">What was built</h3>
+        <ul className="mt-4 space-y-2.5">
+          {item.built.map((line) => (
+            <li
+              key={line}
+              className="flex gap-3 text-sm leading-relaxed text-chalk-muted"
+            >
+              <span aria-hidden className="mt-2 h-px w-3 shrink-0 bg-orange" />
+              {line}
+            </li>
+          ))}
+        </ul>
+
+        <h3 className="label mt-8 text-chalk">Services</h3>
+        <p className="mt-3 text-sm text-chalk-muted">{item.services.join(' · ')}</p>
+
+        {item.href ? (
+          <ArrowLink href={item.href} className="mt-8">
+            Visit the site
+          </ArrowLink>
+        ) : null}
+      </div>
+
+      <div className="border border-line bg-char">
+        {shot ? (
+          <Image
+            src={shot.src}
+            alt={shot.alt}
+            width={shot.width}
+            height={shot.height}
+            className="h-auto w-full"
+            sizes="(min-width: 1024px) 640px, 100vw"
+          />
+        ) : (
+          // No real screenshot yet. The drawn plate stands in rather than a
+          // fabricated browser mock-up of a site that was never designed.
+          <div className="relative aspect-16/10 overflow-hidden">
+            <MountainPlate className="h-full w-full opacity-60" />
+          </div>
+        )}
+      </div>
+    </article>
+  )
 }
 
 export default function WorkPage() {
@@ -35,10 +97,14 @@ export default function WorkPage() {
                 Designed to perform.
               </Display>
               <p className="mt-9 max-w-xl text-[15px] leading-relaxed text-chalk-muted sm:text-base">
-                Northbound is a young studio and the public portfolio is still
-                short. What is here is labelled honestly — nothing on this page
-                is presented as a client relationship that does not exist.
+                Northbound is a young studio, and this page shows only work that
+                genuinely exists. Every project is labelled for what it is, and
+                nothing here is presented as a client relationship that has not
+                happened.
               </p>
+              <ButtonLink href="/contact" variant="light" className="mt-10">
+                Ask to see more
+              </ButtonLink>
             </div>
           </div>
         </Container>
@@ -46,48 +112,11 @@ export default function WorkPage() {
 
       <Section className="bg-black">
         <Container>
-          <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-16">
             {work.map((item) => (
-              <li key={item.slug} className="group">
-                <div className="relative aspect-4/3 overflow-hidden border border-line bg-char">
-                  <MountainPlate className="h-full w-full opacity-60 transition-opacity duration-300 group-hover:opacity-80" />
-                  <span className="label absolute top-3 left-3 border border-line-strong bg-black/80 px-2.5 py-1 text-chalk">
-                    {workKindLabel[item.kind]}
-                  </span>
-                </div>
-                <h2 className="display mt-5 text-2xl text-cream">{item.title}</h2>
-                <p className="label mt-2 text-chalk-faint">{item.category}</p>
-                <p className="mt-4 text-sm leading-relaxed text-chalk-muted">
-                  {item.summary}
-                </p>
-                {item.href ? (
-                  <ArrowLink href={item.href} className="mt-5">
-                    Visit site
-                  </ArrowLink>
-                ) : null}
-              </li>
+              <CaseStudy key={item.slug} item={item} />
             ))}
-
-            <li>
-              <Link
-                href={WORK_PLACEHOLDER.href}
-                className="group flex h-full min-h-64 flex-col justify-between border border-dashed border-line-strong p-7 transition-colors hover:border-chalk"
-              >
-                <span className="label text-chalk-faint">In progress</span>
-                <span>
-                  <span className="display block text-2xl text-cream">
-                    {WORK_PLACEHOLDER.title}
-                  </span>
-                  <span className="mt-4 block text-sm leading-relaxed text-chalk-muted">
-                    {WORK_PLACEHOLDER.body}
-                  </span>
-                  <span className="label mt-6 block text-orange">
-                    {WORK_PLACEHOLDER.cta}
-                  </span>
-                </span>
-              </Link>
-            </li>
-          </ul>
+          </div>
         </Container>
       </Section>
 

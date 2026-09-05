@@ -76,9 +76,3 @@ export const divisions = [
     available: false,
   },
 ] as const
-
-export const currency = new Intl.NumberFormat('en-GB', {
-  style: 'currency',
-  currency: 'GBP',
-  maximumFractionDigits: 0,
-})
