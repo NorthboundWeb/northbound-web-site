@@ -113,14 +113,20 @@ export default function AiPage() {
             </p>
           </div>
 
-          <ul className="mt-14 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
+          {/*
+            Ruled with borders rather than by letting a background show through
+            1px gaps. Seven cards never fill a two- or three-column grid, and a
+            background-painted grid renders each empty cell as a solid block of
+            rule colour that reads as a broken tile.
+          */}
+          <ul className="mt-14 grid border-t border-l border-line sm:grid-cols-2 lg:grid-cols-3">
             {employees.map((emp) => {
               const Icon = employeeIcons[emp.icon]
               return (
                 <li
                   key={emp.slug}
                   id={emp.slug}
-                  className="group flex scroll-mt-24 flex-col bg-black p-7 transition-colors hover:bg-char sm:p-8"
+                  className="group flex scroll-mt-24 flex-col border-r border-b border-line bg-black p-7 transition-colors hover:bg-char sm:p-8"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <Icon className="h-8 w-8 text-yellow" />
