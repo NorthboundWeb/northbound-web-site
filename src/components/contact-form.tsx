@@ -5,8 +5,10 @@ import { useActionState, useEffect, useRef } from 'react'
 import { useFormStatus } from 'react-dom'
 import { ArrowRight } from '@/components/graphics'
 import { buttonClass, cn } from '@/components/ui'
+import type { Dictionary } from '@/i18n/dictionaries'
 import { submitEnquiry } from '@/lib/contact/actions'
 import {
+  EMPLOYEES_INTEREST,
   budgetBands,
   initialContactState,
   projectTypes,
@@ -19,16 +21,18 @@ function Label({
   htmlFor,
   children,
   optional,
+  optionalLabel,
 }: {
   htmlFor: string
   children: React.ReactNode
   optional?: boolean
+  optionalLabel?: string
 }) {
   return (
     <label htmlFor={htmlFor} className="label mb-2.5 block text-ink">
       {children}
       {optional ? (
-        <span className="ml-2 text-ink-faint normal-case">(optional)</span>
+        <span className="ml-2 text-ink-faint normal-case">{optionalLabel}</span>
       ) : null}
     </label>
   )
@@ -46,7 +50,20 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   )
 }
 
-function SubmitButton() {
+/**
+ * Maps a stored project-type identifier to its label in the reader's language.
+ *
+ * Package and plan names are product names and stay as they are; only the two
+ * generic options and the employees enquiry have translations.
+ */
+function translateProjectType(type: string, t: Dictionary['contact']): string {
+  if (type === 'Not sure yet') return t.form.notSure
+  if (type === 'Something else') return t.form.somethingElse
+  if (type === EMPLOYEES_INTEREST) return t.form.employeesInterest
+  return type
+}
+
+function SubmitButton({ labels }: { labels: { submit: string; submitting: string } }) {
   const { pending } = useFormStatus()
   return (
     <button
@@ -54,7 +71,7 @@ function SubmitButton() {
       disabled={pending}
       className={cn(buttonClass({ variant: 'solid', size: 'lg' }), 'w-full sm:w-auto')}
     >
-      {pending ? 'Sending…' : 'Send enquiry'}
+      {pending ? labels.submitting : labels.submit}
       {pending ? null : (
         <span className="transition-transform duration-200 group-hover/btn:translate-x-1">
           <ArrowRight />
@@ -67,7 +84,9 @@ function SubmitButton() {
 export function ContactForm({
   defaultProjectType,
   currency = 'GBP',
-  language = 'en-GB',
+  language = 'en',
+  t,
+  privacyHref,
 }: {
   /** Preselected from /contact?package=… — the visitor can still change it. */
   defaultProjectType?: string
@@ -75,6 +94,10 @@ export function ContactForm({
   currency?: string
   /** The locale the visitor was reading, sent with the enquiry. */
   language?: string
+  /** The contact slice of the dictionary — labels, options and messages. */
+  t: Dictionary['contact']
+  /** Locale-aware path to the privacy notice. */
+  privacyHref: string
 }) {
   const [state, formAction] = useActionState(submitEnquiry, initialContactState)
   const formRef = useRef<HTMLFormElement>(null)
@@ -111,8 +134,8 @@ export function ContactForm({
         role="status"
         className="border border-line-ink bg-cream-sunk p-10 focus:outline-none"
       >
-        <p className="label text-orange-ink">Sent</p>
-        <h2 className="display mt-4 text-4xl text-ink">Message sent</h2>
+        <p className="label text-orange-ink">{t.form.sentLabel}</p>
+        <h2 className="display mt-4 text-4xl text-ink">{t.form.sentHeading}</h2>
         <p className="mt-3 leading-relaxed text-ink-muted">
           {state.message ??
             'Thanks — your message is with me. I normally reply within one working day.'}
@@ -139,7 +162,7 @@ export function ContactForm({
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
-          <Label htmlFor="name">Your name</Label>
+          <Label htmlFor="name">{t.form.name}</Label>
           <input
             id="name"
             name="name"
@@ -154,7 +177,7 @@ export function ContactForm({
         </div>
 
         <div>
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t.form.email}</Label>
           <input
             id="email"
             name="email"
@@ -170,8 +193,8 @@ export function ContactForm({
       </div>
 
       <div>
-        <Label htmlFor="business" optional>
-          Business name
+        <Label htmlFor="business" optional optionalLabel={t.form.optional}>
+          {t.form.business}
         </Label>
         <input
           id="business"
@@ -184,8 +207,8 @@ export function ContactForm({
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
-          <Label htmlFor="projectType" optional>
-            What do you need?
+          <Label htmlFor="projectType" optional optionalLabel={t.form.optional}>
+            {t.form.projectType}
           </Label>
           <select
             id="projectType"
@@ -193,18 +216,23 @@ export function ContactForm({
             defaultValue={defaultProjectType ?? ''}
             className={fieldClass}
           >
-            <option value="">Choose one…</option>
+            <option value="">{t.form.projectTypePlaceholder}</option>
             {projectTypes.map((type) => (
               <option key={type} value={type}>
-                {type}
+                {/*
+                  The value is the stable identifier stored in the enquiry;
+                  only the visible label is translated, so a French visitor
+                  and an English one produce the same recorded answer.
+                */}
+                {translateProjectType(type, t)}
               </option>
             ))}
           </select>
         </div>
 
         <div>
-          <Label htmlFor="budget" optional>
-            Rough budget
+          <Label htmlFor="budget" optional optionalLabel={t.form.optional}>
+            {t.form.budget}
           </Label>
           <select
             id="budget"
@@ -212,10 +240,10 @@ export function ContactForm({
             defaultValue=""
             className={fieldClass}
           >
-            <option value="">Choose one…</option>
-            {budgetBands.map((band) => (
+            <option value="">{t.form.projectTypePlaceholder}</option>
+            {budgetBands.map((band, i) => (
               <option key={band} value={band}>
-                {band}
+                {t.form.budgets[i] ?? band}
               </option>
             ))}
           </select>
@@ -223,13 +251,13 @@ export function ContactForm({
       </div>
 
       <div>
-        <Label htmlFor="message">About the project</Label>
+        <Label htmlFor="message">{t.form.message}</Label>
         <textarea
           id="message"
           name="message"
           rows={6}
           required
-          placeholder="What does your business do, what is the site or system for, and is there a date you need it by?"
+          placeholder={t.form.messagePlaceholder}
           aria-invalid={Boolean(state.errors?.message)}
           aria-describedby={state.errors?.message ? 'message-error' : undefined}
           className={cn(fieldClass, 'resize-y')}
@@ -270,15 +298,11 @@ export function ContactForm({
       <input type="hidden" name="language" value={language} readOnly />
 
       <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
-        <SubmitButton />
+        <SubmitButton labels={{ submit: t.form.submit, submitting: t.form.submitting }} />
         <p className="max-w-xs text-xs leading-relaxed text-ink-faint">
-          Your details are used only to reply to this enquiry. Nothing is added
-          to a mailing list and nothing is passed on.{' '}
-          <Link
-            href="/privacy"
-            className="text-orange-ink underline underline-offset-4"
-          >
-            How your data is handled
+          {t.form.privacyNote}{' '}
+          <Link href={privacyHref} className="text-orange-ink underline underline-offset-4">
+            {t.form.privacyLink}
           </Link>
           .
         </p>

@@ -3,8 +3,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { CurrencySelect } from '@/components/currency-select'
+import { LanguageSelect } from '@/components/language-select'
 import { Lockup, Mark } from '@/components/logo'
 import { Container, cn } from '@/components/ui'
+import { localePath, type Locale } from '@/i18n/config'
+import type { Currency } from '@/lib/money/currency'
 import { site } from '@/lib/site'
 
 /** Scroll distance after which the header compacts to the symbol. */
@@ -23,7 +27,22 @@ const COMPACT_AT = 120
  * Both logo variants are rendered at once and cross-faded, so the transition
  * costs opacity and transform only — no layout shift, and no reflow on scroll.
  */
-export function SiteHeader() {
+export function SiteHeader({
+  locale,
+  currency,
+  labels,
+}: {
+  locale: Locale
+  currency: Currency
+  /** Passed down rather than looked up: the header is a client component. */
+  labels: {
+    nav: { web: string; ai: string; work: string; about: string; contact: string }
+    letsTalk: string
+    openMenu: string
+    closeMenu: string
+    home: string
+  }
+}) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [compact, setCompact] = useState(false)
@@ -70,6 +89,14 @@ export function SiteHeader() {
     }
   }, [open])
 
+  const nav = [
+    { href: '/web', label: labels.nav.web },
+    { href: '/ai', label: labels.nav.ai },
+    { href: '/web/work', label: labels.nav.work },
+    { href: '/about', label: labels.nav.about },
+    { href: '/contact', label: labels.nav.contact },
+  ]
+
   return (
     <header
       data-compact={compact ? '' : undefined}
@@ -93,8 +120,8 @@ export function SiteHeader() {
         >
           {/* Always returns to the homepage, in every state. */}
           <Link
-            href="/"
-            aria-label={`${site.name} — home`}
+            href={localePath(locale, '/')}
+            aria-label={`${site.name} — ${labels.home}`}
             className="relative block shrink-0 focus-visible:outline-offset-8"
           >
             {/*
@@ -127,17 +154,16 @@ export function SiteHeader() {
             </span>
           </Link>
 
-          <nav aria-label="Main" className="hidden items-center gap-8 lg:flex">
-            {site.nav.map((item) => {
+          <nav aria-label="Main" className="hidden items-center gap-6 lg:flex">
+            {nav.map((item) => {
               // /web/work must light up "Our Work", not "Web Services", so the
               // longest matching nav href wins rather than the first prefix.
-              const active =
-                pathname === item.href ||
-                pathname.startsWith(`${item.href}/`)
+              const href = localePath(locale, item.href)
+              const active = pathname === href || pathname.startsWith(`${href}/`)
               return (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={href}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
                     'label transition-colors hover:text-chalk',
@@ -149,10 +175,10 @@ export function SiteHeader() {
               )
             })}
             <Link
-              href="/contact"
-              className="label border border-line-strong px-6 py-3 text-chalk transition-colors hover:border-chalk hover:bg-chalk hover:text-black"
+              href={localePath(locale, '/contact')}
+              className="label border border-line-strong px-5 py-3 text-chalk transition-colors hover:border-chalk hover:bg-chalk hover:text-black"
             >
-              Let&rsquo;s talk
+              {labels.letsTalk}
             </Link>
           </nav>
 
@@ -163,7 +189,9 @@ export function SiteHeader() {
             aria-controls="mobile-nav"
             className="-mr-2 inline-flex h-12 w-12 items-center justify-center text-chalk lg:hidden"
           >
-            <span className="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
+            <span className="sr-only">
+              {open ? labels.closeMenu : labels.openMenu}
+            </span>
             <svg
               viewBox="0 0 20 20"
               className="h-5 w-5"
@@ -187,22 +215,30 @@ export function SiteHeader() {
           style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
           <Container className="flex flex-col py-2">
-            {site.nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={pathname === item.href ? 'page' : undefined}
-                className="label border-b border-line py-5 text-chalk"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {nav.map((item) => {
+              const href = localePath(locale, item.href)
+              return (
+                <Link
+                  key={item.href}
+                  href={href}
+                  aria-current={pathname === href ? 'page' : undefined}
+                  className="label border-b border-line py-5 text-chalk"
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
             <Link
-              href="/contact"
-              className="label mt-6 mb-4 inline-flex items-center justify-center bg-chalk px-6 py-4 text-black"
+              href={localePath(locale, '/contact')}
+              className="label mt-6 inline-flex items-center justify-center bg-chalk px-6 py-4 text-black"
             >
-              Let&rsquo;s talk
+              {labels.letsTalk}
             </Link>
+            {/* Both preferences reachable without leaving the menu. */}
+            <div className="mt-6 mb-4 flex flex-wrap gap-4 border-t border-line pt-6">
+              <LanguageSelect value={locale} />
+              <CurrencySelect value={currency} />
+            </div>
           </Container>
         </nav>
       ) : null}

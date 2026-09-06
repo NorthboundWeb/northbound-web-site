@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { localePath } from '@/i18n/config'
+import { resolvePage, type LocaleParams } from '@/lib/page-locale'
 import { pageMetadata } from '@/lib/seo'
 import { employeeIcons } from '@/components/graphics'
 import { MountainPlate } from '@/components/mountain'
@@ -12,45 +14,23 @@ import {
   Rail,
   Section,
 } from '@/components/ui'
-import {
-  AI_PUBLIC_STATUS,
-  director,
-  employees,
-  statusLabel,
-} from '@/lib/employees'
+import { director, employees } from '@/lib/employees'
 
-export const metadata: Metadata = pageMetadata({
-  title: 'AI employees',
-  description: 'Northbound Employees are coming soon — AI-powered digital workers designed around actual business jobs. A preview of what is being built, and how to register interest.',
-  path: '/ai',
-})
+export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
+  const { locale, t } = await resolvePage(params)
+  return pageMetadata({
+    locale,
+    title: t.ai.metaTitle,
+    description: t.ai.metaDescription,
+    path: '/ai',
+  })
+}
 
-/**
- * How the employees are intended to work.
- *
- * Written as intent throughout. Nothing here describes behaviour that has been
- * built, and no integration, model or vendor is named — none of that has been
- * settled, so claiming it would be fiction.
- */
-const howItWorks = [
-  {
-    step: '01',
-    title: 'Pick the job',
-    body: 'You start from a job that needs doing — finding prospects, chasing follow-ups, keeping admin straight — rather than from a piece of technology.',
-  },
-  {
-    step: '02',
-    title: 'Set the boundaries',
-    body: 'An employee is intended to work inside limits you set, on the tasks you agree, with the things that matter kept under your sign-off.',
-  },
-  {
-    step: '03',
-    title: 'Review the work',
-    body: 'The plan is that work comes back for review rather than going out unseen, so you keep control of anything that reaches a customer.',
-  },
-]
+export default async function AiPage({ params }: LocaleParams) {
+  const { locale, t } = await resolvePage(params)
+  const a = t.ai
+  const interestHref = `${localePath(locale, '/contact')}?interest=employees`
 
-export default function AiPage() {
   return (
     <>
       <section className="relative overflow-hidden border-b border-line">
@@ -64,30 +44,30 @@ export default function AiPage() {
           <div className="flex gap-8 lg:gap-14">
             <Rail index="02" />
             <div className="min-w-0 flex-1 pt-14 pb-20 sm:pt-20 lg:pb-28">
-              <Label>Northbound.AI</Label>
+              <Label>{a.eyebrow}</Label>
               <Display as="h1" size="lg" className="mt-9 max-w-3xl text-cream">
-                Your next employee
+                {a.h1Line1}
                 <br />
-                might not be human
+                {a.h1Line2}
               </Display>
 
               <ComingSoon className="mt-9">
-                {AI_PUBLIC_STATUS.label}
+                {t.common.comingSoon}
               </ComingSoon>
 
               <p className="mt-8 max-w-xl text-[15px] leading-relaxed text-chalk-muted sm:text-base">
-                {AI_PUBLIC_STATUS.headline} {AI_PUBLIC_STATUS.body}
+                {a.statusHeadline} {a.statusBody}
               </p>
 
               <div className="mt-11 flex flex-wrap items-center gap-4">
-                <ButtonLink href="#employees" variant="yellow">
-                  Meet the employees
+                <ButtonLink href={localePath(locale, '/ai') + '#employees'} variant="yellow">
+                  {t.common.cta.meetEmployees}
                 </ButtonLink>
                 <ButtonLink
-                  href={AI_PUBLIC_STATUS.interestHref}
+                  href={interestHref}
                   variant="outline"
                 >
-                  Register interest
+                  {t.common.cta.registerInterest}
                 </ButtonLink>
               </div>
             </div>
@@ -100,16 +80,15 @@ export default function AiPage() {
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <Label>The team</Label>
+              <Label>{a.teamEyebrow}</Label>
               <Display as="h2" size="md" className="mt-8 text-cream">
-                Meet your
+                {a.teamLine1}
                 <br />
-                future team.
+                {a.teamLine2}
               </Display>
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-chalk-muted">
-              Seven workers, each with its own job. None is available to buy or
-              hire yet, and every card says exactly where it stands.
+              {a.teamAside}
             </p>
           </div>
 
@@ -131,23 +110,23 @@ export default function AiPage() {
                   <div className="flex items-start justify-between gap-4">
                     <Icon className="h-8 w-8 text-yellow" />
                     <span className="label text-chalk-faint">
-                      {statusLabel[emp.status]}
+                      {emp.status === 'coming-soon' ? t.common.comingSoon : t.common.inDevelopment}
                     </span>
                   </div>
 
                   <h3 className="display mt-7 text-3xl text-cream">{emp.name}</h3>
-                  <p className="label mt-2 text-yellow">{emp.role}</p>
+                  <p className="label mt-2 text-yellow">{a.employees[emp.slug].role}</p>
 
                   <p className="mt-6 text-sm leading-relaxed text-chalk-muted">
-                    {emp.problem}
+                    {a.employees[emp.slug].problem}
                   </p>
                   <p className="mt-4 text-sm leading-relaxed text-cream">
-                    {emp.benefit}
+                    {a.employees[emp.slug].benefit}
                   </p>
 
-                  <p className="label mt-7 text-chalk-faint">For example</p>
+                  <p className="label mt-7 text-chalk-faint">{a.forExample}</p>
                   <ul className="mt-4 flex-1 space-y-2.5">
-                    {emp.tasks.map((task) => (
+                    {a.employees[emp.slug].tasks.map((task) => (
                       <li
                         key={task}
                         className="flex gap-3 text-sm leading-relaxed text-chalk-muted"
@@ -159,13 +138,16 @@ export default function AiPage() {
                   </ul>
 
                   <ArrowLink
-                    href={AI_PUBLIC_STATUS.interestHref}
+                    href={interestHref}
                     tone="yellow"
                     className="mt-8"
                   >
                     <span>
-                      Register interest
-                      <span className="sr-only"> in {emp.name}</span>
+                      {t.common.cta.registerInterest}
+                      <span className="sr-only">
+                        {' '}
+                        {a.registerInterestIn.replace('{name}', emp.name)}
+                      </span>
                     </span>
                   </ArrowLink>
                 </li>
@@ -183,21 +165,18 @@ export default function AiPage() {
               <div className="flex flex-wrap items-center gap-4">
                 <h3 className="display text-2xl text-cream">{director.name}</h3>
                 <span className="label text-chalk-faint">
-                  {statusLabel[director.status]}
+                  {t.common.inDevelopment}
                 </span>
               </div>
-              <p className="label mt-2 text-chalk-muted">{director.role}</p>
+              <p className="label mt-2 text-chalk-muted">{a.director.role}</p>
               <p className="mt-5 max-w-2xl text-sm leading-relaxed text-chalk-muted">
-                {director.summary}
+                {a.director.summary}
               </p>
             </div>
           </div>
 
           <p className="mt-10 border-t border-line pt-8 text-xs leading-relaxed text-chalk-faint">
-            Every employee above is in development. Nothing on this page
-            describes a capability that is available today, and no pricing,
-            integrations or performance figures are published because none have
-            been finalised.
+            {a.disclaimer}
           </p>
         </Container>
       </Section>
@@ -207,24 +186,21 @@ export default function AiPage() {
         <Container>
           <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
             <div>
-              <Label tone="light">How it will work</Label>
+              <Label tone="light">{a.howItWorks.eyebrow}</Label>
               <Display as="h2" size="md" className="mt-8 text-ink">
-                Built around
+                {a.howItWorks.h2Line1}
                 <br />
-                the job.
+                {a.howItWorks.h2Line2}
               </Display>
               <p className="mt-8 max-w-md text-[15px] leading-relaxed text-ink-muted">
-                Not another generic chatbot bolted onto a website. The intention
-                is a digital worker that takes on a defined job, inside limits
-                you set, with a person keeping sign-off on anything that
-                matters.
+                {a.howItWorks.body}
               </p>
             </div>
             <ul className="grid gap-px self-start bg-line-ink">
-              {howItWorks.map((item) => (
-                <li key={item.step} className="bg-cream p-7 sm:p-8">
+              {a.howItWorks.steps.map((item, i) => (
+                <li key={item.title} className="bg-cream p-7 sm:p-8">
                   <div className="flex items-baseline gap-5">
-                    <span className="label text-ink-faint">{item.step}</span>
+                    <span className="label text-ink-faint">{String(i + 1).padStart(2, '0')}</span>
                     <div>
                       <h3 className="display text-xl text-ink">{item.title}</h3>
                       <p className="mt-3 text-sm leading-relaxed text-ink-muted">
@@ -243,25 +219,24 @@ export default function AiPage() {
       <Section className="bg-black">
         <Container>
           <div className="border border-line p-9 sm:p-14">
-            <ComingSoon>{AI_PUBLIC_STATUS.label}</ComingSoon>
+            <ComingSoon>{t.common.comingSoon}</ComingSoon>
             <Display as="h2" size="md" className="mt-8 max-w-2xl text-cream">
-              Want to know when
+              {a.ctaLine1}
               <br />
-              they are ready?
+              {a.ctaLine2}
             </Display>
             <p className="mt-7 max-w-lg text-[15px] leading-relaxed text-chalk-muted">
-              There is no waitlist system yet, so registering interest sends a
-              normal enquiry — it reaches a person, and you will hear back.
+              {a.ctaBody}
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <ButtonLink
-                href={AI_PUBLIC_STATUS.interestHref}
+                href={interestHref}
                 variant="yellow"
               >
                 Register interest
               </ButtonLink>
-              <ButtonLink href="/contact" variant="outline">
-                Talk to Northbound
+              <ButtonLink href={localePath(locale, '/contact')} variant="outline">
+                {t.common.cta.talkToNorthbound}
               </ButtonLink>
             </div>
           </div>

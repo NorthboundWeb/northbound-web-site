@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { Dictionary } from '@/i18n/dictionaries'
 import { buildPackages, managementPlans } from '@/lib/services'
 
 /**
@@ -64,6 +65,12 @@ export function interestFromParam(
  * The packaged builds have published prices, so a budget question would be
  * asking something the visitor can already read off the page.
  */
+/**
+ * Budget bands. The VALUES are stable identifiers stored in the enquiry and
+ * validated on the server; the visible labels come from the dictionary, so a
+ * French visitor picks "Moins de 500 £" and the enquiry still records the same
+ * band. Changing one of these strings changes stored data, so don't.
+ */
 export const budgetBands = [
   'Not sure yet',
   'Under £500',
@@ -76,29 +83,34 @@ export const budgetBands = [
  * Validated on the server, not just in the browser. A server action is a public
  * POST endpoint, so anything the form promises has to be re-checked here.
  */
-export const contactSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, 'Please enter your name.')
-    .max(100, 'That name is too long.'),
-  email: z
-    .string()
-    .trim()
-    .min(1, 'Please enter your email address.')
-    .max(200, 'That email address is too long.')
-    .email('Please enter a valid email address.'),
-  business: z.string().trim().max(120, 'That is too long.').optional(),
-  projectType: z.enum(projectTypes).optional(),
-  budget: z.enum(budgetBands).optional(),
-  message: z
-    .string()
-    .trim()
-    .min(20, 'Please give me a little more detail — 20 characters or more.')
-    .max(4000, 'Please keep this under 4,000 characters.'),
-})
+/**
+ * Builds the schema with messages in the reader's language.
+ *
+ * The rules are identical in every locale — only the wording changes — so
+ * there is one definition rather than four, and a French visitor is told what
+ * is wrong in French rather than in English.
+ */
+export function buildContactSchema(e: Dictionary['contact']['errors']) {
+  return z.object({
+    name: z.string().trim().min(2, e.nameRequired).max(100, e.nameTooLong),
+    email: z
+      .string()
+      .trim()
+      .min(1, e.emailRequired)
+      .max(200, e.emailTooLong)
+      .email(e.emailInvalid),
+    business: z.string().trim().max(120, e.businessTooLong).optional(),
+    projectType: z.enum(projectTypes).optional(),
+    budget: z.enum(budgetBands).optional(),
+    message: z
+      .string()
+      .trim()
+      .min(20, e.messageTooShort)
+      .max(4000, e.messageTooLong),
+  })
+}
 
-export type ContactInput = z.infer<typeof contactSchema>
+export type ContactInput = z.infer<ReturnType<typeof buildContactSchema>>
 
 export type ContactState = {
   status: 'idle' | 'success' | 'error'

@@ -1,10 +1,14 @@
 import type { MetadataRoute } from 'next'
+import { LOCALES, LOCALE_META, localePath } from '@/i18n/config'
 import { site } from '@/lib/site'
 
 /**
- * Public routes only. /services and /approach are gone and 308 to /web and
- * /about#process respectively (see next.config.ts) — a redirecting URL does
- * not belong in a sitemap, so they are not listed here.
+ * Every public route, in every locale.
+ *
+ * /services and /approach are gone and 308 to /web and /about#process (see
+ * next.config.ts) — a redirecting URL does not belong in a sitemap, so they
+ * are not listed. Each entry carries its `alternates.languages` so a crawler
+ * that finds one language is told about the rest.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = [
@@ -18,11 +22,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   const lastModified = new Date()
+  const absolute = (locale: (typeof LOCALES)[number], path: string) =>
+    new URL(localePath(locale, path), site.url).toString()
 
-  return routes.map(({ path, priority }) => ({
-    url: new URL(path, site.url).toString(),
-    lastModified,
-    changeFrequency: 'monthly',
-    priority,
-  }))
+  return routes.flatMap(({ path, priority }) =>
+    LOCALES.map((locale) => ({
+      url: absolute(locale, path),
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority,
+      alternates: {
+        languages: Object.fromEntries(
+          LOCALES.map((code) => [LOCALE_META[code].tag, absolute(code, path)])
+        ),
+      },
+    }))
+  )
 }

@@ -17,14 +17,11 @@
 const BASE = (process.argv[2] ?? 'http://localhost:3000').replace(/\/$/, '')
 
 /** Pages to crawl. Everything else is discovered from the links on these. */
+const ROUTES = ['/', '/web', '/web/work', '/ai', '/about', '/contact', '/privacy']
+/** English is unprefixed; the others carry their locale. */
+const LOCALE_PREFIXES = ['', '/fr', '/de', '/es']
 const SEEDS = [
-  '/',
-  '/web',
-  '/web/work',
-  '/ai',
-  '/about',
-  '/contact',
-  '/privacy',
+  ...LOCALE_PREFIXES.flatMap((p) => ROUTES.map((r) => (p ? p + (r === '/' ? '' : r) : r))),
   '/does-not-exist-404',
 ]
 

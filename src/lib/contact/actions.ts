@@ -4,8 +4,10 @@ import { headers } from 'next/headers'
 import { Resend } from 'resend'
 import { rateLimit } from '@/lib/rate-limit'
 import { site } from '@/lib/site'
+import { isLocale, DEFAULT_LOCALE } from '@/i18n/config'
+import { getDictionary } from '@/i18n/dictionaries'
 import {
-  contactSchema,
+  buildContactSchema,
   type ContactInput,
   type ContactState,
 } from './schema'
@@ -25,8 +27,7 @@ const HONEYPOT_FIELD = 'website'
  */
 const FAST_FILL_MS = 3_000
 
-const GENERIC_ERROR =
-  'Something went wrong sending your message. Please email me directly and I will pick it up.'
+
 
 /** Rejects rather than hanging, so the visitor always gets an answer. */
 async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
@@ -70,6 +71,13 @@ export async function submitEnquiry(
   _previous: ContactState,
   formData: FormData
 ): Promise<ContactState> {
+  // Everything the visitor is told comes back in the language they were
+  // reading. The locale arrives as a hidden field; anything unrecognised
+  // falls back to English rather than throwing.
+  const rawLocale = String(formData.get('language') ?? '')
+  const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE
+  const t = await getDictionary(locale)
+  const errors = t.contact.errors
   // 1. Spam traps. Both fail silently as a "success" so a bot gets no signal
   //    about which check caught it.
   if (String(formData.get(HONEYPOT_FIELD) ?? '') !== '') {
@@ -89,12 +97,12 @@ export async function submitEnquiry(
   if (!limited.ok) {
     return {
       status: 'error',
-      message: `You have sent a few messages already. Please try again later, or email me directly at ${site.email}.`,
+      message: errors.rateLimited.replace('{email}', site.email),
     }
   }
 
   // 3. Validate.
-  const parsed = contactSchema.safeParse({
+  const parsed = buildContactSchema(errors).safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
     business: formData.get('business') || undefined,
@@ -104,22 +112,22 @@ export async function submitEnquiry(
   })
 
   if (!parsed.success) {
-    const errors: ContactState['errors'] = {}
+    const fieldErrors: ContactState['errors'] = {}
     for (const issue of parsed.error.issues) {
       const field = issue.path[0] as keyof ContactInput | undefined
-      if (field && !errors[field]) errors[field] = issue.message
+      if (field && !fieldErrors[field]) fieldErrors[field] = issue.message
     }
     return {
       status: 'error',
-      message: 'Please check the highlighted fields.',
-      errors,
+      message: errors.checkFields,
+      errors: fieldErrors,
     }
   }
 
   const enquiry = parsed.data
   // What the visitor was actually looking at when they wrote to us.
   const currency = String(formData.get('currency') ?? 'GBP')
-  const language = String(formData.get('language') ?? 'en-GB')
+  const language = locale
 
   // 4. Send. Configuration problems are logged server-side but never described
   //    to the visitor — an error page is not the place to leak setup detail.
@@ -131,7 +139,7 @@ export async function submitEnquiry(
     console.error(
       'Enquiry not sent: RESEND_API_KEY, CONTACT_TO_EMAIL or CONTACT_FROM_EMAIL is missing.'
     )
-    return { status: 'error', message: GENERIC_ERROR }
+    return { status: 'error', message: errors.generic }
   }
 
   const subject = `${suspiciouslyFast ? '[fast] ' : ''}New enquiry — ${headerSafe(
@@ -187,11 +195,11 @@ export async function submitEnquiry(
 
     if (error) {
       console.error('Resend rejected the enquiry:', error)
-      return { status: 'error', message: GENERIC_ERROR }
+      return { status: 'error', message: errors.generic }
     }
   } catch (error) {
     console.error('Failed to send enquiry:', error)
-    return { status: 'error', message: GENERIC_ERROR }
+    return { status: 'error', message: errors.generic }
   }
 
   return {

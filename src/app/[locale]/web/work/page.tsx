@@ -11,35 +11,42 @@ import {
   Rail,
   Section,
 } from '@/components/ui'
-import { standards } from '@/lib/services'
-import { work, workKindLabel, type WorkItem } from '@/lib/work'
+import { localePath } from '@/i18n/config'
+import type { Dictionary } from '@/i18n/dictionaries'
+import { resolvePage, type LocaleParams } from '@/lib/page-locale'
+import { work, type WorkItem } from '@/lib/work'
 
-export const metadata: Metadata = pageMetadata({
-  title: 'Our work',
-  description: 'Selected Northbound.Web projects. Every piece is labelled for what it actually is — client project, demo, internal work or concept — with no invented case studies.',
-  path: '/web/work',
-})
+export async function generateMetadata({ params }: LocaleParams): Promise<Metadata> {
+  const { locale, t } = await resolvePage(params)
+  return pageMetadata({
+    locale,
+    title: t.work.metaTitle,
+    description: t.work.metaDescription,
+    path: '/web/work',
+  })
+}
 
-function CaseStudy({ item }: { item: WorkItem }) {
+function CaseStudy({ item, t }: { item: WorkItem; t: Dictionary }) {
+  const copy = t.work.projects[item.slug]
   const shot = item.shots?.desktop
 
   return (
     <article className="grid gap-10 border-t border-line pt-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
       <div>
         <span className="label border border-line-strong px-2.5 py-1 text-chalk">
-          {workKindLabel[item.kind]}
+          {t.work.kinds[item.kind]}
         </span>
         <Display as="h2" size="md" className="mt-7 text-cream">
           {item.title}
         </Display>
-        <p className="label mt-3 text-chalk-faint">{item.category}</p>
+        <p className="label mt-3 text-chalk-faint">{copy.category}</p>
         <p className="mt-7 text-[15px] leading-relaxed text-chalk-muted">
-          {item.brief}
+          {copy.brief}
         </p>
 
-        <h3 className="label mt-9 text-chalk">What was built</h3>
+        <h3 className="label mt-9 text-chalk">{t.work.whatWasBuilt}</h3>
         <ul className="mt-4 space-y-2.5">
-          {item.built.map((line) => (
+          {copy.built.map((line) => (
             <li
               key={line}
               className="flex gap-3 text-sm leading-relaxed text-chalk-muted"
@@ -50,12 +57,12 @@ function CaseStudy({ item }: { item: WorkItem }) {
           ))}
         </ul>
 
-        <h3 className="label mt-8 text-chalk">Services</h3>
-        <p className="mt-3 text-sm text-chalk-muted">{item.services.join(' · ')}</p>
+        <h3 className="label mt-8 text-chalk">{t.work.services}</h3>
+        <p className="mt-3 text-sm text-chalk-muted">{copy.services.join(' · ')}</p>
 
         {item.href ? (
           <ArrowLink href={item.href} className="mt-8">
-            Visit the site
+            {t.work.visitSite}
           </ArrowLink>
         ) : null}
       </div>
@@ -82,7 +89,8 @@ function CaseStudy({ item }: { item: WorkItem }) {
   )
 }
 
-export default function WorkPage() {
+export default async function WorkPage({ params }: LocaleParams) {
+  const { locale, t } = await resolvePage(params)
   return (
     <>
       <section className="border-b border-line">
@@ -90,20 +98,21 @@ export default function WorkPage() {
           <div className="flex gap-8 lg:gap-14">
             <Rail index="03" />
             <div className="min-w-0 flex-1 pt-14 pb-16 sm:pt-20 lg:pb-24">
-              <Label>Recent work</Label>
+              <Label>{t.work.eyebrow}</Label>
               <Display as="h1" size="lg" className="mt-9 max-w-3xl text-cream">
-                Built for business.
+                {t.work.h1Line1}
                 <br />
-                Designed to perform.
+                {t.work.h1Line2}
               </Display>
               <p className="mt-9 max-w-xl text-[15px] leading-relaxed text-chalk-muted sm:text-base">
-                Northbound is a young studio, and this page shows only work that
-                genuinely exists. Every project is labelled for what it is, and
-                nothing here is presented as a client relationship that has not
-                happened.
+                {t.work.lede}
               </p>
-              <ButtonLink href="/contact" variant="light" className="mt-10">
-                Ask to see more
+              <ButtonLink
+                href={localePath(locale, '/contact')}
+                variant="light"
+                className="mt-10"
+              >
+                {t.work.askToSeeMore}
               </ButtonLink>
             </div>
           </div>
@@ -114,7 +123,7 @@ export default function WorkPage() {
         <Container>
           <div className="space-y-16">
             {work.map((item) => (
-              <CaseStudy key={item.slug} item={item} />
+              <CaseStudy key={item.slug} item={item} t={t} />
             ))}
           </div>
         </Container>
@@ -122,12 +131,12 @@ export default function WorkPage() {
 
       <Section className="bg-cream text-ink">
         <Container>
-          <Label tone="light">What you get</Label>
+          <Label tone="light">{t.work.whatYouGet}</Label>
           <Display as="h2" size="md" className="mt-8 max-w-2xl text-ink">
-            The standard, regardless of package.
+            {t.web.standardsHeadingAlt}
           </Display>
           <ul className="mt-14 grid gap-px bg-line-ink sm:grid-cols-2 lg:grid-cols-3">
-            {standards.map((s) => (
+            {t.web.standards.map((s) => (
               <li key={s.title} className="bg-cream p-7 sm:p-8">
                 <h3 className="label text-ink">{s.title}</h3>
                 <p className="mt-4 text-sm leading-relaxed text-ink-muted">
@@ -137,11 +146,11 @@ export default function WorkPage() {
             ))}
           </ul>
           <div className="mt-14 flex flex-wrap items-center gap-5 border-t border-line-ink pt-10">
-            <ButtonLink href="/contact" variant="solid" size="lg">
-              Start a project
+            <ButtonLink href={localePath(locale, '/contact')} variant="solid" size="lg">
+              {t.common.cta.startProject}
             </ButtonLink>
-            <ArrowLink href="/web#pricing" tone="ink">
-              See website packages
+            <ArrowLink href={localePath(locale, '/web') + '#pricing'} tone="ink">
+              {t.common.cta.seePackages}
             </ArrowLink>
           </div>
         </Container>

@@ -12,7 +12,7 @@
 import { chromium } from 'playwright'
 const BASE = process.argv[2] ?? 'http://localhost:3000'
 
-const ROUTES = ['/', '/web', '/ai', '/web/work', '/about', '/contact', '/privacy']
+const ROUTES = ['/', '/web', '/ai', '/web/work', '/about', '/contact', '/privacy', '/fr', '/fr/web', '/de/web', '/es/web']
 const WIDTHS = [390, 500, 768, 1024, 1440]
 const problems = []
 const note = (m) => problems.push(m)

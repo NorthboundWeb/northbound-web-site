@@ -15,52 +15,33 @@ import {
 } from '@/components/ui'
 import { formatMoney } from '@/lib/money/currency'
 import { buildPackages } from '@/lib/services'
+import { localePath } from '@/i18n/config'
+import { resolvePage, type LocaleParams } from '@/lib/page-locale'
 import { divisions } from '@/lib/site'
-import { work, workKindLabel } from '@/lib/work'
-
-/**
- * Hero credentials.
- *
- * The approved mockup showed "200+ websites" and "trusted by UK businesses".
- * Neither figure has been verified, so neither is published. These are
- * statements that are true without counting anything.
- */
-const credentials = [
-  { label: 'Based in', value: 'The UK' },
-  { label: 'Built for', value: 'Small business' },
-  { label: 'Focused on', value: 'Results' },
-]
-
-const pillars = [
-  {
-    icon: WindowIcon,
-    title: 'Web services',
-    body: 'Strategy, design, build and management for websites that perform.',
-  },
-  {
-    icon: PeopleIcon,
-    title: 'AI employees',
-    body: 'Digital employees designed to handle the work, so you can focus on what matters.',
-    comingSoon: true,
-  },
-  {
-    icon: GrowthIcon,
-    title: 'Growth focused',
-    body: 'Built around real outcomes, and changed on the strength of what the numbers show.',
-  },
-  {
-    icon: ShieldIcon,
-    title: 'Secure & reliable',
-    body: 'Your data, your business. Secure systems and clear control at every step.',
-  },
-]
+import { work } from '@/lib/work'
 
 /** The entry price, read from the pricing data rather than typed into copy. */
 const cheapestBuild = buildPackages.reduce((cheapest, pkg) =>
   pkg.pricePence < cheapest.pricePence ? pkg : cheapest
 )
 
-export default function HomePage() {
+export default async function HomePage({ params }: LocaleParams) {
+  const { locale, t } = await resolvePage(params)
+  const h = t.home
+
+  /**
+   * The approved mockup showed "200+ websites" and "trusted by UK
+   * businesses". Neither figure has been verified, so neither is published —
+   * these are statements that are true without counting anything.
+   */
+  const credentials = h.credentials
+  const pillars = [
+    { icon: WindowIcon, ...h.pillars.web },
+    { icon: PeopleIcon, ...h.pillars.ai, comingSoon: true },
+    { icon: GrowthIcon, ...h.pillars.growth },
+    { icon: ShieldIcon, ...h.pillars.secure },
+  ]
+
   return (
     <>
       {/* ---------------------------------------------------------------- 01 */}
@@ -78,39 +59,38 @@ export default function HomePage() {
             <Rail index="01" />
 
             <div className="min-w-0 flex-1 pt-14 pb-20 sm:pt-20 lg:pt-24 lg:pb-32">
-              <Label>Welcome to Northbound</Label>
+              <Label>{h.eyebrow}</Label>
 
               <Display as="h1" size="lg" className="mt-9 max-w-4xl text-cream">
-                Digital infrastructure
+                {h.h1Line1}
                 <br />
-                for modern businesses
+                {h.h1Line2}
               </Display>
 
               <p className="mt-9 max-w-lg text-[15px] leading-relaxed text-chalk-muted sm:text-base">
-                Northbound builds, hosts and manages websites for small
-                businesses. Fixed prices from{' '}
+                {h.lede.split('{price}')[0]}
                 <strong className="font-semibold text-cream">
                   {formatMoney(cheapestBuild.pricePence)}
                 </strong>
-                , and none of the technical side lands on you.
+                {h.lede.split('{price}')[1]}
               </p>
 
               <div className="mt-10 flex flex-wrap items-center gap-4">
-                <ButtonLink href="/web#pricing" variant="light" size="lg">
-                  See website packages
+                <ButtonLink href={localePath(locale, '/web') + '#pricing'} variant="light" size="lg">
+                  {t.common.cta.seePackages}
                 </ButtonLink>
-                <ButtonLink href="/contact" variant="outline" size="lg">
-                  Start a project
+                <ButtonLink href={localePath(locale, '/contact')} variant="outline" size="lg">
+                  {t.common.cta.startProject}
                 </ButtonLink>
               </div>
 
               <p className="mt-8 max-w-md text-sm leading-relaxed text-chalk-faint">
-                AI employees that work for your business are coming soon.{' '}
+                {h.aiNote}{' '}
                 <Link
-                  href="/ai"
+                  href={localePath(locale, '/ai')}
                   className="text-yellow underline-offset-4 hover:underline"
                 >
-                  See what&rsquo;s coming
+                  {h.aiNoteLink}
                 </Link>
               </p>
             </div>
@@ -191,10 +171,10 @@ export default function HomePage() {
                     web ? 'text-ink' : 'text-yellow'
                   )}
                 >
-                  {d.headline}
+                  {web ? h.divisions.webHeadline : h.divisions.aiHeadline}
                 </p>
 
-                {!d.available ? <ComingSoon className="mt-6 self-start" /> : null}
+                {!d.available ? <ComingSoon className="mt-6 self-start">{t.common.comingSoon}</ComingSoon> : null}
 
                 <p
                   className={cn(
@@ -202,23 +182,24 @@ export default function HomePage() {
                     web ? 'text-ink-muted' : 'text-chalk-muted'
                   )}
                 >
-                  {d.body}
+                  {web ? h.divisions.webBody : h.divisions.aiBody}
                 </p>
 
                 {web ? (
                   <p className="label mt-6 text-ink">
-                    Available now · from {formatMoney(cheapestBuild.pricePence)}
+                    {t.common.availableNow} · {t.common.from.toLowerCase()}{' '}
+                    {formatMoney(cheapestBuild.pricePence)}
                   </p>
                 ) : null}
 
                 <div className="mt-10 pt-2">
                   <ButtonLink
-                    href={d.href}
+                    href={localePath(locale, d.href)}
                     variant={web ? 'solid' : 'yellow'}
                     // Stretches over the whole card; see CardCta's note.
                     className="relative z-10 after:absolute after:inset-0 after:content-['']"
                   >
-                    {d.cta}
+                    {web ? t.common.cta.exploreWeb : t.common.cta.exploreComing}
                   </ButtonLink>
                 </div>
               </article>
@@ -230,9 +211,7 @@ export default function HomePage() {
         <div className="mt-8 hidden items-center gap-4 border border-line px-5 py-4 lg:inline-flex">
           <Mark className="h-6 w-auto" />
           <p className="label text-chalk-muted">
-            Northbound.
-            <br />
-            Built to last.
+            {h.signature}
           </p>
         </div>
       </Container>
@@ -242,24 +221,24 @@ export default function HomePage() {
         <Container>
           <div className="grid gap-14 lg:grid-cols-2 lg:gap-20">
             <div>
-              <Label tone="light">What we do</Label>
+              <Label tone="light">{h.whatWeDo}</Label>
               <Display as="h2" size="md" className="mt-8 text-ink">
-                Two divisions.
+                {h.twoDivisionsLine1}
                 <br />
-                One Northbound.
+                {h.twoDivisionsLine2}
               </Display>
               <p className="mt-8 max-w-md text-[15px] leading-relaxed text-ink-muted sm:text-base">
-                Northbound.Web builds and manages the digital infrastructure a
-                business runs on — the site, the hosting, the upkeep and the
-                improvements that follow.
+                {h.twoDivisionsBody1}
               </p>
               <p className="mt-4 max-w-md text-[15px] leading-relaxed text-ink-muted sm:text-base">
-                Northbound.AI will provide digital employees designed to help
-                businesses operate, grow and save time. That side is still being
-                built, and it is marked as such everywhere on this site.
+                {h.twoDivisionsBody2}
               </p>
-              <ButtonLink href="/about" variant="solid" className="mt-10">
-                Learn more about us
+              <ButtonLink
+                href={localePath(locale, '/about')}
+                variant="solid"
+                className="mt-10"
+              >
+                {t.common.cta.learnMore}
               </ButtonLink>
             </div>
 
@@ -268,8 +247,8 @@ export default function HomePage() {
                 <li key={p.title} className="bg-cream p-7 sm:p-8">
                   <p.icon className="h-7 w-7 text-ink" />
                   <h3 className="label mt-6 text-ink">{p.title}</h3>
-                  {p.comingSoon ? (
-                    <p className="label mt-3 text-ink-faint">Coming soon</p>
+                  {'comingSoon' in p && p.comingSoon ? (
+                    <p className="label mt-3 text-ink-faint">{t.common.comingSoon}</p>
                   ) : null}
                   <p className="mt-3 text-sm leading-relaxed text-ink-muted">
                     {p.body}
@@ -286,29 +265,31 @@ export default function HomePage() {
         <Container>
           <div className="grid gap-14 lg:grid-cols-2 lg:gap-16">
             <div>
-              <Label>Recent work</Label>
+              <Label>{h.recentWork}</Label>
               <Display as="h2" size="md" className="mt-8 text-cream">
-                Built for business.
+                {h.workLine1}
                 <br />
-                Designed to perform.
+                {h.workLine2}
               </Display>
-              <ArrowLink href="/web/work" className="mt-10">
-                View our work
+              <ArrowLink href={localePath(locale, '/web/work')} className="mt-10">
+                {t.common.cta.viewWork}
               </ArrowLink>
             </div>
 
             <ul className="grid gap-6 sm:grid-cols-2">
               {work.map((item) => (
                 <li key={item.slug} className="group">
-                  <Link href="/web/work" className="block">
+                  <Link href={localePath(locale, '/web/work')} className="block">
                     <div className="relative aspect-4/3 overflow-hidden border border-line bg-char">
                       <MountainPlate className="h-full w-full opacity-60 transition-opacity duration-300 group-hover:opacity-80" />
                       <span className="label absolute top-3 left-3 border border-line-strong bg-black/80 px-2.5 py-1 text-chalk">
-                        {workKindLabel[item.kind]}
+                        {t.work.kinds[item.kind]}
                       </span>
                     </div>
                     <h3 className="mt-4 text-[15px] text-cream">{item.title}</h3>
-                    <p className="mt-1 text-sm text-chalk-faint">{item.category}</p>
+                    <p className="mt-1 text-sm text-chalk-faint">
+                      {t.work.projects[item.slug].category}
+                    </p>
                   </Link>
                 </li>
               ))}
@@ -320,11 +301,10 @@ export default function HomePage() {
               */}
               <li className="flex flex-col justify-center border-l border-line pl-6">
                 <p className="text-[15px] leading-relaxed text-chalk-muted">
-                  More projects are added as they go live. Recent client sites
-                  can be shared on request — some are under wraps until launch.
+                  {h.workMore}
                 </p>
-                <ArrowLink href="/contact" className="mt-6">
-                  Ask to see examples
+                <ArrowLink href={localePath(locale, '/contact')} className="mt-6">
+                  {t.common.cta.askToSee}
                 </ArrowLink>
               </li>
             </ul>

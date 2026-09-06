@@ -21,14 +21,17 @@ export function PrefsSelect({
   value,
   options,
   onCommit,
+  refreshOnChange = true,
   className,
 }: {
   label: string
   name: string
   value: string
   options: { value: string; label: string }[]
-  /** Persists the choice. Runs before the refresh. */
+  /** Persists the choice. Runs before any refresh. */
   onCommit: (next: string) => void
+  /** False when `onCommit` navigates by itself, as the language switch does. */
+  refreshOnChange?: boolean
   className?: string
 }) {
   const id = useId()
@@ -47,7 +50,7 @@ export function PrefsSelect({
         disabled={pending}
         onChange={(event) => {
           onCommit(event.target.value)
-          startTransition(() => router.refresh())
+          if (refreshOnChange) startTransition(() => router.refresh())
         }}
         className="label min-h-11 cursor-pointer border border-line bg-transparent px-2.5 py-2 text-chalk transition-colors hover:border-chalk-faint focus-visible:border-chalk disabled:opacity-60"
       >

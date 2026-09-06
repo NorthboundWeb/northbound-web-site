@@ -33,18 +33,13 @@ export type WorkShot = {
   height: number
 }
 
+/** Keys into `t.work.projects`. Adding a project means adding both. */
+export type WorkSlug = 'northbound'
+
 export type WorkItem = {
-  slug: string
+  slug: WorkSlug
   title: string
-  /** What kind of site it is. */
-  category: string
   kind: WorkKind
-  /** One or two sentences on what the project had to do. */
-  brief: string
-  /** What was actually built. Work, not outcomes. */
-  built: string[]
-  /** Northbound services the project used. */
-  services: string[]
   /** Real screenshots, when they exist. */
   shots?: { desktop?: WorkShot; mobile?: WorkShot }
   /** Only where the site is genuinely live and public. */
@@ -55,17 +50,7 @@ export const work: WorkItem[] = [
   {
     slug: 'northbound',
     title: 'Northbound',
-    category: 'Brand and marketing site',
     kind: 'internal',
-    brief:
-      'Northbound’s own site had to carry two divisions at once — a web service that is trading today, and a product line that is still being built — without either one misleading the visitor about what they can buy.',
-    built: [
-      'Static-rendered pages served from the edge',
-      'A single pricing source that every page, link and enquiry option reads from',
-      'Currency selection with GBP kept as the contractual currency',
-      'Automated link, contrast and duplicate-id checks that run against a real build',
-    ],
-    services: ['Design', 'Build', 'Management'],
   },
 ]
 
