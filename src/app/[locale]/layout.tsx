@@ -4,6 +4,7 @@ import { LogoDefs } from '@/components/logo'
 import { MountainDefs } from '@/components/mountain'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { LOCALES, LOCALE_META, isLocale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
@@ -84,6 +85,9 @@ export default async function RootLayout({
   if (!isLocale(locale)) notFound()
   const t = await getDictionary(locale)
   const currency = await getCurrency()
+  // Set by the proxy for this request; stamps the inline JSON-LD so the CSP
+  // does not have to allow all inline script.
+  const nonce = (await headers()).get('x-nonce') ?? undefined
 
   return (
     <html
@@ -97,6 +101,7 @@ export default async function RootLayout({
           run JavaScript.
         */}
         <script
+          nonce={nonce}
           type="application/ld+json"
           // The payload is built in this repository from site config — no
           // user input reaches it, so there is nothing here to escape.
