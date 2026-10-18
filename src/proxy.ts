@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { DEFAULT_LOCALE, LOCALES, isLocale } from '@/i18n/config'
 import { LOCALE_COOKIE } from '@/lib/prefs/cookies'
+import { HQ_COOKIE, readHqConfig, verifySessionToken } from '@/lib/hq/session'
 
 /**
  * Locale routing.
@@ -64,7 +65,42 @@ function withCsp(response: NextResponse, csp: string): NextResponse {
   return response
 }
 
-export function proxy(request: NextRequest) {
+/**
+ * The private HQ area (/hq). It is not part of the marketing site: it has no
+ * locale, is never cached or indexed, and nothing under it is reachable
+ * without a valid session cookie except the login page itself. Every page,
+ * action and route handler under /hq also re-checks the session on its own, so
+ * this gate is the first line of defence, not the only one.
+ */
+async function handleHq(
+  request: NextRequest,
+  requestHeaders: Headers,
+  csp: string
+): Promise<NextResponse> {
+  const config = readHqConfig()
+  const isLogin = request.nextUrl.pathname === '/hq/login'
+
+  const allowed = config
+    ? await verifySessionToken(config.secret, request.cookies.get(HQ_COOKIE)?.value)
+    : false
+
+  let response: NextResponse
+  if (!allowed && !isLogin) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/hq/login'
+    url.search = ''
+    response = NextResponse.redirect(url)
+  } else {
+    response = NextResponse.next({ request: { headers: requestHeaders } })
+  }
+
+  response.headers.set('Content-Security-Policy', csp)
+  response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive')
+  response.headers.set('Cache-Control', 'no-store')
+  return response
+}
+
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
 
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
@@ -74,6 +110,10 @@ export function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set('x-nonce', nonce)
   requestHeaders.set('Content-Security-Policy', csp)
+
+  if (pathname === '/hq' || pathname.startsWith('/hq/')) {
+    return handleHq(request, requestHeaders, csp)
+  }
 
   const hasPrefix = LOCALES.some(
     (locale) =>

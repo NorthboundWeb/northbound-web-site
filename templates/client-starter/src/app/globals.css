@@ -1,0 +1,40 @@
+@import 'tailwindcss';
+
+/*
+  Starter palette. Replace these four values with the client's brand colours
+  and the whole site follows. Keep text on --paper at 4.5:1 contrast or better.
+*/
+:root {
+  --paper: #fbfaf7;
+  --ink: #17181a;
+  --muted: #5b5d62;
+  --accent: #1f5f8b;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
