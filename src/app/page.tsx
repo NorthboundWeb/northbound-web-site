@@ -8,6 +8,7 @@ import {
   TravellingLine,
   Wireframe,
 } from '@/components/graphics'
+import { RebuildStage } from '@/components/rebuild-stage'
 import {
   ArrowLink,
   ButtonLink,
@@ -134,6 +135,9 @@ export default function HomePage() {
           </dl>
         </Container>
       </section>
+
+      {/* ── The rebuild: a dated site reassembling on scroll ─── */}
+      <RebuildStage />
 
       {/* ── Editorial spreads ────────────────────────────────── */}
       {spreads.map((s, i) => (
