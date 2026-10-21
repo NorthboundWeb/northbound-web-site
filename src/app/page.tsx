@@ -9,6 +9,7 @@ import {
   Wireframe,
 } from '@/components/graphics'
 import { RebuildStage } from '@/components/rebuild-stage'
+import { Restyler } from '@/components/restyler'
 import {
   ArrowLink,
   ButtonLink,
@@ -177,6 +178,9 @@ export default function HomePage() {
           </Container>
         </section>
       ))}
+
+      {/* ── Restyler: the demo site rebuilt from four controls ─ */}
+      <Restyler />
 
       {/* ── Judged ───────────────────────────────────────────── */}
       <StatementBand

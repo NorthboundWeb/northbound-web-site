@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Container, Label } from '@/components/ui'
+import { ramp, useScrollProgress } from '@/lib/use-scroll-progress'
 
 /**
  * The rebuild stage.
@@ -44,51 +45,9 @@ const STEPS = [
   },
 ] as const
 
-/** Maps progress to 0–1 across an arbitrary window, clamped at both ends. */
-function ramp(progress: number, from: number, to: number) {
-  if (progress <= from) return 0
-  if (progress >= to) return 1
-  return (progress - from) / (to - from)
-}
-
 export function RebuildStage() {
   const sectionRef = useRef<HTMLDivElement>(null)
-  const [progress, setProgress] = useState(0)
-  const [enabled, setEnabled] = useState(false)
-
-  useEffect(() => {
-    const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)')
-    if (!motionOk.matches) return
-
-    setEnabled(true)
-    const section = sectionRef.current
-    if (!section) return
-
-    let frame = 0
-    const measure = () => {
-      frame = 0
-      const rect = section.getBoundingClientRect()
-      const travel = rect.height - window.innerHeight
-      if (travel <= 0) {
-        setProgress(1)
-        return
-      }
-      setProgress(Math.min(1, Math.max(0, -rect.top / travel)))
-    }
-    const onScroll = () => {
-      if (frame) return
-      frame = requestAnimationFrame(measure)
-    }
-
-    measure()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
-      if (frame) cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-    }
-  }, [])
+  const { progress, enabled } = useScrollProgress(sectionRef)
 
   // With motion off, show the finished state and every step.
   const p = enabled ? progress : 1
