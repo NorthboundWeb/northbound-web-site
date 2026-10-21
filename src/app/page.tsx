@@ -11,6 +11,7 @@ import {
 import { Devices } from '@/components/devices'
 import { RebuildStage } from '@/components/rebuild-stage'
 import { Restyler } from '@/components/restyler'
+import { SiteCheck } from '@/components/site-check'
 import {
   ArrowLink,
   ButtonLink,
@@ -185,6 +186,9 @@ export default function HomePage() {
 
       {/* ── Restyler: the demo site rebuilt from four controls ─ */}
       <Restyler />
+
+      {/* ── Site self-check ───────────────────────────────────── */}
+      <SiteCheck />
 
       {/* ── Judged ───────────────────────────────────────────── */}
       <StatementBand

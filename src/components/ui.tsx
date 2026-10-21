@@ -148,7 +148,7 @@ export function Display({
 }
 
 const base =
-  'group/btn inline-flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-[0.12em] transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60'
+  'press group/btn inline-flex items-center justify-center gap-3 text-sm font-medium uppercase tracking-[0.12em] disabled:cursor-not-allowed disabled:opacity-60'
 
 const variants = {
   /** Deep green block, cream text, orange arrow. */

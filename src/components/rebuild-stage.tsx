@@ -101,14 +101,14 @@ export function RebuildStage() {
                     >
                       <span
                         aria-hidden
-                        className={`label absolute top-3.5 left-0 tabular-nums transition-colors duration-300 ${
+                        className={`label absolute top-3.5 left-0 tabular-nums transition-colors duration-200 ${
                           on || done ? 'text-accent' : 'text-ink-faint'
                         }`}
                       >
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <span
-                        className={`block font-display text-lg tracking-tight uppercase transition-colors duration-300 ${
+                        className={`block font-display text-lg tracking-tight uppercase transition-colors duration-200 ${
                           on ? 'text-ink' : 'text-ink-faint'
                         }`}
                       >
@@ -196,7 +196,7 @@ function DatedSite({
           THORNLEY PLUMBING &amp; HEATING LTD
         </b>
         <small
-          className="text-[1.8cqw] text-[#b00] transition-opacity duration-300"
+          className="text-[1.8cqw] text-[#b00] transition-opacity duration-200"
           style={{ opacity: clutterGone ? 0 : 1 }}
         >
           ~ Quality Work At Affordable Prices ~
@@ -210,7 +210,7 @@ function DatedSite({
       </div>
 
       <div
-        className="absolute inset-x-0 top-[25cqw] text-center text-[2.9cqw] text-[#c00] transition-opacity duration-300"
+        className="absolute inset-x-0 top-[25cqw] text-center text-[2.9cqw] text-[#c00] transition-opacity duration-200"
         style={{ opacity: clutterGone ? 0 : 1, fontFamily: 'Comic Sans MS, cursive' }}
       >
         Welcome To Our Website!!!
@@ -224,7 +224,7 @@ function DatedSite({
           <br />* Bathrooms
           <br />* Leaks &amp; Repairs
           <span
-            className="mt-[0.8cqw] inline-block border border-dashed border-[#c90] bg-[#ff0] px-[0.8cqw] text-[1.5cqw] transition-opacity duration-300"
+            className="mt-[0.8cqw] inline-block border border-dashed border-[#c90] bg-[#ff0] px-[0.8cqw] text-[1.5cqw] transition-opacity duration-200"
             style={{ opacity: clutterGone ? 0 : 1 }}
           >
             Page Under Construction
@@ -236,7 +236,7 @@ function DatedSite({
           <br />
           <br />
           <span
-            className="font-bold text-[#c00] transition-opacity duration-300"
+            className="font-bold text-[#c00] transition-opacity duration-200"
             style={{ opacity: clutterGone ? 0 : 1 }}
           >
             *** NEW *** We now do power flushing!!
@@ -250,7 +250,7 @@ function DatedSite({
       </div>
 
       <div
-        className="absolute inset-x-[2.4cqw] bottom-[1.6cqw] text-center text-[1.4cqw] text-[#555] transition-opacity duration-300"
+        className="absolute inset-x-[2.4cqw] bottom-[1.6cqw] text-center text-[1.4cqw] text-[#555] transition-opacity duration-200"
         style={{ opacity: clutterGone ? 0 : 1 }}
       >
         Visitors:{' '}

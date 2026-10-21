@@ -38,6 +38,29 @@
 
   --line: rgba(13, 42, 36, 0.2);
   --line-strong: rgba(13, 42, 36, 0.42);
+
+  /*
+    Motion.
+
+    Anything answering a tap finishes inside 300ms — past that it stops
+    reading as response and starts reading as waiting. Presses are quicker
+    going down than coming back up, which is what makes a button feel
+    physical rather than rubbery.
+
+    The easings are custom on purpose. The browser defaults (ease, ease-out)
+    are symmetrical and slightly limp; these start faster and settle slower,
+    which is how real objects behave.
+  */
+  --t-press: 90ms;
+  --t-fast: 150ms;
+  --t-base: 200ms;
+  --t-slow: 300ms;
+  --t-stage: 520ms;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* The curve iOS uses for sheets — slow to leave, decisive to arrive. */
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* Dark mode is the same brand inverted: green paper, cream ink. */
@@ -123,6 +146,14 @@
     color: var(--cream);
   }
 
+  /*
+    Reduced motion removes movement, not feedback.
+
+    Flattening every duration to zero is the usual shortcut, and it leaves
+    the interface feeling broken — things change with no acknowledgement at
+    all. Transforms are what cause trouble, so those are dropped; opacity
+    and colour still cross-fade, quickly.
+  */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -132,7 +163,10 @@
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      transition-property: opacity, background-color, border-color, color,
+        fill, stroke !important;
+      transition-duration: 120ms !important;
+      transform: none !important;
     }
   }
 }
@@ -209,10 +243,15 @@
   animation: travel 6s ease-in-out infinite;
 }
 
+/*
+  Entrances start at 0.95, never at 0. Something scaling up from nothing
+  reads as a special effect; something arriving from slightly-too-small
+  reads as the thing settling into place.
+*/
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(14px) scale(0.985);
   }
   to {
     opacity: 1;
@@ -221,7 +260,45 @@
 }
 
 @utility rise-in {
-  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation: rise 0.62s var(--ease-out) both;
+}
+
+/*
+  Press feedback.
+
+  Down is quick and up is slower, so the button resists for a moment and
+  then returns — the asymmetry is the whole trick. Only transform and
+  opacity move, so this never touches layout.
+*/
+@utility press {
+  transition:
+    transform var(--t-base) var(--ease-out),
+    background-color var(--t-fast) ease,
+    border-color var(--t-fast) ease,
+    color var(--t-fast) ease;
+
+  &:active {
+    transform: scale(0.97);
+    transition-duration: var(--t-press);
+  }
+}
+
+/*
+  Blur bridges a state change that would otherwise cut.
+
+  Used where content is replaced rather than moved — the brief softness
+  covers the swap and the eye reads one thing becoming another instead of
+  two separate frames.
+*/
+@utility state-swap {
+  transition:
+    opacity var(--t-slow) var(--ease-out),
+    filter var(--t-slow) var(--ease-out);
+
+  @starting-style {
+    opacity: 0;
+    filter: blur(6px);
+  }
 }
 
 /*

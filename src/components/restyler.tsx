@@ -195,7 +195,7 @@ export function Restyler() {
             <button
               type="button"
               onClick={shuffle}
-              className="mt-7 w-full cursor-pointer border border-line-strong px-5 py-3 text-sm font-medium tracking-wide uppercase transition-colors hover:bg-ink hover:text-paper"
+              className="press mt-7 w-full cursor-pointer border border-line-strong px-5 py-3 text-sm font-medium tracking-wide uppercase hover:bg-ink hover:text-paper"
             >
               Surprise me
             </button>
@@ -233,7 +233,7 @@ export function Restyler() {
                   borderRadius: c.radius,
                   fontFamily: t.body,
                   transition:
-                    'background-color 400ms ease, color 400ms ease, border-radius 400ms ease',
+                    'background-color var(--t-stage) var(--ease-out), color var(--t-stage) var(--ease-out), border-radius var(--t-stage) var(--ease-out)',
                 }}
               >
                 <DemoSite palette={p} pairing={t} space={d.space} radius={c.radius} />
@@ -276,7 +276,7 @@ function Choice({
               type="button"
               aria-pressed={on}
               onClick={() => onChange(i)}
-              className={`flex cursor-pointer items-center gap-2 border px-3 py-1.5 text-sm transition-colors ${
+              className={`press flex cursor-pointer items-center gap-2 border px-3 py-1.5 text-sm ${
                 on
                   ? 'border-ink bg-ink text-paper'
                   : 'border-line text-ink-muted hover:border-line-strong hover:text-ink'
@@ -340,7 +340,7 @@ function DemoSite({
   const gap = `${0.75 * space}rem`
 
   return (
-    <div style={{ transition: 'all 400ms ease' }}>
+    <div style={{ transition: 'all var(--t-stage) var(--ease-out)' }}>
       <header
         className="flex items-center justify-between border-b"
         style={{
