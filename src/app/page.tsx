@@ -8,6 +8,7 @@ import {
   TravellingLine,
   Wireframe,
 } from '@/components/graphics'
+import { Devices } from '@/components/devices'
 import { RebuildStage } from '@/components/rebuild-stage'
 import { Restyler } from '@/components/restyler'
 import {
@@ -178,6 +179,9 @@ export default function HomePage() {
           </Container>
         </section>
       ))}
+
+      {/* ── Devices: the same site at both sizes ──────────────── */}
+      <Devices />
 
       {/* ── Restyler: the demo site rebuilt from four controls ─ */}
       <Restyler />
