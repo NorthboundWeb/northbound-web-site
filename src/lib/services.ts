@@ -3,17 +3,20 @@
  * plans.
  *
  * These are the real advertised prices, not illustrations. Only the Custom
- * build is variable ("from £499"), because its scope is agreed per project.
+ * build is variable ("from £349"), because its scope is agreed per project.
  * Do not reintroduce "example price" or "starting from" framing around the
- * £199, £299 and £399 packages — they are the advertised prices.
+ * £249 and £349 packages — they are the advertised prices.
  *
  * Everything a customer is promised lives in this file. Do not add
  * deliverables here that have not been agreed as part of the offer, and do not
  * promise unlimited fixes, updates or support anywhere.
  */
 
-/** Advanced Management's monthly price, quoted wherever the free month is mentioned. */
-export const ADVANCED_MANAGEMENT_PRICE = 80
+/** Management's starting monthly price, quoted wherever the free month is mentioned. */
+export const ADVANCED_MANAGEMENT_PRICE = 39
+/** The annual deal, stated the same way everywhere: twelve months for the price of ten. */
+export const ANNUAL_TERMS =
+  'Pay for a year up front and you get twelve months for the price of ten — the first and the last month free.'
 
 export type BuildPackage = {
   slug: string
@@ -46,85 +49,64 @@ export type BuildPackage = {
 
 export const buildPackages: BuildPackage[] = [
   {
-    slug: 'basic',
-    name: 'Basic',
-    price: 199,
-    summary:
-      'A small, well-built site that tells people who you are, what you do and how to reach you.',
-    bestFor:
-      'Sole traders and new businesses who need a credible presence quickly.',
-    includes: [
-      'Up to 3 pages',
-      'Mobile responsive',
-      'Contact form',
-      'Basic SEO setup',
-      '1 revision round',
-    ],
-    timeline: 'Approximately 5–7 working days',
-    enquiryParam: 'basic',
-    cta: 'Choose Basic',
-  },
-  {
-    slug: 'standard',
-    name: 'Standard',
-    price: 299,
+    slug: 'pro',
+    name: 'Pro',
+    price: 249,
     badge: 'Most popular',
     summary:
-      'Room to explain each of your services properly, with analytics so you can see what visitors do.',
+      'A proper small-business site: every page designed for mobile and desktop, with bookings handled for you.',
     bestFor:
-      'Established businesses with a few distinct services or locations to cover.',
+      'Sole traders and small teams who take enquiries and bookings and want to look the part.',
     includes: [
-      'Everything in Basic',
-      'Up to 5 pages',
-      'Analytics setup',
-      'Google Business link or integration, where applicable',
-      '2 revision rounds',
+      'Up to 5 pages, each designed for mobile and desktop',
+      'Contact form and basic SEO',
+      'Booking setup for one staff calendar, with email confirmations',
+      '1 revision round',
     ],
     timeline: 'Approximately 7–10 working days',
-    enquiryParam: 'standard',
-    cta: 'Choose Standard',
+    enquiryParam: 'pro',
+    cta: 'Choose Pro',
   },
   {
-    slug: 'advanced',
-    name: 'Advanced',
-    price: 399,
+    slug: 'ultimate',
+    name: 'Ultimate',
+    price: 349,
     freeAdvancedMonth: true,
     summary:
-      'A larger site, with the option of a third-party booking tool connected where that suits how you work.',
+      'More pages, local search set up properly, and a booking system that runs a whole team.',
     bestFor:
-      'Businesses taking bookings or enquiries regularly, or with more to say.',
+      'Businesses with several services or staff, where bookings and local search matter.',
     includes: [
-      'Everything in Standard',
-      'Up to 8 pages',
-      'One standard third-party booking integration, where compatible and appropriate',
-      '3 revision rounds',
-      `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
+      'Up to 8 pages, each designed for mobile and desktop',
+      'Contact form and basic SEO',
+      'Local SEO setup',
+      'Booking setup for multiple staff calendars, with reminders, booking payments, cancellation and rescheduling, and custom questions',
+      '2 revision rounds',
     ],
     timeline: 'Approximately 10–15 working days',
-    enquiryParam: 'advanced-build',
-    cta: 'Choose Advanced',
-    note: 'The booking integration means connecting or embedding a suitable booking service you already use, or one we pick together. Building a booking system from scratch — complex availability rules, custom payment flows, customer accounts or automated booking workflows — is a bigger job, so that gets scoped and quoted separately.',
+    enquiryParam: 'ultimate',
+    cta: 'Choose Ultimate',
+    note: 'Booking payments run through Stripe, so card details never touch the website. Stripe\'s own fees apply to each payment.',
   },
   {
     slug: 'custom',
     name: 'Custom',
-    price: 499,
+    price: 349,
     variable: true,
     freeAdvancedMonth: true,
     summary:
-      'For projects that do not fit a package. We agree the requirements and scope together, and the price is quoted from that.',
+      'For work that does not fit a package. Pages, functionality, booking needs and SEO scope are agreed up front.',
     bestFor:
-      'Businesses whose requirements do not fit one of the fixed packages.',
+      'Web applications, integrations, and businesses with specific requirements.',
     includes: [
-      'Requirements and scope agreed individually',
-      'No fixed page cap',
-      'Revision allowance agreed in the project quote',
-      `1 complimentary month of Advanced Management, worth £${ADVANCED_MANAGEMENT_PRICE}`,
+      'Pages, functionality, booking needs and SEO scope agreed upfront',
+      'Bespoke integrations where needed',
+      'Revisions and timeline set in your quote',
     ],
-    timeline: 'Agreed individually in your written quote',
+    timeline: 'Agreed with your brief',
     enquiryParam: 'custom',
-    cta: 'Discuss a Custom Build',
-    note: '£499 is where a custom project starts, not what every custom project costs. Substantial functionality — user accounts, databases, payments, customer portals, ecommerce and the like — is not included in that starting price. Anything of that kind is scoped and quoted separately before any work begins.',
+    cta: 'Discuss a Custom build',
+    note: '£349 is where a custom project starts, not what every custom project costs. Substantial functionality — user accounts, databases, payments, customer portals, ecommerce and the like — is not included in that starting price. Anything of that kind is scoped and quoted separately before any work begins.',
   },
 ]
 
@@ -148,52 +130,54 @@ export type ManagementPlan = {
 
 export const managementPlans: ManagementPlan[] = [
   {
-    slug: 'essential',
-    name: 'Essential',
+    slug: 'pro-management',
+    name: 'Pro Management',
     price: 39,
     summary:
-      'Keeps the site online, secure and up to date, without you having to think about it.',
+      'Keeps the site online, secure and current, with hosting included while the plan is active.',
     includes: [
-      'Hosting and technical maintenance',
+      'Hosting included while the plan is active',
       'Security and dependency maintenance, where applicable',
       'Uptime monitoring',
+      'Safety and security fixes never count against your hours',
     ],
     changeTime:
-      'Includes up to 30 minutes of requested website changes per billing month.',
-    enquiryParam: 'essential-management',
-    cta: 'Choose Essential',
+      'Includes up to 2 hours of requested website updates per billing month.',
+    enquiryParam: 'pro-management',
+    cta: 'Choose Pro Management',
   },
   {
-    slug: 'advanced-management',
-    name: 'Advanced',
-    price: ADVANCED_MANAGEMENT_PRICE,
+    slug: 'ultimate-management',
+    name: 'Ultimate Management',
+    price: 39,
     summary:
-      'Adds a regular check on how the site is actually performing, and moves your requests up the queue.',
+      'Twice the update time, a regular look at how the site is performing, and your requests go up the queue.',
     includes: [
-      'Everything in Essential',
+      'Everything in Pro Management',
       'Analytics and performance check',
-      'Priority support — your requests go ahead of Essential ones in the queue',
+      'Priority support — your requests go ahead of Pro Management ones in the queue',
+      'Safety and security fixes never count against your hours',
     ],
     changeTime:
-      'Includes up to 1 hour of requested website changes per billing month.',
-    enquiryParam: 'advanced-management',
-    cta: 'Choose Advanced Management',
+      'Includes up to 4 hours of requested website updates per billing month.',
+    enquiryParam: 'ultimate-management',
+    cta: 'Choose Ultimate Management',
   },
   {
-    slug: 'complete',
-    name: 'Complete',
-    price: 149,
+    slug: 'custom-management',
+    name: 'Custom Management',
+    price: 39,
     summary:
-      'The site reviewed and reported on properly, so you can see how it is doing rather than guess.',
+      'For custom builds and web applications, where what needs looking after is agreed alongside the build.',
     includes: [
-      'Everything in Advanced',
-      'Performance and SEO review',
-      'Simple monthly performance report',
+      'Everything in Ultimate Management',
+      'Monitoring and maintenance scoped to what was built',
+      'Quoted with your Custom build',
     ],
     changeTime:
-      'Includes up to 2 hours of requested website changes per billing month.',
-    enquiryParam: 'complete-management',
-    cta: 'Choose Complete',
+      'Update time is agreed in your quote.',
+    enquiryParam: 'custom-management',
+    cta: 'Discuss Custom Management',
   },
 ]
 
@@ -204,15 +188,16 @@ export const managementPlans: ManagementPlan[] = [
 export const managementTerms = [
   'Unused change time does not roll over from one billing month to the next.',
   'Additional work beyond the included allowance can be quoted separately.',
-  'Priority support means Advanced and Complete requests are handled ahead of Essential ones. It is a place in the queue rather than a guaranteed response time.',
+  'Priority support means Ultimate Management requests are handled ahead of Pro Management ones. It is a place in the queue rather than a guaranteed response time.',
+  'Safety and security work — patching, certificate renewals, fixing something that has broken — is done as part of the plan and never counts against your update hours.',
   'You can cancel before your next billing date, which stops future renewals. Amounts already charged for the current billing period are not partially refunded if you cancel part-way through it.',
   'If you end a plan, I will set out your options — either continuing hosting separately, where that is available, or transferring the website to another suitable hosting provider.',
   'A management plan is optional. It is not a condition of having a website built.',
 ]
 
-/** Stated wherever the complimentary month is mentioned. */
+/** Stated wherever the free first month is mentioned. */
 export const COMPLIMENTARY_MONTH_TERMS =
-  'The complimentary month does not turn into a paid subscription automatically. When it ends, you decide whether to start a paid management plan — if you do nothing, nothing is charged.'
+  'Your first month of management is free. It does not turn into a paid subscription automatically — when it ends, you decide whether to carry on, and if you do nothing, nothing is charged.'
 
 /**
  * The conditions every timeline estimate depends on. Render this wherever a
@@ -231,16 +216,17 @@ export const commercialTerms: { title: string; points: string[] }[] = [
   {
     title: 'Payment',
     points: [
-      'A 50% deposit secures your project and allows work to begin.',
+      'A 50% deposit secures your project and allows work to begin — £124.50 on Pro, £174.50 on Ultimate.',
       'The remaining 50% is payable once the website is complete and approved, before it goes live.',
+      'Northbound is not VAT registered, so no VAT is added to any price.',
+      'Hosting, domains and third-party provider fees are separate unless a plan or quote says otherwise.',
     ],
   },
   {
     title: 'Timescales',
     points: [
-      'Basic — approximately 5–7 working days.',
-      'Standard — approximately 7–10 working days.',
-      'Advanced — approximately 10–15 working days.',
+      'Pro — approximately 7–10 working days.',
+      'Ultimate — approximately 10–15 working days.',
       'Custom — agreed individually in your written quote.',
       TIMELINE_TERMS,
     ],
@@ -248,7 +234,7 @@ export const commercialTerms: { title: string; points: string[] }[] = [
   {
     title: 'Revisions and feedback',
     points: [
-      'Each package includes a set number of revision rounds — one on Basic, two on Standard, three on Advanced. Custom is agreed in your quote.',
+      'Each package includes a set number of revision rounds — one on Pro, two on Ultimate. Custom is agreed in your quote.',
       'Please send the feedback for each round within 10 working days of getting the preview link.',
       'If it arrives later than that, the project may be paused and the estimated completion date may move.',
       'Silence is never treated as approval. If I have not heard from you, I will follow up rather than sign the work off on your behalf.',
@@ -298,7 +284,7 @@ export const process = [
   {
     step: '05',
     title: 'Revisions',
-    body: 'Your package includes a set number of revision rounds — one on Basic, two on Standard, three on Advanced. A round means you collect your changes, send them over, and I work through them together. Feedback within 10 working days of the preview keeps things moving; later than that and the finish date can shift. I will never take silence as approval.',
+    body: 'Your package includes a set number of revision rounds — one on Pro, two on Ultimate. A round means you collect your changes, send them over, and I work through them together. Feedback within 10 working days of the preview keeps things moving; later than that and the finish date can shift. I will never take silence as approval.',
   },
   {
     step: '06',

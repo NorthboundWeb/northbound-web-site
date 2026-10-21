@@ -16,6 +16,7 @@ export const site = {
   email: 'hello@northboundweb.co.uk',
   location: 'United Kingdom',
   nav: [
+    { href: '/discover', label: 'Discover' },
     { href: '/services', label: 'Services' },
     // Labelled "Process" but kept at /approach: the URL is in the sitemap and
     // the page's canonical tag, so renaming the route would be an SEO change.

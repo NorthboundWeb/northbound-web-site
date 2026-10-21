@@ -39,7 +39,7 @@ const beliefs = [
   },
   {
     title: 'The honest answer',
-    body: 'If the Basic package would do what you need, I will not sell you the Advanced one. If the thing you are describing does not need a developer at all, I will say so. Long-term relationships pay better than one oversold project.',
+    body: 'If the Pro package would do what you need, I will not sell you the Ultimate one. If the thing you are describing does not need a developer at all, I will say so. Long-term relationships pay better than one oversold project.',
   },
 ]
 

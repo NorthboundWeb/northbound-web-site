@@ -29,7 +29,7 @@ const answers = [
   {
     question: 'How long does a build take?',
     answer:
-      'Roughly 5–7 working days for Basic, 7–10 for Standard and 10–15 for Advanced. Custom is agreed in your quote. These are estimates: the clock starts once the deposit and your content have arrived, and slow feedback moves the date.',
+      'Roughly 7–10 working days for Pro and 10–15 for Ultimate. Custom is agreed in your quote. These are estimates: the clock starts once the deposit and your content have arrived, and slow feedback moves the date.',
   },
   {
     question: 'What if I do not know what I need?',
@@ -39,7 +39,7 @@ const answers = [
   {
     question: 'Do I have to take a management plan?',
     answer:
-      'No. Plans are optional and rolling, and the build price does not depend on taking one. The Advanced and Custom builds include a complimentary month of Advanced Management — it does not turn into a paid subscription on its own, so if you do nothing when it ends, nothing is charged.',
+      'No. Plans are optional and rolling, and the build price does not depend on taking one. Every plan starts with a free month — it does not turn into a paid subscription on its own, so if you do nothing when it ends, nothing is charged.',
   },
 ]
 

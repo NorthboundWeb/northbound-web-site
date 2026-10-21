@@ -16,19 +16,22 @@ process steps and the build standards are all in `src/lib/services.ts`; the
 business name, URL and contact email are in `src/lib/site.ts`. Edit copy there
 rather than in pages.
 
-**Prices are real, not illustrative.** Basic £199, Standard £299, Advanced £399
-and the management plans (£39 / £80 / £149) are the actual advertised prices. Do
-**not** describe them as example, indicative or "starting from" figures. Only
-Custom carries a "from" (£499), because its scope is agreed per project. Use the
-exported `ADVANCED_MANAGEMENT_PRICE` wherever the complimentary month's value is
-quoted, so it cannot drift from the plan's own price.
+**Prices are real, not illustrative.** Pro £249, Ultimate £349 and management
+from £39 a month are the actual advertised prices. Do **not** describe them as
+example, indicative or "starting from" figures. Only Custom carries a "from"
+(£349), because its scope is agreed per project. Management: Pro Management
+includes 2 hours of updates a month, Ultimate Management 4 hours; the first
+month is free; a year paid up front is twelve months for the price of ten
+(`ANNUAL_TERMS`). Never describe the annual deal as "last month free" on a
+rolling monthly plan — only an annual term can honour it. Use the exported
+`ADVANCED_MANAGEMENT_PRICE` wherever the free month's value is quoted.
 
 **Promises are bounded on purpose.** Never write unlimited fixes, updates or
 support. No absolutes ("every time"), no guaranteed same-day response. Included
 change time does not roll over, and extra work is quoted before it is done. The
 complimentary month must never be described as auto-renewing. A management plan
 is optional and must not read as a condition of having a site built. Custom's
-£499 must not imply accounts, databases, payments, portals or ecommerce are
+£349 must not imply accounts, databases, payments, portals or ecommerce are
 included.
 
 **Commercial terms are load-bearing.** Payment is 50% deposit to begin and 50%
@@ -37,21 +40,23 @@ optional at that point. Timelines are estimates and must always render with
 `TIMELINE_TERMS` beside them; never write "guaranteed in X days". Cancelling a
 plan stops future renewals and does not part-refund the current period, and
 must never be described as taking the site offline. Copywriting, photography,
-logo/brand design and paid stock are not in the fixed packages. Add **no VAT
-wording** in either direction.
+logo/brand design and paid stock are not in the fixed packages. Northbound is
+not VAT registered: say so once in the commercial terms and nowhere else.
 
-"Priority support" is a **place in the queue, not an SLA** — Advanced and
-Complete requests go ahead of Essential ones. Never attach a response time to
-it. Advanced's booking integration means **connecting or embedding an existing
-third-party service**; bespoke booking systems, availability logic, custom
-payment flows, accounts or automated workflows are quoted separately. Revision
+"Priority support" is a **place in the queue, not an SLA** — Ultimate
+Management requests go ahead of Pro Management ones. Never attach a response
+time to it. Safety and security fixes never count against update hours. The
+packaged booking setups are **configuring an existing booking service** for
+one calendar (Pro) or several (Ultimate); bespoke booking systems,
+availability logic, custom payment flows, accounts or automated workflows are
+quoted separately. Revision
 feedback is asked for within **10 working days** of a preview, after which the
 project may pause and the date may move — and **silence is never treated as
 approval**.
 
 These constraints are encoded in `managementTerms`, `commercialTerms`,
 `TIMELINE_TERMS`, `COMPLIMENTARY_MONTH_TERMS`, each plan's `changeTime`, and
-the `note` fields on the Advanced and Custom packages.
+the `note` fields on the Ultimate and Custom packages.
 
 **Do not invent social proof.** No testimonials, client logos, case studies,
 review counts or years-of-experience claims unless Che supplies real ones. The

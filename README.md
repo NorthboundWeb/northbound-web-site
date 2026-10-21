@@ -23,23 +23,21 @@ examples:
 
 | Build | Price | Pages | Revisions |
 |---|---|---|---|
-| Basic | £199 | Up to 3 | 1 round |
-| Standard | £299 (*Most popular*) | Up to 5 | 2 rounds |
-| Advanced | £399 + complimentary month | Up to 8 | 3 rounds |
-| Custom | from £499 + complimentary month | No cap | Agreed in the quote |
+| Pro | £249 (*Most popular*) | Up to 5 | 1 round |
+| Ultimate | £349 + free first month of management | Up to 8 | 2 rounds |
+| Custom | from £349 + free first month of management | Agreed | Agreed in the quote |
 
 | Build | Estimated timescale |
 |---|---|
-| Basic | ~5–7 working days |
-| Standard | ~7–10 working days |
-| Advanced | ~10–15 working days |
+| Pro | ~7–10 working days |
+| Ultimate | ~10–15 working days |
 | Custom | Agreed in the written quote |
 
 | Management plan | Price | Included change time |
 |---|---|---|
-| Essential | £39/month | Up to 30 minutes per billing month |
-| Advanced | £80/month | Up to 1 hour per billing month |
-| Complete | £149/month | Up to 2 hours per billing month |
+| Pro Management | from £39/month | Up to 2 hours per billing month |
+| Ultimate Management | from £39/month | Up to 4 hours per billing month |
+| Custom Management | quoted | Agreed in the quote |
 
 Payment is **50% deposit to begin, 50% once complete and approved, before go-live**.
 
@@ -57,7 +55,7 @@ described as "example", "starting from" or "indicative" prices anywhere.
   the customer chooses at the end of it.
 - A management plan is optional and must not be implied as a condition of
   having a website built.
-- Custom's £499 must not imply that accounts, databases, payments, portals or
+- Custom's £349 must not imply that accounts, databases, payments, portals or
   ecommerce are included; those are quoted separately.
 
 - Timelines are **estimates, never guarantees**, and must always render
@@ -71,7 +69,7 @@ described as "example", "starting from" or "indicative" prices anywhere.
 - Copywriting, photography, logo/brand design and paid stock are **not** in the
   fixed packages.
 - "Priority support" is a queue position, **not** a response-time promise.
-- Advanced's booking integration is **connecting/embedding an existing service**.
+- The packaged booking setups are **configuring an existing booking service**.
   Bespoke booking systems are scoped and quoted separately.
 - Revision feedback is requested within **10 working days** of a preview; later
   feedback can pause the project. **Silence is never treated as approval.**

@@ -91,7 +91,7 @@ export default function ApproachPage() {
         index="02"
         eyebrow="Standards"
         word="Solid"
-        lede="These apply whether you are spending £199 or £499. They are the difference between a site that lasts and one that has to be rebuilt in eighteen months."
+        lede="These apply whether you are spending £249 or a great deal more. They are the difference between a site that lasts and one that has to be rebuilt in eighteen months."
       />
 
       <Section className="border-b border-line">
