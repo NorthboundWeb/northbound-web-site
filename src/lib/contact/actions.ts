@@ -1,7 +1,6 @@
 'use server'
 
 import { headers } from 'next/headers'
-import { Resend } from 'resend'
 import { rateLimit } from '@/lib/rate-limit'
 import { site } from '@/lib/site'
 import {
@@ -15,25 +14,14 @@ const HONEYPOT_FIELD = 'website'
 /** A genuine person does not read, think and type in under this many ms. */
 const MIN_FILL_MS = 3_000
 
-const GENERIC_ERROR =
-  'Something went wrong sending your message. Please email me directly and I will pick it up.'
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-}
-
 /**
- * Strip CR/LF from anything interpolated into a mail header. Without this a
- * crafted name could inject extra headers into the outgoing message.
+ * How long to wait for the enquiry inbox (a Google Apps Script web app, see
+ * apps-script/enquiries.gs) before telling the visitor it did not go through.
+ * A cold start is usually 1-3 seconds, so this leaves plenty of room.
  */
-function headerSafe(value: string) {
-  return value.replace(/[\r\n]+/g, ' ').trim()
-}
+const WEBHOOK_TIMEOUT_MS = 8_000
+
+const GENERIC_ERROR = `Something went wrong sending your message. Please email me directly at ${site.email} and I will pick it up.`
 
 async function clientKey() {
   const headerList = await headers()
@@ -97,68 +85,65 @@ export async function submitEnquiry(
 
   const enquiry = parsed.data
 
-  // 4. Send. Configuration problems are logged server-side but never described
-  //    to the visitor — an error page is not the place to leak setup detail.
-  const apiKey = process.env.RESEND_API_KEY
-  const to = process.env.CONTACT_TO_EMAIL
-  const from = process.env.CONTACT_FROM_EMAIL
+  // 4. Send. The enquiry goes to a Google Apps Script web app that emails it
+  //    to the inbox and logs it to a Google Sheet (apps-script/enquiries.gs).
+  //    It escapes and re-checks everything itself. Configuration problems are
+  //    logged server-side but never described to the visitor: an error page is
+  //    not the place to leak setup detail.
+  const webhookUrl = process.env.ENQUIRY_WEBHOOK_URL
+  const webhookToken = process.env.ENQUIRY_WEBHOOK_TOKEN
 
-  if (!apiKey || !to || !from) {
+  if (!webhookUrl || !webhookToken) {
     console.error(
-      'Enquiry not sent: RESEND_API_KEY, CONTACT_TO_EMAIL or CONTACT_FROM_EMAIL is missing.'
+      'Enquiry not sent: ENQUIRY_WEBHOOK_URL or ENQUIRY_WEBHOOK_TOKEN is missing.'
     )
     return { status: 'error', message: GENERIC_ERROR }
   }
 
-  const subject = `New enquiry — ${headerSafe(enquiry.name)}${
-    enquiry.business ? ` (${headerSafe(enquiry.business)})` : ''
-  }`
-
-  const lines = [
-    ['Name', enquiry.name],
-    ['Email', enquiry.email],
-    ['Business', enquiry.business ?? '—'],
-    ['Project type', enquiry.projectType ?? '—'],
-    ['Budget', enquiry.budget ?? '—'],
-  ] as const
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT_MS)
 
   try {
-    const resend = new Resend(apiKey)
-    const { error } = await resend.emails.send({
-      from,
-      to,
-      replyTo: enquiry.email,
-      subject,
-      text: [
-        ...lines.map(([label, value]) => `${label}: ${value}`),
-        '',
-        enquiry.message,
-      ].join('\n'),
-      html: `
-        <table style="font-family:system-ui,sans-serif;font-size:14px;border-collapse:collapse">
-          ${lines
-            .map(
-              ([label, value]) =>
-                `<tr><td style="padding:4px 16px 4px 0;color:#666">${label}</td><td style="padding:4px 0"><strong>${escapeHtml(
-                  String(value)
-                )}</strong></td></tr>`
-            )
-            .join('')}
-        </table>
-        <hr style="margin:20px 0;border:none;border-top:1px solid #e5e5e5" />
-        <p style="font-family:system-ui,sans-serif;font-size:14px;line-height:1.6;white-space:pre-wrap">${escapeHtml(
-          enquiry.message
-        )}</p>
-      `,
+    // Apps Script answers a POST with a redirect to the page holding its
+    // reply, so redirects must be followed.
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      redirect: 'follow',
+      cache: 'no-store',
+      signal: controller.signal,
+      body: JSON.stringify({
+        token: webhookToken,
+        id: crypto.randomUUID(),
+        name: enquiry.name,
+        email: enquiry.email,
+        business: enquiry.business ?? '',
+        projectType: enquiry.projectType ?? '',
+        budget: enquiry.budget ?? '',
+        message: enquiry.message,
+      }),
     })
 
-    if (error) {
-      console.error('Resend rejected the enquiry:', error)
+    // Apps Script reports its own failures with HTTP 200 and { ok: false }.
+    const result: unknown = await response.json().catch(() => null)
+    const delivered =
+      response.ok &&
+      typeof result === 'object' &&
+      result !== null &&
+      (result as { ok?: unknown }).ok === true
+
+    if (!delivered) {
+      console.error('The enquiry inbox rejected the enquiry:', {
+        status: response.status,
+        result,
+      })
       return { status: 'error', message: GENERIC_ERROR }
     }
   } catch (error) {
     console.error('Failed to send enquiry:', error)
     return { status: 'error', message: GENERIC_ERROR }
+  } finally {
+    clearTimeout(timer)
   }
 
   return {

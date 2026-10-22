@@ -64,11 +64,15 @@ About page is deliberately written to make no checkable claims.
 
 **The enquiry form is the only write path.** `src/lib/contact/actions.ts` is a
 server action — a public POST endpoint. Validate on the server there, not only
-in the browser. It has a honeypot, a submit-time trap, an in-memory rate limit,
-and HTML-escapes user text before it goes into the notification email. Keep all
-four if you touch it.
+in the browser. It has a honeypot, a submit-time trap and an in-memory rate
+limit, then posts the enquiry to a Google Apps Script web app
+(`apps-script/enquiries.gs`), which re-validates it, HTML-escapes it into the
+notification email and stores it in a Google Sheet with formula characters
+neutralised. Keep all of those if you touch either side. There is no Resend and
+no email provider in the Next.js app.
 
-**Secrets are server-side.** `RESEND_API_KEY` must never be renamed to anything
-`NEXT_PUBLIC_*` — that prefix ships the value to the browser.
+**Secrets are server-side.** `ENQUIRY_WEBHOOK_URL` and `ENQUIRY_WEBHOOK_TOKEN`
+must never be renamed to anything `NEXT_PUBLIC_*` — that prefix ships the value
+to the browser.
 
 Run `npm run typecheck && npm run lint && npm run build` before committing.

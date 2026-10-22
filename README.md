@@ -1,7 +1,7 @@
 # Northbound Web — website
 
 Marketing site for Northbound Web. Next.js 16 (App Router), Tailwind CSS v4,
-TypeScript, deployed on Vercel. The enquiry form sends through Resend.
+TypeScript, deployed on Vercel. The enquiry form sends to a Google Apps Script inbox (email plus a Google Sheet log).
 
 ---
 
@@ -13,8 +13,8 @@ them — each has one home.
 | What | Where | Currently |
 |---|---|---|
 | Domain | `NEXT_PUBLIC_SITE_URL` env var, and the fallback in `src/lib/site.ts` | `northboundweb.co.uk` |
-| Contact email | `site.email` in `src/lib/site.ts` | `hello@northboundweb.co.uk` |
-| Resend keys | Vercel env vars | Not set |
+| Contact email | `site.email` in `src/lib/site.ts` | `che@northboundweb.co.uk` |
+| Enquiry inbox (`ENQUIRY_WEBHOOK_URL`, `ENQUIRY_WEBHOOK_TOKEN`) | Vercel env vars | Not set |
 
 ## Pricing
 
@@ -97,10 +97,11 @@ cp .env.example .env.local   # then fill in the values
 npm run dev                  # http://localhost:3000
 ```
 
-Without `RESEND_API_KEY`, `CONTACT_TO_EMAIL` and `CONTACT_FROM_EMAIL` set, the
-form validates and behaves normally but the send fails and the visitor sees a
-generic error. The specific cause is logged to the server console only —
-configuration detail should never reach a visitor's screen.
+Without `ENQUIRY_WEBHOOK_URL` and `ENQUIRY_WEBHOOK_TOKEN` set, the form
+validates and behaves normally but the send fails and the visitor sees a generic
+error (with your email address, so the enquiry is not lost). The specific cause
+is logged to the server console only — configuration detail should never reach a
+visitor's screen. See `apps-script/enquiries.gs` for the one-off setup.
 
 ```bash
 npm run build      # production build
@@ -135,7 +136,7 @@ src/
     rate-limit.ts       in-memory limiter for the form
     contact/
       schema.ts         zod schema shared by client and server
-      actions.ts        server action: spam checks, validation, Resend
+      actions.ts        server action: spam checks, validation, sends to the Apps Script inbox
 ```
 
 Content lives in `src/lib/services.ts` and `src/lib/site.ts` rather than being
@@ -175,8 +176,10 @@ store rather than extending it.
 2. Set the environment variables from `.env.example` under
    **Vercel → Project → Settings → Environment Variables**. Set
    `NEXT_PUBLIC_SITE_URL` for Production only.
-3. Verify the sending domain in **Resend → Domains** before expecting the form
-   to deliver. The `CONTACT_FROM_EMAIL` address must be on that domain.
+3. Set up the enquiry inbox by following the steps at the top of
+   `apps-script/enquiries.gs` (about five minutes), then add
+   `ENQUIRY_WEBHOOK_URL` and `ENQUIRY_WEBHOOK_TOKEN` to Vercel. Submit a test
+   enquiry on the preview before pointing the domain at it.
 4. Point DNS at Vercel in Cloudflare. Plan this in advance — changing DNS
    records can take a domain's website *and email* offline if the existing MX
    records are disturbed.

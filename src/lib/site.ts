@@ -13,7 +13,7 @@ export const site = {
   tagline: 'Web development for small businesses that need to be taken seriously.',
   description:
     'Northbound Web builds fast, accessible, secure websites and web applications for UK small businesses — designed properly, built to last, and looked after once they are live.',
-  email: 'hello@northboundweb.co.uk',
+  email: 'che@northboundweb.co.uk',
   location: 'United Kingdom',
   nav: [
     { href: '/discover', label: 'Discover' },
