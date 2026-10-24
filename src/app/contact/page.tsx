@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import { ContactForm } from '@/components/contact-form'
+import { StartFlow } from '@/components/start-flow'
 import { Container, Display, Label, Section } from '@/components/ui'
-import { projectTypeFromParam } from '@/lib/contact/schema'
+import { startFromParam } from '@/lib/contact/start'
 import { site } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -48,9 +48,9 @@ export default async function ContactPage({
 }: {
   searchParams: Promise<{ package?: string | string[] }>
 }) {
-  // Resolved on the server so the right option is already selected in the HTML
-  // — no flash of an empty select, and it still works without JavaScript.
-  const preselected = projectTypeFromParam((await searchParams).package)
+  // Resolved on the server so a pricing card's link lands with its lane (or
+  // the management box) already chosen.
+  const initial = startFromParam((await searchParams).package)
 
   return (
     <Section>
@@ -64,48 +64,44 @@ export default async function ContactPage({
           Begin
         </Display>
 
-        <div className="mt-16 grid gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-24">
-          <div>
-            <p className="max-w-xl text-lg leading-relaxed text-ink-muted">
-              The more you can tell me about the business and the problem, the
-              more useful my first reply will be. If you would rather just
-              email,{' '}
-              <a
-                href={`mailto:${site.email}`}
-                className="text-accent underline-offset-4 hover:underline"
-              >
-                {site.email}
-              </a>{' '}
-              reaches the same place.
-            </p>
+        <p className="mt-8 max-w-2xl text-lg leading-relaxed text-ink-muted">
+          Plan your route: four junctions, about two minutes. Tell me about the
+          business, pick a lane and you will see the price, the deposit and a
+          rough timeline as you go. Nothing is charged here. I reply with a
+          written quote first. If you would rather just email,{' '}
+          <a
+            href={`mailto:${site.email}`}
+            className="text-accent underline-offset-4 hover:underline"
+          >
+            {site.email}
+          </a>{' '}
+          reaches the same place.
+        </p>
 
-            <div className="mt-12">
-              <ContactForm defaultProjectType={preselected} />
-            </div>
-          </div>
-
-          <aside>
-            <div className="border border-line bg-paper-sunk p-8">
-              <h2 className="label text-ink-faint">Before you ask</h2>
-              <dl className="mt-8 divide-y divide-line">
-                {answers.map((item, i) => (
-                  <div key={item.question} className="py-5 first:pt-0 last:pb-0">
-                    <dt className="flex gap-4">
-                      <span className="label shrink-0 pt-0.5 text-accent">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <span className="font-medium text-ink">
-                        {item.question}
-                      </span>
-                    </dt>
-                    <dd className="mt-2.5 pl-10 text-[15px] leading-relaxed text-ink-muted">
-                      {item.answer}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </aside>
+        <div className="mt-14">
+          <StartFlow
+            initial={initial}
+            aside={
+              <div className="border border-line bg-paper-sunk p-8">
+                <h2 className="label text-ink-faint">Before you ask</h2>
+                <dl className="mt-8 divide-y divide-line">
+                  {answers.map((item, i) => (
+                    <div key={item.question} className="py-5 first:pt-0 last:pb-0">
+                      <dt className="flex gap-4">
+                        <span className="label shrink-0 pt-0.5 text-accent">
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <span className="font-medium text-ink">{item.question}</span>
+                      </dt>
+                      <dd className="mt-2.5 pl-10 text-[15px] leading-relaxed text-ink-muted">
+                        {item.answer}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            }
+          />
         </div>
       </Container>
     </Section>
