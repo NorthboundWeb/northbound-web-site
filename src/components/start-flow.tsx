@@ -8,10 +8,9 @@ import {
   useTransition,
   type FormEvent,
   type ReactNode,
+  type Ref,
 } from 'react'
 import { useFormStatus } from 'react-dom'
-import { StartRoad, ROUTE, carAt } from '@/components/start-road'
-import { Arrow, buttonClass, cn } from '@/components/ui'
 import { checkPromo, submitStart } from '@/lib/contact/actions'
 import { budgetBands } from '@/lib/contact/schema'
 import {
@@ -33,16 +32,30 @@ import {
   type StartInput,
 } from '@/lib/contact/start'
 import { discounted, money } from '@/lib/pricing'
-import {
-  ADVANCED_MANAGEMENT_PRICE,
-  ANNUAL_TERMS,
-  COMPLIMENTARY_MONTH_TERMS,
-  TIMELINE_TERMS,
-} from '@/lib/services'
+import { ADVANCED_MANAGEMENT_PRICE, TIMELINE_TERMS } from '@/lib/services'
 import { site } from '@/lib/site'
 
-const fieldClass =
-  'w-full border border-line bg-paper-raised px-4 py-3.5 text-[15px] text-ink transition-colors placeholder:text-ink-faint hover:border-line-strong focus:border-accent focus:outline-none aria-[invalid=true]:border-accent'
+/**
+ * Start a project: four junctions and a review, on a blue sign.
+ *
+ * The step card is on the left, your route so far (price, deposit, timeline)
+ * on the right, and a road along the bottom of the screen with a car that
+ * drives from junction to junction as you go. Every answer is checked again on
+ * the server when it is sent; nothing here is trusted on its own.
+ */
+
+const ROUTE = [
+  { code: 'J1', label: 'Your business' },
+  { code: 'J2', label: 'Your lane' },
+  { code: 'J3', label: 'What it needs' },
+  { code: 'J4', label: 'Your details' },
+  { code: 'END', label: 'Arrive' },
+] as const
+
+/** Where the car stops for each step, as a percentage of the road's width. */
+function carAt(step: number) {
+  return 10 + Math.min(step, ROUTE.length - 1) * 20
+}
 
 /** The element to focus when a step is refused, keyed by the field at fault. */
 const focusId: Partial<Record<StartField, string>> = {
@@ -53,126 +66,32 @@ const focusId: Partial<Record<StartField, string>> = {
   email: 'email',
 }
 
-function FieldLabel({
-  htmlFor,
-  children,
-  optional,
-}: {
-  htmlFor: string
-  children: ReactNode
-  optional?: string
-}) {
-  return (
-    <label htmlFor={htmlFor} className="label mb-2.5 block text-ink">
-      {children}
-      {optional ? (
-        <span className="ml-2 text-ink-faint normal-case">({optional})</span>
-      ) : null}
-    </label>
-  )
-}
-
-function FieldError({ id, message }: { id: string; message?: string }) {
+function Err({ id, message }: { id: string; message?: string }) {
   if (!message) return null
   return (
-    <p id={id} className="mt-2 text-sm text-ink" role="alert">
-      <span aria-hidden className="mr-1.5 text-accent">
-        ▲
-      </span>
+    <span className="err" id={id} role="alert">
       {message}
-    </p>
+    </span>
   )
 }
 
-const pickClass =
-  'block border border-line-strong px-4 py-2.5 text-sm text-ink transition-colors hover:border-accent peer-checked:border-accent peer-checked:bg-accent-wash peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent'
-
-function Chip({
-  id,
-  name,
-  checked,
-  onChange,
-  children,
-}: {
-  id: string
-  name: string
-  checked: boolean
-  onChange: () => void
-  children: ReactNode
-}) {
+function GoArrow() {
   return (
-    <label className="relative cursor-pointer">
-      <input
-        id={id}
-        type="radio"
-        name={name}
-        checked={checked}
-        onChange={onChange}
-        className="peer sr-only"
-      />
-      <span className={pickClass}>{children}</span>
-    </label>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
   )
 }
 
-function Tick({
-  checked,
-  onChange,
-  children,
-}: {
-  checked: boolean
-  onChange: () => void
-  children: ReactNode
-}) {
+function Controls({ onBack, count, next }: { onBack?: () => void; count?: string; next: ReactNode }) {
   return (
-    <label className="relative cursor-pointer">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-        className="peer sr-only"
-      />
-      <span className={cn(pickClass, 'flex items-center gap-3')}>
-        <span
-          aria-hidden
-          className={cn(
-            'grid h-4 w-4 shrink-0 place-items-center border text-[10px] leading-none',
-            checked
-              ? 'border-accent bg-accent text-cream'
-              : 'border-line-strong text-transparent'
-          )}
-        >
-          ✓
-        </span>
-        {children}
-      </span>
-    </label>
-  )
-}
-
-function Controls({
-  onBack,
-  count,
-  next,
-}: {
-  onBack?: () => void
-  count?: string
-  next: ReactNode
-}) {
-  return (
-    <div className="mt-10 flex items-center justify-between gap-4 border-t border-line pt-6">
+    <div className="controls">
       {onBack ? (
-        <button
-          type="button"
-          onClick={onBack}
-          className="label text-ink-faint underline-offset-4 hover:text-accent hover:underline"
-        >
+        <button className="backbtn" type="button" onClick={onBack}>
           Back
         </button>
-      ) : (
-        <span />
-      )}
-      {count ? <span className="label hidden text-ink-faint sm:inline">{count}</span> : null}
+      ) : null}
+      {count ? <span className="stepcount">{count}</span> : null}
       {next}
     </div>
   )
@@ -180,11 +99,8 @@ function Controls({
 
 function NextButton({ children }: { children: ReactNode }) {
   return (
-    <button type="submit" className={cn(buttonClass({ size: 'lg' }), 'group/btn')}>
-      {children}
-      <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
-        <Arrow />
-      </span>
+    <button className="go" type="submit">
+      {children} <GoArrow />
     </button>
   )
 }
@@ -192,51 +108,28 @@ function NextButton({ children }: { children: ReactNode }) {
 function SendButton() {
   const { pending } = useFormStatus()
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className={cn(buttonClass({ size: 'lg' }), 'group/btn')}
-    >
-      {pending ? 'Sending…' : 'Send my enquiry'}
-      {pending ? null : (
-        <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
-          <Arrow />
-        </span>
-      )}
+    <button className="go" type="submit" disabled={pending}>
+      {pending ? 'Sending…' : 'Send my enquiry'} {pending ? null : <GoArrow />}
     </button>
   )
 }
 
-function StepCard({
+function StepTop({
   code,
   title,
   headingRef,
-  children,
-  ...props
 }: {
   code: string
-  title: string
-  headingRef: React.Ref<HTMLHeadingElement>
-  children: ReactNode
-} & React.ComponentProps<'form'>) {
+  title: ReactNode
+  headingRef: Ref<HTMLHeadingElement>
+}) {
   return (
-    <form
-      noValidate
-      className="rise-in border border-line bg-paper-sunk p-6 sm:p-9"
-      {...props}
-    >
-      <div className="flex items-baseline gap-4">
-        <span className="label text-accent">{code}</span>
-        <h2
-          ref={headingRef}
-          tabIndex={-1}
-          className="display text-3xl text-ink focus:outline-none sm:text-4xl"
-        >
-          {title}
-        </h2>
-      </div>
-      {children}
-    </form>
+    <div className="step-top">
+      <span className="jn">{code}</span>
+      <h2 ref={headingRef} tabIndex={-1}>
+        {title}
+      </h2>
+    </div>
   )
 }
 
@@ -261,81 +154,64 @@ function PromoBox({
   onRemove: () => void
   compact?: boolean
 }) {
-  if (promo) {
-    return (
-      <div
-        role="status"
-        className={cn(
-          'flex flex-wrap items-center gap-x-4 gap-y-1 border bg-paper-raised px-4 py-3 text-sm',
-          promo.ff ? 'border-accent' : 'border-line-strong'
-        )}
-      >
-        <span aria-hidden className="text-accent">
-          ✓
-        </span>
-        <span className="font-medium tracking-[0.08em] text-ink">{promo.code}</span>
-        {compact ? null : <span className="label text-accent">{promo.tag}</span>}
-        <span className="text-ink-muted">{promo.what}</span>
-        <button
-          type="button"
-          onClick={onRemove}
-          className="label ml-auto text-ink-faint underline-offset-4 hover:text-accent hover:underline"
-        >
-          Remove
-        </button>
-        {compact ? null : (
-          <p className="basis-full text-[13px] leading-relaxed text-ink-muted">{promo.msg}</p>
-        )}
-      </div>
-    )
-  }
   return (
-    <div>
-      <FieldLabel htmlFor={id} optional="optional">
-        Promo code
-      </FieldLabel>
-      <div className="flex gap-2">
-        <input
-          id={id}
-          type="text"
-          autoComplete="off"
-          autoCapitalize="characters"
-          spellCheck={false}
-          placeholder={compact ? 'Got a code?' : 'Got a code? Enter it here'}
-          value={input}
-          onChange={(e) => onInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault()
-              onApply()
-            }
-          }}
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? `${id}-error` : undefined}
-          className={fieldClass}
-        />
-        <button
-          type="button"
-          onClick={onApply}
-          disabled={checking}
-          className={cn(buttonClass({ variant: 'secondary' }), 'shrink-0')}
-        >
-          {checking ? 'Checking…' : 'Apply'}
-        </button>
-      </div>
-      <FieldError id={`${id}-error`} message={error} />
+    <div className="promo">
+      {promo ? (
+        <div className={promo.ff ? 'promo-ok ff' : 'promo-ok'} role="status">
+          <span className="promo-badge" aria-hidden>
+            ✓
+          </span>
+          <div>
+            <span className="promo-code">{promo.code}</span>
+            {compact ? null : <span className="promo-tag">{promo.tag}</span>}
+            <span className="promo-what">{promo.what}</span>
+          </div>
+          <button className="edit" type="button" onClick={onRemove}>
+            Remove
+          </button>
+          {compact ? null : <p className="promo-msg">{promo.msg}</p>}
+        </div>
+      ) : (
+        <>
+          <label htmlFor={id}>
+            Promo code <span className="opt">Optional</span>
+          </label>
+          <div className="promo-row">
+            <input
+              id={id}
+              className={error ? 'in bad' : 'in'}
+              type="text"
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              placeholder={compact ? 'Got a code?' : 'Got a code? Enter it here'}
+              value={input}
+              onChange={(e) => onInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  onApply()
+                }
+              }}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? `${id}-err` : undefined}
+            />
+            <button className="promo-btn" type="button" onClick={onApply} disabled={checking}>
+              {checking ? 'Checking…' : 'Apply'}
+            </button>
+          </div>
+          <Err id={`${id}-err`} message={error} />
+        </>
+      )}
     </div>
   )
 }
 
 export function StartFlow({
   initial,
-  aside,
 }: {
   /** From /contact?package=…: a lane to preselect and/or management ticked. */
   initial?: { lane?: LaneId; mgmt?: boolean }
-  /** Extra content under the summary, rendered by the server (the FAQ). */
-  aside?: ReactNode
 }) {
   const [f, setF] = useState<StartInput>({
     ...emptyStart,
@@ -343,6 +219,7 @@ export function StartFlow({
     mgmt: initial?.mgmt ?? false,
   })
   const [step, setStep] = useState(0)
+  const [back, setBack] = useState(false)
   const [errs, setErrs] = useState<StartErrors>({})
   const [promo, setPromo] = useState<AppliedPromo | null>(null)
   const [promoInput, setPromoInput] = useState('')
@@ -407,6 +284,7 @@ export function StartFlow({
   }
 
   const go = (n: number) => {
+    setBack(n < step)
     setStep(n)
     setErrs({})
     scrollToFlow()
@@ -429,9 +307,7 @@ export function StartFlow({
 
   const toggleFeature = (feature: string) =>
     set({
-      feats: f.feats.includes(feature)
-        ? f.feats.filter((x) => x !== feature)
-        : [...f.feats, feature],
+      feats: f.feats.includes(feature) ? f.feats.filter((x) => x !== feature) : [...f.feats, feature],
     })
 
   const applyPromo = () => {
@@ -469,18 +345,10 @@ export function StartFlow({
   const lane = laneById(f.pkg)
   const fixed = Boolean(lane && lane.price > 0 && !lane.variable)
   const net = lane && fixed ? discounted(lane.price, promo) : (lane?.price ?? 0)
-  const priceText = !lane
-    ? ''
-    : fixed
-      ? money(net)
-      : lane.price > 0
-        ? money(lane.price)
-        : 'To be advised'
+  const priceText = !lane ? '' : fixed ? money(net) : lane.price > 0 ? money(lane.price) : 'To be advised'
   const half = fixed ? money(net / 2) : 'Set in your quote'
   const advice = step === 2 ? laneAdvice(f) : null
-  const needs =
-    [f.pages ? `${f.pages} pages` : '', ...f.feats].filter(Boolean).join(', ') ||
-    'Not specified'
+  const needs = [f.pages ? `${f.pages} pages` : '', ...f.feats].filter(Boolean).join(', ') || 'Not specified'
   const mgmtLine = f.mgmt
     ? `Interested: from ${money(ADVANCED_MANAGEMENT_PRICE)} a month, first month free`
     : 'Not now (you can add it later)'
@@ -488,7 +356,7 @@ export function StartFlow({
 
   const signTop = lane ? (fixed ? money(net) : lane.price > 0 ? `from ${money(lane.price)}` : 'TBC') : 'Your route'
   const signSub = lane
-    ? `${lane.name}${fixed ? ` · ${money(net / 2)} to start` : ''}`
+    ? `${lane.name}${promo ? ` · ${promo.code}` : ''}${fixed ? ` · ${money(net / 2)} to start` : ''}`
     : done
       ? 'Sent'
       : `Junction ${Math.min(step + 1, 4)} of 4`
@@ -507,171 +375,154 @@ export function StartFlow({
     />
   )
 
+  const stepCls = back ? 'card step back' : 'card step'
+
   // ── Steps ──────────────────────────────────────────────────────────────
   let card: ReactNode
 
   if (done) {
     card = (
-      <div
-        role="status"
-        className="rise-in border border-line bg-paper-sunk p-6 sm:p-9"
-      >
-        <p className="label text-accent">Sent</p>
-        <h2
-          ref={headingRef}
-          tabIndex={-1}
-          className="display mt-4 text-4xl text-ink focus:outline-none sm:text-5xl"
-        >
-          You are on your way, {firstName}
-          <span className="text-accent">.</span>
+      <div className="done-card step" role="status">
+        <h2 ref={headingRef} tabIndex={-1}>
+          You&apos;re on your way, {firstName}.
         </h2>
-        {state.ref ? <p className="label mt-4 text-ink-faint">Ref {state.ref}</p> : null}
-        <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">{state.message}</p>
-        <ol className="mt-8 divide-y divide-line border-y border-line">
-          {[
-            [
-              'Next',
-              'I read it properly',
-              `And reply with a written quote for ${f.biz.trim()}, normally within one working day.`,
-            ],
-            [
-              'Then',
-              'A short call, if you want one',
-              'To check the details. No charge, and if a smaller package would do, I will say so.',
-            ],
-            [
-              'Go',
-              'Deposit, and work begins',
-              fixed
-                ? `${half} to begin. The rest only once you have approved the site, before it goes live.`
-                : 'The deposit is set in your quote. The rest is only due once you have approved the site, before it goes live.',
-            ],
-          ].map(([tag, head, body]) => (
-            <li key={tag} className="grid grid-cols-[3.5rem_1fr] gap-3 py-4">
-              <span className="label pt-0.5 text-accent">{tag}</span>
-              <div>
-                <p className="font-medium text-ink">{head}</p>
-                <p className="mt-1 text-sm leading-relaxed text-ink-muted">{body}</p>
-              </div>
-            </li>
-          ))}
+        {state.ref ? <span className="ref">Ref {state.ref}</span> : null}
+        {state.message ? <p className="done-msg">{state.message}</p> : null}
+        <ol className="next">
+          <li>
+            <span className="jn">NEXT</span>
+            <div>
+              <b>We read it properly</b>
+              <span className="t">
+                And reply with a written quote for {f.biz.trim()}, usually within one working day.
+              </span>
+            </div>
+          </li>
+          <li>
+            <span className="jn">THEN</span>
+            <div>
+              <b>A short call, if you want one</b>
+              <span className="t">
+                To check the details. No charge, and if a smaller package would do, we&apos;ll say so.
+              </span>
+            </div>
+          </li>
+          <li>
+            <span className="jn">GO</span>
+            <div>
+              <b>Deposit, and we start</b>
+              <span className="t">
+                {fixed
+                  ? `${half} to begin. The rest only once you've approved the site, before it goes live.`
+                  : 'The deposit is set in your quote. The rest only once you’ve approved the site, before it goes live.'}
+              </span>
+            </div>
+          </li>
         </ol>
       </div>
     )
   } else if (step === 0) {
     card = (
-      <StepCard code="J1" title="Your business" headingRef={headingRef} onSubmit={next}>
-        <div className="mt-8 space-y-7">
-          <div>
-            <FieldLabel htmlFor="biz">Business name</FieldLabel>
-            <input
-              id="biz"
-              type="text"
-              autoComplete="organization"
-              placeholder="e.g. Thornley Heating"
-              value={f.biz}
-              onChange={(e) => set({ biz: e.target.value })}
-              aria-invalid={Boolean(errs.biz)}
-              aria-describedby={errs.biz ? 'biz-error' : undefined}
-              className={fieldClass}
-            />
-            <FieldError id="biz-error" message={errs.biz} />
-          </div>
-
-          <fieldset aria-describedby={errs.trade ? 'trade-error' : undefined}>
-            <legend className="label mb-2.5 block text-ink">What do you do?</legend>
-            <div className="flex flex-wrap gap-2.5">
-              {tradeOptions.map((trade, i) => (
-                <Chip
-                  key={trade}
+      <form key="s0" className={stepCls} noValidate onSubmit={next}>
+        <StepTop code="J1" title="Your business" headingRef={headingRef} />
+        <div className="field">
+          <label htmlFor="biz">Business name</label>
+          <input
+            id="biz"
+            className={errs.biz ? 'in bad' : 'in'}
+            type="text"
+            autoComplete="organization"
+            placeholder="e.g. Thornley Heating"
+            value={f.biz}
+            onChange={(e) => set({ biz: e.target.value })}
+            aria-invalid={Boolean(errs.biz)}
+            aria-describedby={errs.biz ? 'biz-err' : undefined}
+          />
+          <Err id="biz-err" message={errs.biz} />
+        </div>
+        <fieldset className="field" aria-describedby={errs.trade ? 'trade-err' : undefined}>
+          <legend className="legend">What do you do?</legend>
+          <div className="chips">
+            {tradeOptions.map((trade, i) => (
+              <label key={trade} className={f.trade === trade ? 'chip on' : 'chip'}>
+                <input
                   id={`trade-${i}`}
+                  type="radio"
                   name="trade"
                   checked={f.trade === trade}
                   onChange={() => set({ trade })}
-                >
-                  {trade}
-                </Chip>
-              ))}
-            </div>
-            <FieldError id="trade-error" message={errs.trade} />
-          </fieldset>
-
-          <div>
-            <FieldLabel htmlFor="site" optional="optional">
-              Current website
-            </FieldLabel>
-            <input
-              id="site"
-              type="text"
-              inputMode="url"
-              autoComplete="url"
-              placeholder="yourbusiness.co.uk"
-              value={f.site}
-              onChange={(e) => set({ site: e.target.value })}
-              aria-invalid={Boolean(errs.site)}
-              className={fieldClass}
-            />
-            <FieldError id="site-error" message={errs.site} />
+                />
+                {trade}
+              </label>
+            ))}
           </div>
+          <Err id="trade-err" message={errs.trade} />
+        </fieldset>
+        <div className="field">
+          <label htmlFor="site">
+            Current website <span className="opt-l">optional</span>
+          </label>
+          <input
+            id="site"
+            className={errs.site ? 'in bad' : 'in'}
+            type="text"
+            inputMode="url"
+            autoComplete="url"
+            placeholder="yourbusiness.co.uk"
+            value={f.site}
+            onChange={(e) => set({ site: e.target.value })}
+            aria-invalid={Boolean(errs.site)}
+          />
+          <Err id="site-err" message={errs.site} />
         </div>
         <Controls count="Junction 1 of 4" next={<NextButton>Next junction</NextButton>} />
-      </StepCard>
+      </form>
     )
   } else if (step === 1) {
     card = (
-      <StepCard code="J2" title="Choose your lane" headingRef={headingRef} onSubmit={next}>
-        <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
-          Fixed prices. Half to start, half once the site is finished and approved, before it
-          goes live.
+      <form key="s1" className={stepCls} noValidate onSubmit={next}>
+        <StepTop code="J2" title="Choose your lane" headingRef={headingRef} />
+        <p className="hint">
+          Fixed prices. Half to start, half once it&apos;s finished and approved, before it goes live.
         </p>
-
-        <fieldset className="mt-7" aria-describedby={errs.pkg ? 'pkg-error' : undefined}>
+        <fieldset aria-describedby={errs.pkg ? 'pkg-err' : undefined}>
           <legend className="sr-only">Package</legend>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="lanes">
             {lanes.map((l) => (
-              <label key={l.id} className="relative block cursor-pointer">
+              <label key={l.id} className={f.pkg === l.id ? 'lane on' : 'lane'}>
                 <input
                   id={`pkg-${l.id}`}
                   type="radio"
                   name="pkg"
                   checked={f.pkg === l.id}
                   onChange={() => set({ pkg: l.id })}
-                  className="peer sr-only"
                 />
-                <span className="block h-full border border-line-strong bg-paper-raised p-5 transition-colors hover:border-accent peer-checked:border-accent peer-checked:bg-accent-wash peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent">
-                  <span className="flex items-baseline justify-between gap-4">
-                    <span className="display text-3xl text-ink">{l.name}</span>
-                    {l.price > 0 ? (
-                      <span className="font-medium text-ink">
-                        {l.variable ? <span className="label mr-1.5 text-ink-faint">from</span> : null}
-                        {money(l.price)}
-                      </span>
-                    ) : null}
-                  </span>
-                  <span className="mt-3 block text-sm leading-relaxed text-ink-muted">
-                    {l.summary}
-                  </span>
-                  <span className="label mt-3 block text-ink-faint">{l.timeline}</span>
+                <span className="mark" aria-hidden />
+                <span className="lane-top">
+                  <span className="lane-name">{l.name}</span>
+                  {l.price > 0 ? (
+                    <span className="lane-price">
+                      {l.variable ? <small>from</small> : null}
+                      {money(l.price)}
+                    </span>
+                  ) : null}
                 </span>
+                <span className="lane-sub">{l.summary}</span>
+                <span className="lane-time">{l.timeline}</span>
               </label>
             ))}
           </div>
-          <FieldError id="pkg-error" message={errs.pkg} />
+          <Err id="pkg-err" message={errs.pkg} />
         </fieldset>
-        <p className="mt-4 text-xs leading-relaxed text-ink-faint">{TIMELINE_TERMS}</p>
+        <p className="fine">{TIMELINE_TERMS}</p>
 
         {f.pkg === 'custom' ? (
-          <div className="mt-7">
-            <FieldLabel htmlFor="budget" optional="helps me scope it">
-              Rough budget
-            </FieldLabel>
-            <select
-              id="budget"
-              value={f.budget}
-              onChange={(e) => set({ budget: e.target.value })}
-              className={fieldClass}
-            >
-              <option value="">Choose one…</option>
+          <div className="field">
+            <label htmlFor="budget">
+              Rough budget <span className="opt-l">helps us scope it</span>
+            </label>
+            <select id="budget" className="in" value={f.budget} onChange={(e) => set({ budget: e.target.value })}>
+              <option value="">Not sure yet</option>
               {budgetBands.map((band) => (
                 <option key={band} value={band}>
                   {band}
@@ -681,209 +532,166 @@ export function StartFlow({
           </div>
         ) : null}
 
-        <label className="relative mt-8 block cursor-pointer">
-          <input
-            type="checkbox"
-            checked={f.mgmt}
-            onChange={() => set({ mgmt: !f.mgmt })}
-            className="peer sr-only"
-          />
-          <span className="flex gap-4 border border-line-strong bg-paper-raised p-5 transition-colors hover:border-accent peer-checked:border-accent peer-checked:bg-accent-wash peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent">
-            <span
-              aria-hidden
-              className={cn(
-                'mt-0.5 grid h-5 w-5 shrink-0 place-items-center border text-xs leading-none',
-                f.mgmt
-                  ? 'border-accent bg-accent text-cream'
-                  : 'border-line-strong text-transparent'
-              )}
-            >
-              ✓
-            </span>
-            <span>
-              <span className="block font-medium text-ink">
-                Tell me about looking after it
-                <span className="label ml-3 text-accent">1st month free</span>
-              </span>
-              <span className="mt-1.5 block text-sm leading-relaxed text-ink-muted">
-                Management is from {money(ADVANCED_MANAGEMENT_PRICE)} a month. It is optional,
-                and the build price does not depend on it. {COMPLIMENTARY_MONTH_TERMS}{' '}
-                {ANNUAL_TERMS}
-              </span>
+        <label className={f.mgmt ? 'mgmt on' : 'mgmt'}>
+          <input type="checkbox" checked={f.mgmt} onChange={() => set({ mgmt: !f.mgmt })} />
+          <span className="box" aria-hidden />
+          <span>
+            <b>
+              Keep it looked after <span className="free-tag">1st month free</span>
+            </b>
+            <span className="s">
+              Management from {money(ADVANCED_MANAGEMENT_PRICE)} a month, hosting included. Up to 2
+              hours of updates a month on Pro Management, 4 on Ultimate. Pay annually: twelve months
+              for the price of ten. The free month doesn&apos;t turn into a paid plan by itself.
+              Optional, and you can decide later.
             </span>
           </span>
         </label>
-
-        <Controls
-          onBack={() => go(0)}
-          count="Junction 2 of 4"
-          next={<NextButton>Next junction</NextButton>}
-        />
-      </StepCard>
+        <Controls onBack={() => go(0)} count="Junction 2 of 4" next={<NextButton>Next junction</NextButton>} />
+      </form>
     )
   } else if (step === 2) {
     card = (
-      <StepCard code="J3" title="What it needs" headingRef={headingRef} onSubmit={next}>
-        <div className="mt-8 space-y-8">
-          <fieldset>
-            <legend className="label mb-2.5 block text-ink">How many pages, roughly?</legend>
-            <div className="flex flex-wrap gap-2.5">
-              {pageOptions.map((pages, i) => (
-                <Chip
-                  key={pages}
+      <form key="s2" className={stepCls} noValidate onSubmit={next}>
+        <StepTop code="J3" title="What it needs" headingRef={headingRef} />
+        <fieldset>
+          <legend className="legend">How many pages, roughly?</legend>
+          <div className="chips">
+            {pageOptions.map((pages, i) => (
+              <label key={pages} className={f.pages === pages ? 'chip on' : 'chip'}>
+                <input
                   id={`pages-${i}`}
+                  type="radio"
                   name="pages"
                   checked={f.pages === pages}
                   onChange={() => set({ pages })}
-                >
-                  {pages}
-                </Chip>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend className="label mb-2.5 block text-ink">
-              What should it do?
-              <span className="ml-2 text-ink-faint normal-case">(tick any)</span>
-            </legend>
-            <div className="grid gap-2.5 sm:grid-cols-2">
-              {featureOptions.map((feature) => (
-                <Tick
-                  key={feature}
-                  checked={f.feats.includes(feature)}
-                  onChange={() => toggleFeature(feature)}
-                >
+                />
+                {pages}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset className="field">
+          <legend className="legend">
+            What should it do? <span className="opt-l">tick any</span>
+          </legend>
+          <div className="ticks">
+            {featureOptions.map((feature) => {
+              const on = f.feats.includes(feature)
+              return (
+                <label key={feature} className={on ? 'tick on' : 'tick'}>
+                  <input type="checkbox" checked={on} onChange={() => toggleFeature(feature)} />
+                  <span className="box" aria-hidden />
                   {feature}
-                </Tick>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend className="label mb-2.5 block text-ink">
-              Have your words and photos ready?
-            </legend>
-            <div className="flex flex-wrap gap-2.5">
-              {contentOptions.map((content, i) => (
-                <Chip
-                  key={content}
+                </label>
+              )
+            })}
+          </div>
+        </fieldset>
+        <fieldset className="field">
+          <legend className="legend">Have your words and photos ready?</legend>
+          <div className="chips">
+            {contentOptions.map((content, i) => (
+              <label key={content} className={f.content === content ? 'chip on' : 'chip'}>
+                <input
                   id={`content-${i}`}
+                  type="radio"
                   name="content"
                   checked={f.content === content}
                   onChange={() => set({ content })}
-                >
-                  {content}
-                </Chip>
-              ))}
-            </div>
-          </fieldset>
-        </div>
+                />
+                {content}
+              </label>
+            ))}
+          </div>
+        </fieldset>
 
         {advice ? (
-          <div
-            role="status"
-            className="mt-8 flex gap-4 border-l-2 border-accent bg-paper-raised px-5 py-4"
-          >
-            <span aria-hidden className="text-accent">
-              ▲
-            </span>
-            <div className="text-sm leading-relaxed text-ink-muted">
-              <p>
-                <strong className="font-medium text-ink">Lane change ahead.</strong>{' '}
-                {advice.text}
-              </p>
-              <button
-                type="button"
-                onClick={() => set({ pkg: advice.switchTo })}
-                className="label mt-2 text-accent underline-offset-4 hover:underline"
-              >
-                {advice.switchLabel}
-              </button>
+          <div className="advise" role="status">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#FFB21A" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M12 3 2 21h20L12 3z" />
+              <path d="M12 10v5M12 18h.01" />
+            </svg>
+            <div>
+              <b>Lane change ahead.</b> {advice.text}
+              <div>
+                <button type="button" onClick={() => set({ pkg: advice.switchTo })}>
+                  {advice.switchLabel}
+                </button>
+              </div>
             </div>
           </div>
         ) : null}
-
-        <Controls
-          onBack={() => go(1)}
-          count="Junction 3 of 4"
-          next={<NextButton>Next junction</NextButton>}
-        />
-      </StepCard>
+        <Controls onBack={() => go(1)} count="Junction 3 of 4" next={<NextButton>Next junction</NextButton>} />
+      </form>
     )
   } else if (step === 3) {
     card = (
-      <StepCard code="J4" title="Your details" headingRef={headingRef} onSubmit={next}>
-        <div className="mt-8 space-y-6">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div>
-              <FieldLabel htmlFor="name">Your name</FieldLabel>
-              <input
-                id="name"
-                type="text"
-                autoComplete="name"
-                value={f.name}
-                onChange={(e) => set({ name: e.target.value })}
-                aria-invalid={Boolean(errs.name)}
-                aria-describedby={errs.name ? 'name-error' : undefined}
-                className={fieldClass}
-              />
-              <FieldError id="name-error" message={errs.name} />
-            </div>
-            <div>
-              <FieldLabel htmlFor="phone" optional="optional">
-                Phone
-              </FieldLabel>
-              <input
-                id="phone"
-                type="tel"
-                autoComplete="tel"
-                value={f.phone}
-                onChange={(e) => set({ phone: e.target.value })}
-                aria-invalid={Boolean(errs.phone)}
-                aria-describedby={errs.phone ? 'phone-error' : undefined}
-                className={fieldClass}
-              />
-              <FieldError id="phone-error" message={errs.phone} />
-            </div>
-          </div>
-          <div>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
+      <form key="s3" className={stepCls} noValidate onSubmit={next}>
+        <StepTop code="J4" title="Your details" headingRef={headingRef} />
+        <div className="two">
+          <div className="field">
+            <label htmlFor="name">Your name</label>
             <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              value={f.email}
-              onChange={(e) => set({ email: e.target.value })}
-              aria-invalid={Boolean(errs.email)}
-              aria-describedby={errs.email ? 'email-error' : undefined}
-              className={fieldClass}
+              id="name"
+              className={errs.name ? 'in bad' : 'in'}
+              type="text"
+              autoComplete="name"
+              value={f.name}
+              onChange={(e) => set({ name: e.target.value })}
+              aria-invalid={Boolean(errs.name)}
+              aria-describedby={errs.name ? 'name-err' : undefined}
             />
-            <FieldError id="email-error" message={errs.email} />
+            <Err id="name-err" message={errs.name} />
           </div>
-          <div>
-            <FieldLabel htmlFor="msg" optional="optional">
-              Anything else?
-            </FieldLabel>
-            <textarea
-              id="msg"
-              rows={5}
-              placeholder="Deadlines, examples you like, what is not working now…"
-              value={f.msg}
-              onChange={(e) => set({ msg: e.target.value })}
-              aria-invalid={Boolean(errs.msg)}
-              aria-describedby={errs.msg ? 'msg-error' : undefined}
-              className={cn(fieldClass, 'resize-y')}
+          <div className="field">
+            <label htmlFor="phone">
+              Phone <span className="opt-l">optional</span>
+            </label>
+            <input
+              id="phone"
+              className={errs.phone ? 'in bad' : 'in'}
+              type="tel"
+              autoComplete="tel"
+              value={f.phone}
+              onChange={(e) => set({ phone: e.target.value })}
+              aria-invalid={Boolean(errs.phone)}
+              aria-describedby={errs.phone ? 'phone-err' : undefined}
             />
-            <FieldError id="msg-error" message={errs.msg} />
+            <Err id="phone-err" message={errs.phone} />
           </div>
         </div>
-        <Controls
-          onBack={() => go(2)}
-          count="Junction 4 of 4"
-          next={<NextButton>Review my route</NextButton>}
-        />
-      </StepCard>
+        <div className="field">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            className={errs.email ? 'in bad' : 'in'}
+            type="email"
+            autoComplete="email"
+            value={f.email}
+            onChange={(e) => set({ email: e.target.value })}
+            aria-invalid={Boolean(errs.email)}
+            aria-describedby={errs.email ? 'email-err' : undefined}
+          />
+          <Err id="email-err" message={errs.email} />
+        </div>
+        <div className="field">
+          <label htmlFor="msg">
+            Anything else? <span className="opt-l">optional</span>
+          </label>
+          <textarea
+            id="msg"
+            className={errs.msg ? 'in bad' : 'in'}
+            placeholder="Deadlines, examples you like, what isn't working now…"
+            value={f.msg}
+            onChange={(e) => set({ msg: e.target.value })}
+            aria-invalid={Boolean(errs.msg)}
+            aria-describedby={errs.msg ? 'msg-err' : undefined}
+          />
+          <Err id="msg-err" message={errs.msg} />
+        </div>
+        <Controls onBack={() => go(2)} count="Junction 4 of 4" next={<NextButton>Review my route</NextButton>} />
+      </form>
     )
   } else {
     const rows: [string, string, number | null][] = [
@@ -897,7 +705,7 @@ export function StartFlow({
             ? `${money(net)}, fixed${promo ? ` (was ${money(lane.price)})` : ''}`
             : lane.price > 0
               ? `From ${money(lane.price)}, quoted in writing${promo ? ', with your code taken off' : ''}`
-              : `I will recommend a package${promo ? ', with your code taken off' : ''}`,
+              : `We'll recommend a package${promo ? ', with your code taken off' : ''}`,
         null,
       ],
       ['Deposit to start', half, null],
@@ -908,60 +716,35 @@ export function StartFlow({
       ['Contact', `${f.name.trim()} · ${f.email.trim()}`, 3],
     ]
     card = (
-      <form
-        action={send}
-        className="rise-in border border-line bg-paper-sunk p-6 sm:p-9"
-      >
-        <div className="flex items-baseline gap-4">
-          <span className="label text-accent">END</span>
-          <h2
-            ref={headingRef}
-            tabIndex={-1}
-            className="display text-3xl text-ink focus:outline-none sm:text-4xl"
-          >
-            Your route
-          </h2>
-        </div>
+      <form key="s4" className={stepCls} action={send}>
+        <StepTop code="END" title="Your route" headingRef={headingRef} />
 
         {state.status === 'error' ? (
-          <div
-            role="alert"
-            className="mt-6 border-l-2 border-accent bg-paper-raised px-4 py-3 text-sm"
-          >
+          <div className="sendfail" role="alert">
             <p>{state.message}</p>
             {state.errors ? (
-              <ul className="mt-2 space-y-1">
-                {(Object.entries(state.errors) as [StartField, string][]).map(
-                  ([field, message]) => (
-                    <li key={field}>
-                      {message}{' '}
-                      <button
-                        type="button"
-                        onClick={() => go(stepOfField[field])}
-                        className="label text-accent underline-offset-4 hover:underline"
-                      >
-                        Fix
-                      </button>
-                    </li>
-                  )
-                )}
+              <ul>
+                {(Object.entries(state.errors) as [StartField, string][]).map(([field, message]) => (
+                  <li key={field}>
+                    {message}{' '}
+                    <button className="edit" type="button" onClick={() => go(stepOfField[field])}>
+                      Fix
+                    </button>
+                  </li>
+                ))}
               </ul>
             ) : null}
           </div>
         ) : null}
 
-        <dl className="mt-7 divide-y divide-line border-y border-line">
+        <dl className="rv">
           {rows.map(([label, value, edit]) => (
-            <div key={label} className="grid gap-1 py-3.5 sm:grid-cols-[11rem_1fr] sm:gap-6">
-              <dt className="label pt-0.5 text-ink-faint">{label}</dt>
-              <dd className="flex items-start justify-between gap-4 text-[15px] text-ink">
-                <span>{value}</span>
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>
+                {value}
                 {edit !== null ? (
-                  <button
-                    type="button"
-                    onClick={() => go(edit)}
-                    className="label shrink-0 text-accent underline-offset-4 hover:underline"
-                  >
+                  <button className="edit" type="button" onClick={() => go(edit)}>
                     Edit
                   </button>
                 ) : null}
@@ -969,21 +752,20 @@ export function StartFlow({
             </div>
           ))}
           {promo ? (
-            <div className="grid gap-1 py-3.5 sm:grid-cols-[11rem_1fr] sm:gap-6">
-              <dt className="label pt-0.5 text-ink-faint">Promo code</dt>
-              <dd className="text-[15px] text-ink">
+            <div>
+              <dt>Promo code</dt>
+              <dd>
                 {promo.code} · {promo.tag}
               </dd>
             </div>
           ) : null}
         </dl>
-        <p className="mt-3 text-xs leading-relaxed text-ink-faint">{TIMELINE_TERMS}</p>
 
-        <div className="mt-7">{promoBox('promo')}</div>
+        {promoBox('promo')}
 
-        <p className="mt-7 text-sm leading-relaxed text-ink-muted">
-          Sending this does not commit you to anything or take payment. I reply with a written
-          quote, normally within one working day. You own everything I build.
+        <p className="small">
+          Sending this doesn&apos;t commit you to anything or take payment. We reply with a written
+          quote, usually within one working day. {TIMELINE_TERMS} You own everything we build.
         </p>
 
         {/* The answers travel as hidden fields; the server checks every one again. */}
@@ -1005,7 +787,7 @@ export function StartFlow({
         <input type="hidden" name="promo" value={promo?.code ?? ''} />
 
         {/* Honeypot, as on the plain enquiry form. */}
-        <div aria-hidden className="absolute left-[-9999px] h-px w-px overflow-hidden">
+        <div aria-hidden className="hp">
           <label htmlFor="website">Do not fill this in</label>
           <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
         </div>
@@ -1015,79 +797,110 @@ export function StartFlow({
     )
   }
 
+  const here = Math.min(shown, ROUTE.length - 1)
+
   return (
-    <div ref={rootRef}>
+    <div ref={rootRef} className="sflow">
       <noscript>
-        <p className="border border-line bg-paper-sunk p-6 text-[15px]">
-          This form needs JavaScript. You can email me at{' '}
-          <a className="text-accent underline-offset-4 hover:underline" href={`mailto:${site.email}`}>
-            {site.email}
-          </a>{' '}
-          instead.
+        <p className="card">
+          This form needs JavaScript. You can email{' '}
+          <a href={`mailto:${site.email}`}>{site.email}</a> instead.
         </p>
       </noscript>
 
-      <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
-        <div className="min-w-0">{card}</div>
+      <section className="swrap sbody">
+        <div>{card}</div>
 
-        <aside aria-label="Your route so far" className="min-w-0">
-          <div className="border border-line bg-paper-sunk p-6 sm:p-8 lg:sticky lg:top-24">
-            <h2 className="label text-ink-faint">Your route</h2>
-            {lane ? (
-              <>
-                <p className="display mt-5 text-5xl text-ink">
-                  {lane.variable && lane.price > 0 ? (
-                    <span className="label mr-2 align-middle text-ink-faint">from</span>
-                  ) : null}
-                  {priceText}
-                  {promo && fixed ? (
-                    <span className="label ml-3 align-middle text-ink-faint line-through decoration-accent">
-                      {money(lane.price)}
-                    </span>
-                  ) : null}
-                </p>
-                <p className="mt-1 text-sm font-medium text-ink">{lane.name}</p>
-                <dl className="mt-5 divide-y divide-line border-y border-line text-sm">
-                  {promo ? (
-                    <div className="flex justify-between gap-4 py-2.5 text-accent">
-                      <dt>{promo.code}</dt>
-                      <dd>{fixed ? `−${money(lane.price - net)}` : promo.what}</dd>
-                    </div>
-                  ) : null}
-                  <div className="flex justify-between gap-4 py-2.5">
-                    <dt className="text-ink-faint">Deposit to start</dt>
-                    <dd className="text-ink">{half}</dd>
+        <aside className="summary" aria-label="Your route so far">
+          <h3>Your route</h3>
+          {lane ? (
+            <>
+              <div className="sum-big">
+                {lane.variable && lane.price > 0 ? <small>from</small> : null}
+                {priceText}
+                {promo && fixed ? <span className="was">{money(lane.price)}</span> : null}
+              </div>
+              <div className="sum-pkg">{lane.name}</div>
+              <dl className="sum-rows">
+                {promo ? (
+                  <div className="disc">
+                    <dt>{promo.code}</dt>
+                    <dd>{fixed ? `−${money(lane.price - net)}` : promo.what}</dd>
                   </div>
-                  <div className="flex justify-between gap-4 py-2.5">
-                    <dt className="text-ink-faint">Before go-live</dt>
-                    <dd className="text-ink">{half}</dd>
-                  </div>
-                  <div className="flex justify-between gap-4 py-2.5">
-                    <dt className="text-ink-faint">Estimated time</dt>
-                    <dd className="text-right text-ink">{lane.timeline}</dd>
-                  </div>
-                  <div className="flex justify-between gap-4 py-2.5">
-                    <dt className="text-ink-faint">Management</dt>
-                    <dd className="text-ink">{f.mgmt ? '1st month free' : 'Not added'}</dd>
-                  </div>
-                </dl>
-                <p className="mt-4 text-xs leading-relaxed text-ink-faint">
-                  Fixed price. Nothing is charged until you have had a written quote.{' '}
-                  {TIMELINE_TERMS}
-                </p>
-              </>
-            ) : (
-              <p className="mt-5 text-sm leading-relaxed text-ink-muted">
-                Pick a lane at Junction 2 and the price, deposit and timeline appear here.
+                ) : null}
+                <div>
+                  <dt>Deposit to start</dt>
+                  <dd>{half}</dd>
+                </div>
+                <div>
+                  <dt>Before go-live</dt>
+                  <dd>{half}</dd>
+                </div>
+                <div>
+                  <dt>Estimated time</dt>
+                  <dd>{lane.timeline}</dd>
+                </div>
+                <div>
+                  <dt>Management</dt>
+                  <dd>{f.mgmt ? '1st month free' : 'Not added'}</dd>
+                </div>
+              </dl>
+              <p className="sum-note">
+                {fixed ? 'Fixed price. ' : ''}Nothing is charged until you&apos;ve had a written quote.{' '}
+                {TIMELINE_TERMS}
               </p>
-            )}
-            {step !== 4 && !done ? <div className="mt-6">{promoBox('promo-side', true)}</div> : null}
-          </div>
-          {aside ? <div className="mt-8">{aside}</div> : null}
+            </>
+          ) : (
+            <p className="sum-empty">Pick a lane at Junction 2 and the price, deposit and timeline appear here.</p>
+          )}
+          {step !== 4 && !done ? promoBox('promo-side', true) : null}
         </aside>
-      </div>
+      </section>
 
-      <StartRoad step={shown} motion={motion} signTop={signTop} signSub={signSub} />
+      <div className="road">
+        <div className="swrap roadwrap">
+          <div className="carriage">
+            <div className="surface" aria-hidden />
+            <ol className="rd" aria-label="Your progress">
+              {ROUTE.map((stop, i) => (
+                <li
+                  key={stop.code}
+                  className={i < shown ? 'done' : i === here ? 'here' : undefined}
+                  aria-current={i === here ? 'step' : undefined}
+                  style={{ left: `${10 + i * 20}%` }}
+                >
+                  <span className="post" aria-hidden />
+                  <span className="plate">{stop.code}</span>
+                  <span className="lab">{stop.label}</span>
+                </li>
+              ))}
+            </ol>
+            <div
+              className={motion ? (motion.rev ? 'car moving rev' : 'car moving') : 'car'}
+              aria-hidden
+              style={{ left: `${pos}%` }}
+            >
+              <svg viewBox="0 0 60 28">
+                <path d="M3 20V14q0-3 3-3h9l6-7q1-1 3-1h15q2 0 3 1l5 7h8q3 0 3 3v6z" fill="#FFB21A" />
+                <path d="M16 11l5-6h9v6zM32 5h7l4.5 6H32z" fill="#121417" opacity=".85" />
+                <rect x="55" y="13" width="3" height="3" rx="1" fill="#FFF6D6" />
+                <rect x="2.5" y="13" width="2.5" height="3" rx="1" fill="#E5484D" />
+                {[14, 46].map((cx) => (
+                  <g key={cx} className="wheel">
+                    <circle cx={cx} cy="21" r="5.5" fill="#16181B" stroke="#8A929B" strokeWidth="1.5" />
+                    <path d={`M${cx} 17v8M${cx - 4} 21h8`} stroke="#9AA1AA" strokeWidth="1.5" />
+                    <circle cx={cx} cy="21" r="1.6" fill="#D5D9DE" />
+                  </g>
+                ))}
+              </svg>
+            </div>
+          </div>
+          <div className="psign" aria-hidden>
+            <div className="p">{signTop}</div>
+            <div className="d">{signSub}</div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

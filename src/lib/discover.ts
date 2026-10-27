@@ -232,3 +232,97 @@ export const methods: MethodRow[] = [
   { label: 'Can you move it later', builder: 'Not without rebuilding', agency: 'Usually', northbound: 'Yes — hand over the repo', best: 'northbound' },
   { label: 'Looked after afterwards', builder: 'Up to you', agency: 'Retainer, often £300+/month', northbound: 'From £39/month, first month free', best: 'northbound' },
 ]
+
+/**
+ * The three gantries on /discover: three ways to get a website, compared on
+ * the same four signs. The template and agency rows are typical market
+ * ranges, not quotes; the template gets its due where it wins.
+ */
+export type Route = {
+  key: 'template' | 'agency' | 'northbound'
+  code: string
+  /** Sign colour: blue for the template, green for the agency, black and amber for Northbound. */
+  tone: 'blue' | 'green' | 'nb'
+  title: string
+  sub: string
+  speed: string
+  speedNote: string
+  design: string
+  designNote: string
+  features: string
+  featuresNote: string
+  price: string
+  priceUnit: string
+  priceNote: string
+  bestWhen: string
+}
+
+export const routes: Route[] = [
+  {
+    key: 'template',
+    code: 'A1',
+    tone: 'blue',
+    title: 'A template site',
+    sub: 'Wix, Squarespace, GoDaddy and the like. You build it on a Sunday afternoon.',
+    speed: '4–8 s',
+    speedNote: 'Typical load on 4G. Builders ship every feature they offer whether you use it or not, so the page is heavy before you add a photo.',
+    design: 'A theme',
+    designNote: 'Chosen from a few hundred. Looks fine; looks like the other businesses that chose it. Spacing and type are whatever the theme set.',
+    features: 'Bolt-on',
+    featuresNote: 'Forms and bookings come from an app store, each with its own monthly fee and its own login. Local SEO is a checklist you follow yourself.',
+    price: '£0–£25',
+    priceUnit: '/month',
+    priceNote: 'For as long as you keep it. Cancel and the site goes with it — it only exists on their platform. Your time is the real cost.',
+    bestWhen: 'you need a page up today and the site is a placeholder, not how people find and book you.',
+  },
+  {
+    key: 'agency',
+    code: 'A2',
+    tone: 'green',
+    title: 'An agency site',
+    sub: 'A studio with a team: strategist, designer, developer, account manager.',
+    speed: '2–4 s',
+    speedNote: 'Varies with the stack. Good agencies build fast sites; plenty hand over a heavy WordPress theme with twenty plugins.',
+    design: 'Bespoke',
+    designNote: 'Designed for you, properly, with research and revisions — and rightly so at the price. Brand work is often part of the package.',
+    features: 'Scoped',
+    featuresNote: 'Anything you can specify, quoted line by line. Changes after sign-off go through change requests and the account manager.',
+    price: '£2k–£10k+',
+    priceUnit: '',
+    priceNote: 'Plus a retainer, commonly £300 a month or more, for hosting and updates. Six to twelve weeks from kick-off is typical.',
+    bestWhen: 'you have a brand team, a five-figure budget and a project that genuinely needs five specialists.',
+  },
+  {
+    key: 'northbound',
+    code: 'NB',
+    tone: 'nb',
+    title: 'A Northbound site',
+    sub: 'One developer, working directly with you, at a fixed published price.',
+    speed: '~1 s',
+    speedNote: 'Typical load on 4G. Pages are built ahead of time and served from a network near your visitor, so there is very little to wait for. Speed is a design constraint, not a fix at the end.',
+    design: 'Yours',
+    designNote: 'Designed around your trade and your customers, on a phone first. No theme underneath it, so it does not look like the shop two doors down.',
+    features: 'Set up',
+    featuresNote: 'Booking is set up for you on an established booking service as part of the build. Pro covers one staff calendar; Ultimate runs a whole team, with reminders and payments, and adds local SEO.',
+    price: '£249–£349',
+    priceUnit: 'fixed',
+    priceNote: 'Half to start, and half once it is approved, before it goes live. You own the code, the domain and the content. Custom work starts from £349 and is quoted first.',
+    bestWhen: 'you want it designed for your business, fast on a phone, owned outright and looked after — without the agency price or the DIY weekends.',
+  },
+]
+
+/** The "which one fits" strip under the gantries. */
+export const fits = [
+  {
+    title: 'Pick the template if',
+    body: 'You need something today, you enjoy tinkering, and the site is a placeholder rather than how people find and book you.',
+  },
+  {
+    title: 'Pick the agency if',
+    body: 'You have a brand team, a budget in the thousands, and a project that genuinely needs five specialists and a project manager.',
+  },
+  {
+    title: 'Pick Northbound if',
+    body: 'You want it designed for your business, fast on a phone, owned outright, and looked after — without the agency price or the DIY weekends.',
+  },
+]

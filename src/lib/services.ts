@@ -43,6 +43,8 @@ export type BuildPackage = {
   cta: string
   /** The short list on the home page's price sign. Must stay within `includes`. */
   highlights: string[]
+  /** One line for the lane cards in the Start flow. Must stay within `includes`. */
+  short: string
   /** Shown as small print under the package — used to bound what is included. */
   note?: string
   /** Whether the package bundles a complimentary month of Advanced Management. */
@@ -68,6 +70,7 @@ export const buildPackages: BuildPackage[] = [
     timeline: 'Approximately 7–10 working days',
     enquiryParam: 'pro',
     cta: 'Choose Pro',
+    short: 'Up to 5 pages, booking for one calendar, contact form and basic SEO.',
     highlights: [
       'Up to 5 pages, designed for mobile and desktop',
       'Contact form and basic SEO',
@@ -94,6 +97,7 @@ export const buildPackages: BuildPackage[] = [
     timeline: 'Approximately 10–15 working days',
     enquiryParam: 'ultimate',
     cta: 'Choose Ultimate',
+    short: 'Up to 8 pages, booking for several staff with payments and reminders, local SEO.',
     highlights: [
       'Up to 8 pages, designed for mobile and desktop',
       'Contact form, basic and local SEO',
@@ -120,6 +124,7 @@ export const buildPackages: BuildPackage[] = [
     timeline: 'Agreed with your brief',
     enquiryParam: 'custom',
     cta: 'Discuss a Custom build',
+    short: 'Scope agreed up front. Integrations and anything bespoke, quoted in writing.',
     highlights: [
       'Pages, features and SEO agreed up front',
       'Bespoke integrations where you need them',
