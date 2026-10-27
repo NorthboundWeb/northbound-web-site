@@ -41,6 +41,8 @@ export type BuildPackage = {
   enquiryParam: string
   /** Label for the card's call to action. */
   cta: string
+  /** The short list on the home page's price sign. Must stay within `includes`. */
+  highlights: string[]
   /** Shown as small print under the package — used to bound what is included. */
   note?: string
   /** Whether the package bundles a complimentary month of Advanced Management. */
@@ -66,6 +68,12 @@ export const buildPackages: BuildPackage[] = [
     timeline: 'Approximately 7–10 working days',
     enquiryParam: 'pro',
     cta: 'Choose Pro',
+    highlights: [
+      'Up to 5 pages, designed for mobile and desktop',
+      'Contact form and basic SEO',
+      'Booking setup for one staff calendar, with email confirmations',
+      '1 round of revisions',
+    ],
   },
   {
     slug: 'ultimate',
@@ -86,6 +94,12 @@ export const buildPackages: BuildPackage[] = [
     timeline: 'Approximately 10–15 working days',
     enquiryParam: 'ultimate',
     cta: 'Choose Ultimate',
+    highlights: [
+      'Up to 8 pages, designed for mobile and desktop',
+      'Contact form, basic and local SEO',
+      'Booking setup for several staff calendars, with reminders, payments, cancelling and rescheduling',
+      '2 rounds of revisions',
+    ],
     note: 'Booking payments run through Stripe, so card details never touch the website. Stripe\'s own fees apply to each payment.',
   },
   {
@@ -106,6 +120,12 @@ export const buildPackages: BuildPackage[] = [
     timeline: 'Agreed with your brief',
     enquiryParam: 'custom',
     cta: 'Discuss a Custom build',
+    highlights: [
+      'Pages, features and SEO agreed up front',
+      'Bespoke integrations where you need them',
+      'Revisions and timeline set in your quote',
+      'Accounts, databases, payments, portals and shops are quoted separately',
+    ],
     note: '£349 is where a custom project starts, not what every custom project costs. Substantial functionality — user accounts, databases, payments, customer portals, ecommerce and the like — is not included in that starting price. Anything of that kind is scoped and quoted separately before any work begins.',
   },
 ]
@@ -122,6 +142,8 @@ export type ManagementPlan = {
    */
   includes: string[]
   changeTime: string
+  /** `changeTime` in a few words, for the home page's management sign. */
+  changeTimeShort: string
   /** See BuildPackage.enquiryParam. */
   enquiryParam: string
   /** Label for the card's call to action. */
@@ -143,6 +165,7 @@ export const managementPlans: ManagementPlan[] = [
     ],
     changeTime:
       'Includes up to 2 hours of requested website updates per billing month.',
+    changeTimeShort: 'Up to 2 hours of updates a month',
     enquiryParam: 'pro-management',
     cta: 'Choose Pro Management',
   },
@@ -160,6 +183,7 @@ export const managementPlans: ManagementPlan[] = [
     ],
     changeTime:
       'Includes up to 4 hours of requested website updates per billing month.',
+    changeTimeShort: 'Up to 4 hours of updates a month',
     enquiryParam: 'ultimate-management',
     cta: 'Choose Ultimate Management',
   },
@@ -176,6 +200,7 @@ export const managementPlans: ManagementPlan[] = [
     ],
     changeTime:
       'Update time is agreed in your quote.',
+    changeTimeShort: 'Quoted with your build',
     enquiryParam: 'custom-management',
     cta: 'Discuss Custom Management',
   },
@@ -318,5 +343,24 @@ export const standards = [
   {
     title: 'Monitored',
     body: 'Sites are built so that downtime can be spotted by monitoring rather than by a customer emailing to say the contact form has been broken for a fortnight. Uptime monitoring is part of every management plan.',
+  },
+]
+
+/** The home page's route: three junctions from first message to a live site. */
+export const junctions = [
+  {
+    code: 'J1',
+    title: 'Tell us the plan',
+    body: 'Your business, what you want from it, and what the website needs to do.',
+  },
+  {
+    code: 'J2',
+    title: 'Make it yours',
+    body: 'We agree the brief and build the first version, then refine it with you.',
+  },
+  {
+    code: 'J3',
+    title: 'Put it out there',
+    body: "Once you've approved it and paid the balance, it goes live. Management keeps it running, if you want it to.",
   },
 ]

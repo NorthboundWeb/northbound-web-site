@@ -1,43 +1,46 @@
 @import 'tailwindcss';
 
 /*
-  Northbound print system.
+  Northbound motorway system (design B).
 
-  Warm cream paper, deep bottle-green ink, burnt-orange as the one interaction
-  colour. Olive, mustard, cobalt and dusty pink are editorial accents used
-  sparingly — never as UI states. No purple, no gradients, no gloss.
+  Night tarmac for the page, UK motorway-sign blue for anything that is a
+  sign, white for type, and amber — the colour of a matrix sign and a
+  central-reservation road stud — as the one interaction colour.
+
+  The token names are older than the palette: `green` is the sign blue and
+  `cream` is sign white, so every component that drew a green band with cream
+  type now draws a blue sign with white type.
 */
 :root {
-  /* Paper */
-  --cream: #f2ebdd;
-  --paper: #f2ebdd;
-  --paper-sunk: #ede5d6;
-  --paper-raised: #f7f2e7;
+  /* Tarmac */
+  --cream: #ffffff;
+  --paper: #121417;
+  --paper-sunk: #1a1d21;
+  --paper-raised: #1f2227;
 
-  /* Ink — deep green carries the brand, not neutral black */
-  --green: #0d2a24;
-  --green-deep: #112f29;
-  --black: #111111;
-  --ink: #0d2a24;
-  --ink-muted: #3d564e;
-  /* Darkened from #6B8078 (3.55:1) to clear WCAG AA at small sizes on cream. */
-  --ink-faint: #55675f;
+  /* Signs */
+  --green: #1d4f91;
+  --green-deep: #173f74;
+  --black: #000000;
+  --ink: #ffffff;
+  --ink-muted: #c9ced4;
+  --ink-faint: #9aa1aa;
 
   /* Interaction */
-  --orange: #f04a0a;
-  --orange-lit: #f25a14;
-  --accent: #f04a0a;
-  --accent-ink: #f2ebdd;
-  --accent-wash: #f7e3d5;
+  --orange: #ffb21a;
+  --orange-lit: #ffc24d;
+  --accent: #ffb21a;
+  --accent-ink: #121417;
+  --accent-wash: #2a2418;
 
   /* Editorial accents — sparing, decorative only */
   --olive: #7d8242;
-  --mustard: #d49a17;
-  --cobalt: #3047a8;
+  --mustard: #ffb21a;
+  --cobalt: #1d4f91;
   --pink: #e7b1aa;
 
-  --line: rgba(13, 42, 36, 0.2);
-  --line-strong: rgba(13, 42, 36, 0.42);
+  --line: #2b2f35;
+  --line-strong: #3b4048;
 
   /*
     Motion.
@@ -63,24 +66,9 @@
   --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Dark mode is the same brand inverted: green paper, cream ink. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #0d2a24;
-    --paper-sunk: #0a211c;
-    --paper-raised: #112f29;
-
-    --ink: #f2ebdd;
-    --ink-muted: #c2cec7;
-    --ink-faint: #8ba095;
-
-    --accent: #f25a14;
-    --accent-ink: #0d2a24;
-    --accent-wash: #1b3a32;
-
-    --line: rgba(242, 235, 221, 0.2);
-    --line-strong: rgba(242, 235, 221, 0.4);
-  }
+/* The motorway is always at night: there is no light theme to switch to. */
+:root {
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -107,7 +95,7 @@
 
   --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', sans-serif;
-  --font-display: var(--font-display), 'Arial Narrow', sans-serif;
+  --font-display: var(--font-body), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -123,13 +111,19 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Display type is a graphic element: condensed, uppercase, tight. */
+  /* Display type is sign lettering: Overpass at its heaviest, sentence case. */
   .display {
     font-family: var(--font-display);
-    text-transform: uppercase;
-    line-height: 0.82;
-    letter-spacing: -0.015em;
-    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    font-weight: 900;
+    text-wrap: balance;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
   }
 
   p {
@@ -143,7 +137,7 @@
 
   ::selection {
     background-color: var(--accent);
-    color: var(--cream);
+    color: var(--accent-ink);
   }
 
   /*
@@ -171,12 +165,42 @@
   }
 }
 
-/* Small technical label — the recurring print annotation. */
+/* Small sign label: the uppercase plate lettering used for annotations. */
 @utility label {
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/*
+  The sign: motorway blue, a white border inset from the edge. Used for every
+  panel that is meant to read as a road sign.
+*/
+@utility sign {
+  background: var(--green);
+  color: #ffffff;
+  border-radius: 16px;
+  box-shadow:
+    inset 0 0 0 7px var(--green),
+    inset 0 0 0 11px #ffffff;
+}
+
+/* A junction plate: black, white border, heavy uppercase. */
+@utility kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px 4px;
+  border-radius: 5px;
+  background: #000000;
+  border: 3px solid #ffffff;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -197,13 +221,6 @@
   opacity: 0.5;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
-}
-
-@media (prefers-color-scheme: dark) {
-  .grain-overlay {
-    mix-blend-mode: screen;
-    opacity: 0.28;
-  }
 }
 
 /* Faint technical grid, as on the reference sheets. */
@@ -350,7 +367,7 @@
   right: 0;
   bottom: 30px;
   height: 26px;
-  background: #081a16;
+  background: #0b0c0e;
 }
 
 .nb-surface::after {
