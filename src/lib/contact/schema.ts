@@ -2,13 +2,13 @@ import { z } from 'zod'
 import { buildPackages, managementPlans } from '@/lib/services'
 
 /**
- * Builds and management plans both have a tier called "Advanced", so the plan
- * names are suffixed here. Without it the dropdown shows two options reading
- * simply "Advanced", and the enquiry email cannot tell which one was picked.
+ * Builds and management plans share tier names (Pro, Ultimate, Custom), so
+ * builds are suffixed here. Plan names already end in "Management", which
+ * keeps the dropdown and the enquiry email unambiguous.
  */
 export const projectTypes = [
   ...buildPackages.map((pkg) => `${pkg.name} build`),
-  ...managementPlans.map((plan) => `${plan.name} management`),
+  ...managementPlans.map((plan) => plan.name),
   'Not sure yet',
   'Something else',
 ] as const
@@ -23,10 +23,7 @@ const packageParamToProjectType: Record<string, string> = {
     buildPackages.map((pkg) => [pkg.enquiryParam, `${pkg.name} build`])
   ),
   ...Object.fromEntries(
-    managementPlans.map((plan) => [
-      plan.enquiryParam,
-      `${plan.name} management`,
-    ])
+    managementPlans.map((plan) => [plan.enquiryParam, plan.name])
   ),
 }
 
@@ -52,7 +49,7 @@ export function projectTypeFromParam(
  */
 export const budgetBands = [
   'Not sure yet',
-  'Around £499',
+  'Around £349',
   '£500 – £1,000',
   '£1,000 – £2,500',
   'Over £2,500',

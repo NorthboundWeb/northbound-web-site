@@ -38,6 +38,29 @@
 
   --line: rgba(13, 42, 36, 0.2);
   --line-strong: rgba(13, 42, 36, 0.42);
+
+  /*
+    Motion.
+
+    Anything answering a tap finishes inside 300ms — past that it stops
+    reading as response and starts reading as waiting. Presses are quicker
+    going down than coming back up, which is what makes a button feel
+    physical rather than rubbery.
+
+    The easings are custom on purpose. The browser defaults (ease, ease-out)
+    are symmetrical and slightly limp; these start faster and settle slower,
+    which is how real objects behave.
+  */
+  --t-press: 90ms;
+  --t-fast: 150ms;
+  --t-base: 200ms;
+  --t-slow: 300ms;
+  --t-stage: 520ms;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* The curve iOS uses for sheets — slow to leave, decisive to arrive. */
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 /* Dark mode is the same brand inverted: green paper, cream ink. */
@@ -123,6 +146,14 @@
     color: var(--cream);
   }
 
+  /*
+    Reduced motion removes movement, not feedback.
+
+    Flattening every duration to zero is the usual shortcut, and it leaves
+    the interface feeling broken — things change with no acknowledgement at
+    all. Transforms are what cause trouble, so those are dropped; opacity
+    and colour still cross-fade, quickly.
+  */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -132,7 +163,10 @@
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      transition-property: opacity, background-color, border-color, color,
+        fill, stroke !important;
+      transition-duration: 120ms !important;
+      transform: none !important;
     }
   }
 }
@@ -209,10 +243,15 @@
   animation: travel 6s ease-in-out infinite;
 }
 
+/*
+  Entrances start at 0.95, never at 0. Something scaling up from nothing
+  reads as a special effect; something arriving from slightly-too-small
+  reads as the thing settling into place.
+*/
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(14px) scale(0.985);
   }
   to {
     opacity: 1;
@@ -221,7 +260,45 @@
 }
 
 @utility rise-in {
-  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation: rise 0.62s var(--ease-out) both;
+}
+
+/*
+  Press feedback.
+
+  Down is quick and up is slower, so the button resists for a moment and
+  then returns — the asymmetry is the whole trick. Only transform and
+  opacity move, so this never touches layout.
+*/
+@utility press {
+  transition:
+    transform var(--t-base) var(--ease-out),
+    background-color var(--t-fast) ease,
+    border-color var(--t-fast) ease,
+    color var(--t-fast) ease;
+
+  &:active {
+    transform: scale(0.97);
+    transition-duration: var(--t-press);
+  }
+}
+
+/*
+  Blur bridges a state change that would otherwise cut.
+
+  Used where content is replaced rather than moved — the brief softness
+  covers the swap and the eye reads one thing becoming another instead of
+  two separate frames.
+*/
+@utility state-swap {
+  transition:
+    opacity var(--t-slow) var(--ease-out),
+    filter var(--t-slow) var(--ease-out);
+
+  @starting-style {
+    opacity: 0;
+    filter: blur(6px);
+  }
 }
 
 /*
@@ -240,4 +317,208 @@
       animation-range: entry 0% entry 45%;
     }
   }
+}
+
+/*
+  The Start flow's road.
+
+  A green strip along the bottom with a car as the progress indicator. The
+  road is sticky inside the flow, so it rides the bottom of the screen while
+  you fill the form in and rests above the footer when you reach the end.
+
+  Positions use `left` plus zero-width flex centring instead of transforms:
+  the reduced-motion rule above removes transforms, and a transform used for
+  centring would shove the car and plates half their width to the right.
+*/
+.nb-road {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  background: var(--green);
+  color: var(--cream);
+  border-top: 3px solid var(--orange);
+}
+
+.nb-carriage {
+  position: relative;
+  height: 112px;
+}
+
+.nb-surface {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 30px;
+  height: 26px;
+  background: #081a16;
+}
+
+.nb-surface::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 12px;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(242, 235, 221, 0.55) 0 18px,
+    transparent 18px 36px
+  );
+}
+
+.nb-stops {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nb-stops > li {
+  position: absolute;
+  top: 8px;
+  width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nb-post {
+  order: 2;
+  width: 2px;
+  height: 14px;
+  background: rgba(242, 235, 221, 0.5);
+}
+
+.nb-plate {
+  order: 1;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  padding: 5px 8px;
+  white-space: nowrap;
+  border: 1px solid rgba(242, 235, 221, 0.5);
+  color: rgba(242, 235, 221, 0.75);
+  transition:
+    background-color var(--t-base) ease,
+    color var(--t-base) ease,
+    border-color var(--t-base) ease;
+}
+
+@media (max-width: 63.99rem) {
+  .nb-plate {
+    font-size: 0.5625rem;
+    letter-spacing: 0.04em;
+    padding: 4px 4px;
+  }
+}
+
+.nb-stops > li[data-state='done'] .nb-plate {
+  border-color: var(--orange);
+  color: var(--cream);
+}
+
+.nb-stops > li[data-state='here'] .nb-plate {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--cream);
+}
+
+.nb-stop-label {
+  position: absolute;
+  top: 84px;
+  display: none;
+  white-space: nowrap;
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242, 235, 221, 0.7);
+}
+
+@media (min-width: 64rem) {
+  .nb-stop-label {
+    display: block;
+  }
+}
+
+.nb-car {
+  position: absolute;
+  bottom: 40px;
+  width: 0;
+  display: flex;
+  justify-content: center;
+  transition: left 800ms var(--ease-sheet);
+}
+
+.nb-car svg {
+  flex: none;
+  display: block;
+}
+
+.nb-wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes nb-roll {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nb-car[data-moving='true'] .nb-wheel {
+  animation: nb-roll 0.4s linear infinite;
+}
+
+.nb-car[data-moving='true'][data-rev='true'] .nb-wheel {
+  animation-direction: reverse;
+}
+
+.nb-sign {
+  flex: none;
+  width: 124px;
+  margin-bottom: 24px;
+  padding: 7px 10px;
+  border: 2px solid var(--cream);
+  background: var(--green-deep);
+  text-align: center;
+}
+
+.nb-sign-top {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+
+.nb-sign-sub {
+  margin-top: 3px;
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  color: rgba(242, 235, 221, 0.75);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* The 2009 website on /projects: a banner that scrolls, as they did. */
+@keyframes nb-marquee {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.nb-marquee {
+  animation: nb-marquee 14s linear infinite;
 }

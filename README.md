@@ -1,7 +1,7 @@
 # Northbound Web — website
 
 Marketing site for Northbound Web. Next.js 16 (App Router), Tailwind CSS v4,
-TypeScript, deployed on Vercel. The enquiry form sends through Resend.
+TypeScript, deployed on Vercel. The enquiry form sends to a Google Apps Script inbox (email plus a Google Sheet log).
 
 ---
 
@@ -13,8 +13,8 @@ them — each has one home.
 | What | Where | Currently |
 |---|---|---|
 | Domain | `NEXT_PUBLIC_SITE_URL` env var, and the fallback in `src/lib/site.ts` | `northboundweb.co.uk` |
-| Contact email | `site.email` in `src/lib/site.ts` | `hello@northboundweb.co.uk` |
-| Resend keys | Vercel env vars | Not set |
+| Contact email | `site.email` in `src/lib/site.ts` | `che@northboundweb.co.uk` |
+| Enquiry inbox (`ENQUIRY_WEBHOOK_URL`, `ENQUIRY_WEBHOOK_TOKEN`) | Vercel env vars | Not set |
 
 ## Pricing
 
@@ -23,23 +23,21 @@ examples:
 
 | Build | Price | Pages | Revisions |
 |---|---|---|---|
-| Basic | £199 | Up to 3 | 1 round |
-| Standard | £299 (*Most popular*) | Up to 5 | 2 rounds |
-| Advanced | £399 + complimentary month | Up to 8 | 3 rounds |
-| Custom | from £499 + complimentary month | No cap | Agreed in the quote |
+| Pro | £249 (*Most popular*) | Up to 5 | 1 round |
+| Ultimate | £349 + free first month of management | Up to 8 | 2 rounds |
+| Custom | from £349 + free first month of management | Agreed | Agreed in the quote |
 
 | Build | Estimated timescale |
 |---|---|
-| Basic | ~5–7 working days |
-| Standard | ~7–10 working days |
-| Advanced | ~10–15 working days |
+| Pro | ~7–10 working days |
+| Ultimate | ~10–15 working days |
 | Custom | Agreed in the written quote |
 
 | Management plan | Price | Included change time |
 |---|---|---|
-| Essential | £39/month | Up to 30 minutes per billing month |
-| Advanced | £80/month | Up to 1 hour per billing month |
-| Complete | £149/month | Up to 2 hours per billing month |
+| Pro Management | from £39/month | Up to 2 hours per billing month |
+| Ultimate Management | from £39/month | Up to 4 hours per billing month |
+| Custom Management | quoted | Agreed in the quote |
 
 Payment is **50% deposit to begin, 50% once complete and approved, before go-live**.
 
@@ -57,7 +55,7 @@ described as "example", "starting from" or "indicative" prices anywhere.
   the customer chooses at the end of it.
 - A management plan is optional and must not be implied as a condition of
   having a website built.
-- Custom's £499 must not imply that accounts, databases, payments, portals or
+- Custom's £349 must not imply that accounts, databases, payments, portals or
   ecommerce are included; those are quoted separately.
 
 - Timelines are **estimates, never guarantees**, and must always render
@@ -71,7 +69,7 @@ described as "example", "starting from" or "indicative" prices anywhere.
 - Copywriting, photography, logo/brand design and paid stock are **not** in the
   fixed packages.
 - "Priority support" is a queue position, **not** a response-time promise.
-- Advanced's booking integration is **connecting/embedding an existing service**.
+- The packaged booking setups are **configuring an existing booking service**.
   Bespoke booking systems are scoped and quoted separately.
 - Revision feedback is requested within **10 working days** of a preview; later
   feedback can pause the project. **Silence is never treated as approval.**
@@ -99,10 +97,11 @@ cp .env.example .env.local   # then fill in the values
 npm run dev                  # http://localhost:3000
 ```
 
-Without `RESEND_API_KEY`, `CONTACT_TO_EMAIL` and `CONTACT_FROM_EMAIL` set, the
-form validates and behaves normally but the send fails and the visitor sees a
-generic error. The specific cause is logged to the server console only —
-configuration detail should never reach a visitor's screen.
+Without `ENQUIRY_WEBHOOK_URL` and `ENQUIRY_WEBHOOK_TOKEN` set, the form
+validates and behaves normally but the send fails and the visitor sees a generic
+error (with your email address, so the enquiry is not lost). The specific cause
+is logged to the server console only — configuration detail should never reach a
+visitor's screen. See `apps-script/enquiries.gs` for the one-off setup.
 
 ```bash
 npm run build      # production build
@@ -137,7 +136,7 @@ src/
     rate-limit.ts       in-memory limiter for the form
     contact/
       schema.ts         zod schema shared by client and server
-      actions.ts        server action: spam checks, validation, Resend
+      actions.ts        server action: spam checks, validation, sends to the Apps Script inbox
 ```
 
 Content lives in `src/lib/services.ts` and `src/lib/site.ts` rather than being
@@ -177,8 +176,10 @@ store rather than extending it.
 2. Set the environment variables from `.env.example` under
    **Vercel → Project → Settings → Environment Variables**. Set
    `NEXT_PUBLIC_SITE_URL` for Production only.
-3. Verify the sending domain in **Resend → Domains** before expecting the form
-   to deliver. The `CONTACT_FROM_EMAIL` address must be on that domain.
+3. Set up the enquiry inbox by following the steps at the top of
+   `apps-script/enquiries.gs` (about five minutes), then add
+   `ENQUIRY_WEBHOOK_URL` and `ENQUIRY_WEBHOOK_TOKEN` to Vercel. Submit a test
+   enquiry on the preview before pointing the domain at it.
 4. Point DNS at Vercel in Cloudflare. Plan this in advance — changing DNS
    records can take a domain's website *and email* offline if the existing MX
    records are disturbed.

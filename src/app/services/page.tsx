@@ -25,7 +25,7 @@ import { currency, site } from '@/lib/site'
 export const metadata: Metadata = {
   title: 'Packages and prices',
   description:
-    'Website packages at fixed prices: Basic £199, Standard £299, Advanced £399, and Custom from £499. Optional management plans at £39, £80 and £149 a month.',
+    'Website packages at fixed prices: Pro £249, Ultimate £349, and Custom from £349. Optional management from £39 a month, with the first month free.',
   alternates: { canonical: '/services' },
 }
 
@@ -169,9 +169,8 @@ export default function ServicesPage() {
         className="scroll-mt-20"
         lede={
           <>
-            The Advanced and Custom builds include one complimentary month of
-            Advanced Management, worth{' '}
-            {currency.format(ADVANCED_MANAGEMENT_PRICE)}.{' '}
+            Every management plan starts with a free month, and a year paid
+            up front is twelve months for the price of ten.{' '}
             {COMPLIMENTARY_MONTH_TERMS}
           </>
         }
