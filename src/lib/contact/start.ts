@@ -60,7 +60,7 @@ export const lanes: Lane[] = [
     price: pkg.price,
     variable: Boolean(pkg.variable),
     timeline: pkg.timeline,
-    summary: pkg.summary,
+    summary: pkg.short,
     projectType: `${pkg.name} build`,
   })),
   {
@@ -68,9 +68,9 @@ export const lanes: Lane[] = [
     name: 'Help me choose',
     price: 0,
     variable: false,
-    timeline: 'I will recommend one',
+    timeline: 'We will recommend one',
     summary:
-      'Tell me what you need and I will point you at the smallest package that does it.',
+      'Tell us what you need and we will point you at the smallest package that does it.',
     projectType: 'Not sure yet',
   },
 ]

@@ -200,7 +200,7 @@ const css = `
 .tb-menu.open .tb-chev{transform:translate(0,4px) rotate(-135deg)}
 .tb-links{display:flex;gap:6px;margin-left:auto}
 .tb-links a{font-weight:600;font-size:15px;text-decoration:none;color:#D5D9DE;padding:10px 12px;border-radius:4px;white-space:nowrap;transition:color 150ms ease,background-color 150ms ease}
-.tb-links a[aria-current]{color:#FFFFFF}
+.tb-links a[aria-current]{color:#FFB21A}
 @media (hover:hover){.tb-links a:hover{color:#FFFFFF;background:#1A1D21}}
 .tb-btn{box-sizing:content-box;display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:4px 18px 0;background:transparent;color:#FFFFFF;border:2px solid rgba(255,255,255,.55);border-radius:6px;font-weight:800;font-size:15px;white-space:nowrap;text-decoration:none;transition:border-color 150ms ease,background-color 150ms ease,color 150ms ease,transform 200ms var(--ease-out)}
 .tb-btn:active{transform:scale(.97);transition-duration:90ms}

@@ -584,7 +584,7 @@ const css = `
 .me svg{display:block;width:100%;height:var(--bonnet)}
 .glass{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(170deg,rgba(255,255,255,.035) 0%,transparent 28%,transparent 70%,rgba(255,255,255,.02) 100%)}
 
-.pause{box-sizing:content-box;position:absolute;right:24px;bottom:22px;z-index:4;min-height:44px;padding:4px 16px 0;border:1px solid #3B4048;border-radius:6px;background:rgba(18,20,23,.7);color:#D5D9DE;font:600 14px var(--font-sans);cursor:pointer;transition:transform 200ms var(--ease-out),border-color 150ms ease}
+.pause{position:absolute;right:24px;bottom:22px;z-index:4;min-height:44px;padding:4px 16px 0;border:1px solid #3B4048;border-radius:6px;background:rgba(18,20,23,.7);color:#D5D9DE;font:600 14px var(--font-sans);cursor:pointer;transition:transform 200ms var(--ease-out),border-color 150ms ease}
 .pause:active{transform:scale(.97);transition-duration:90ms}
 @media (hover:hover){.pause:hover{border-color:#8A9099}}
 @keyframes g-arrive{from{opacity:0;transform:translateY(-14px) scale(.86)}to{opacity:1;transform:none}}
