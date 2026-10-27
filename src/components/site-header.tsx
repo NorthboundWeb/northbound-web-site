@@ -3,27 +3,67 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { ArrowRight } from '@/components/graphics'
-import { Wordmark } from '@/components/logo'
-import { Container, buttonClass, cn } from '@/components/ui'
-import { site } from '@/lib/site'
+import { buildPackages } from '@/lib/services'
+import { currency, site } from '@/lib/site'
 
+/** "Pro £249 · Ultimate £349 · Custom from £349", from the package data. */
+const pricesNote = buildPackages
+  .map((p) => `${p.name} ${p.variable ? 'from ' : ''}${currency.format(p.price)}`)
+  .join(' · ')
+
+/**
+ * The top bar.
+ *
+ * The Northbound sign is a button that drops a route map: one junction per
+ * page. Beside it, the four links the design puts in the bar, and the Start a
+ * project button. Under 900px the links fold into the route map.
+ *
+ * The bar is transparent over the top of the page, hides as soon as you scroll
+ * down, and only comes back after a deliberate scroll up (90px of continuous
+ * upward travel, or reaching the top), so momentum ticks do not flicker it.
+ */
 export function SiteHeader() {
   const pathname = usePathname()
-  const [open, setOpen] = useState(false)
   const [renderedPath, setRenderedPath] = useState(pathname)
   const [mapOpen, setMapOpen] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const [atTop, setAtTop] = useState(true)
   const mapRef = useRef<HTMLDivElement>(null)
 
-  // Close the menus when the route changes. Adjusting state during render is
-  // React's recommended alternative to an effect here.
+  // Close the route map when the route changes. Adjusting state during render
+  // is React's recommended alternative to an effect here.
   if (renderedPath !== pathname) {
     setRenderedPath(pathname)
-    setOpen(false)
     setMapOpen(false)
   }
 
-  // The route map closes on Escape (returning focus to the wordmark) and on a
+  useEffect(() => {
+    let lastY = window.scrollY
+    let upRun = 0
+    let hide = false
+    const onScroll = () => {
+      const y = window.scrollY
+      const dy = y - lastY
+      lastY = y
+      if (dy > 0) {
+        upRun = 0
+        if (y > 120) hide = true
+      } else if (dy < 0) {
+        upRun -= dy
+        if (upRun >= 90) hide = false
+      }
+      const top = y < 24
+      if (top) hide = false
+      setHidden(hide)
+      setAtTop(top)
+    }
+    // No initial call: the defaults describe a page at the top, and a page
+    // that loads part-way down (an anchor link) fires a scroll event anyway.
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // The route map closes on Escape (returning focus to the sign) and on a
   // press anywhere outside it.
   useEffect(() => {
     if (!mapOpen) return
@@ -35,7 +75,7 @@ export function SiteHeader() {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setMapOpen(false)
-        mapRef.current?.querySelector('button')?.focus()
+        mapRef.current?.querySelector<HTMLButtonElement>('button.tb-brand')?.focus()
       }
     }
     document.addEventListener('pointerdown', onPress)
@@ -46,176 +86,153 @@ export function SiteHeader() {
     }
   }, [mapOpen])
 
+  const barClass = [
+    'tb',
+    hidden && !mapOpen ? 'tb-hide' : '',
+    atTop ? 'tb-top' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur-sm">
-      <Container>
-        <div className="flex h-16 items-center justify-between gap-6">
-          <div ref={mapRef} className="relative">
-            <button
-              type="button"
-              onClick={() => {
-                setMapOpen((v) => !v)
-                setOpen(false)
-              }}
-              aria-expanded={mapOpen}
-              aria-controls="route-map"
-              aria-label={`${site.name} — open the route map`}
-              className="press flex items-center gap-2 text-ink"
-            >
-              <Wordmark />
-              <svg
-                viewBox="0 0 12 12"
-                className={cn(
-                  'h-3 w-3 text-accent transition-transform duration-200',
-                  mapOpen && 'rotate-180'
-                )}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden
-              >
-                <path d="M2 4.5l4 4 4-4" />
-              </svg>
-            </button>
-
-            {mapOpen ? (
-              <nav
-                id="route-map"
-                aria-label="Route map"
-                className="rise-in absolute left-0 top-full z-50 mt-3 w-[min(22rem,calc(100vw-3rem))] border border-line-strong bg-paper-raised shadow-[0_18px_40px_-18px_rgba(13,42,36,0.45)]"
-              >
-                <p className="label border-b border-line px-5 py-3 text-ink-faint">
-                  Route map
-                </p>
-                <ol>
-                  {site.routeMap.map((stop) => {
-                    const here = pathname === stop.href
-                    return (
-                      <li key={stop.code} className="border-b border-line last:border-0">
-                        <Link
-                          href={stop.href}
-                          onClick={() => setMapOpen(false)}
-                          aria-current={here ? 'page' : undefined}
-                          className={cn(
-                            'group/stop flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-paper-sunk',
-                            stop.go && 'bg-paper-sunk'
-                          )}
-                        >
-                          <span
-                            className={cn(
-                              'label w-9 shrink-0 border px-1.5 py-1 text-center',
-                              stop.go || here
-                                ? 'border-accent bg-accent text-cream'
-                                : 'border-line-strong text-ink'
-                            )}
-                          >
-                            {stop.code}
-                          </span>
-                          <span className="min-w-0">
-                            <span className="block font-medium text-ink group-hover/stop:text-accent">
-                              {stop.label}
-                            </span>
-                            <span className="block text-[13px] text-ink-muted">
-                              {here ? 'You are here' : stop.note}
-                            </span>
-                          </span>
-                          <span
-                            aria-hidden
-                            className="ml-auto text-accent transition-transform duration-200 group-hover/stop:translate-x-1"
-                          >
-                            <ArrowRight />
-                          </span>
-                        </Link>
-                      </li>
-                    )
-                  })}
-                </ol>
-              </nav>
-            ) : null}
-          </div>
-
-          <nav aria-label="Main" className="hidden items-center gap-9 lg:flex">
-            {site.nav.map((item) => {
-              const active = pathname === item.href
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  className={cn(
-                    'label transition-colors hover:text-accent',
-                    active ? 'text-accent' : 'text-ink'
-                  )}
-                >
-                  {item.label}
-                </Link>
-              )
-            })}
-            <Link href="/contact" className={cn(buttonClass(), 'group/btn')}>
-              Start a project
-              <span className="text-accent transition-transform duration-200 group-hover/btn:translate-x-1">
-                <ArrowRight />
-              </span>
-            </Link>
-          </nav>
-
+    <header className={barClass}>
+      <div className="tb-wrap">
+        <div ref={mapRef} className={mapOpen ? 'tb-menu open' : 'tb-menu'}>
           <button
             type="button"
-            onClick={() => {
-              setOpen((v) => !v)
-              setMapOpen(false)
-            }}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            className="-mr-2 inline-flex h-11 w-11 items-center justify-center text-ink lg:hidden"
+            className="tb-brand"
+            aria-expanded={mapOpen}
+            aria-controls="routemap"
+            onClick={() => setMapOpen((v) => !v)}
           >
-            <span className="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
-            <svg
-              viewBox="0 0 20 20"
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              aria-hidden
-            >
-              {open ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 6h14M3 13h14" />}
-            </svg>
+            Northbound
+            <span className="tb-chev" aria-hidden />
           </button>
-        </div>
-      </Container>
 
-      {open ? (
-        <nav
-          id="mobile-nav"
-          aria-label="Main"
-          className="border-t border-line bg-paper lg:hidden"
-        >
-          <Container className="flex flex-col py-3">
-            {site.nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={pathname === item.href ? 'page' : undefined}
-                className="label border-b border-line py-4 text-ink last:border-0"
+          <div
+            className="rmap"
+            id="routemap"
+            role="dialog"
+            aria-label="Site route map"
+            inert={!mapOpen}
+          >
+            <div className="rmap-h">
+              <span className="rmap-t">Northbound · Route map</span>
+              <button
+                type="button"
+                className="rmap-x"
+                aria-label="Close route map"
+                onClick={() => setMapOpen(false)}
               >
-                {item.label}
-              </Link>
-            ))}
+                ×
+              </button>
+            </div>
+            <ul>
+              {site.routeMap.map((stop) => {
+                const here = pathname === stop.href
+                return (
+                  <li key={stop.code}>
+                    <Link
+                      href={stop.href}
+                      className={stop.go ? 'rm rm-go' : 'rm'}
+                      aria-current={here ? 'page' : undefined}
+                      onClick={() => setMapOpen(false)}
+                    >
+                      <span className="rm-j">{stop.code}</span>
+                      <span className="rm-txt">
+                        <span className="rm-name">{stop.label}</span>
+                        <span className="rm-sub">{stop.note ?? pricesNote}</span>
+                      </span>
+                      {here ? (
+                        <span className="rm-tag">You are here</span>
+                      ) : (
+                        <span className="rm-arrow" aria-hidden>
+                          →
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+            <p className="rmap-f">
+              Websites for small UK businesses. Fixed prices, and you own what we
+              build.
+            </p>
+          </div>
+        </div>
+
+        <nav className="tb-links" aria-label="Main">
+          {site.nav.map((item) => (
             <Link
-              href="/contact"
-              className={cn(buttonClass({ size: 'lg' }), 'mt-5 mb-2 group/btn')}
+              key={item.href}
+              href={item.href}
+              aria-current={pathname === item.href ? 'page' : undefined}
             >
-              Start a project
-              <span className="text-accent">
-                <ArrowRight />
-              </span>
+              {item.label}
             </Link>
-          </Container>
+          ))}
         </nav>
-      ) : null}
+
+        <Link href="/contact" className="tb-btn">
+          Start a project
+        </Link>
+      </div>
+
+      <style>{css}</style>
     </header>
   )
 }
+
+const css = `
+/* The design was drawn content-box; Tailwind's preflight is border-box, so the
+   few rules with a fixed size and padding say which they mean. */
+.tb{position:sticky;top:0;z-index:40;background:rgba(18,20,23,.84);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);transition:transform 420ms var(--ease-out),background-color 300ms ease,border-color 300ms ease}
+.tb.tb-hide{transform:translateY(-100%)}
+.tb.tb-top{background:transparent;border-bottom-color:transparent;-webkit-backdrop-filter:none;backdrop-filter:none}
+.tb-wrap{position:relative;display:flex;align-items:center;gap:28px;max-width:1320px;margin-inline:auto;padding:16px 40px;box-sizing:border-box}
+.tb-menu{position:relative;flex:none}
+.tb-brand{display:inline-flex;align-items:center;gap:10px;padding:8px 16px 6px;background:#1D4F91;border:0;border-radius:8px;box-shadow:inset 0 0 0 3px #1D4F91,inset 0 0 0 5px #FFFFFF;font:800 19px/1.3 var(--font-sans);letter-spacing:.01em;color:#FFFFFF;cursor:pointer;transition:transform 160ms var(--ease-out),filter 150ms ease}
+.tb-brand:active{transform:scale(.97)}
+@media (hover:hover){.tb-brand:hover{filter:brightness(1.12)}}
+.tb-brand:focus-visible{outline:3px solid #FFB21A;outline-offset:3px}
+.tb-chev{display:inline-block;width:8px;height:8px;margin-top:-4px;border-right:2.5px solid #FFFFFF;border-bottom:2.5px solid #FFFFFF;transform:rotate(45deg);transition:transform 240ms var(--ease-out)}
+.tb-menu.open .tb-chev{transform:translate(0,4px) rotate(-135deg)}
+.tb-links{display:flex;gap:6px;margin-left:auto}
+.tb-links a{font-weight:600;font-size:15px;text-decoration:none;color:#D5D9DE;padding:10px 12px;border-radius:4px;white-space:nowrap;transition:color 150ms ease,background-color 150ms ease}
+.tb-links a[aria-current]{color:#FFFFFF}
+@media (hover:hover){.tb-links a:hover{color:#FFFFFF;background:#1A1D21}}
+.tb-btn{box-sizing:content-box;display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:4px 18px 0;background:transparent;color:#FFFFFF;border:2px solid rgba(255,255,255,.55);border-radius:6px;font-weight:800;font-size:15px;white-space:nowrap;text-decoration:none;transition:border-color 150ms ease,background-color 150ms ease,color 150ms ease,transform 200ms var(--ease-out)}
+.tb-btn:active{transform:scale(.97);transition-duration:90ms}
+@media (hover:hover){.tb-btn:hover{border-color:#FFB21A;color:#FFB21A;background:rgba(255,178,26,.08)}}
+.rmap{position:absolute;top:calc(100% + 18px);left:0;z-index:60;width:380px;max-width:calc(100vw - 32px);box-sizing:border-box;padding:16px 16px 14px;background:#1D4F91;border-radius:12px;box-shadow:inset 0 0 0 3px #1D4F91,inset 0 0 0 6px #FFFFFF,0 24px 60px rgba(0,0,0,.55);color:#FFFFFF;transform-origin:30px -18px;opacity:0;visibility:hidden;transform:translateY(-10px) scale(.96);pointer-events:none;transition:opacity 160ms ease,transform 220ms var(--ease-out),visibility 0s linear 220ms}
+.tb-menu.open .rmap{opacity:1;visibility:visible;transform:none;pointer-events:auto;transition:opacity 160ms ease,transform 260ms var(--ease-out),visibility 0s}
+.rmap::before,.rmap::after{content:"";position:absolute;top:-18px;width:3px;height:18px;background:repeating-linear-gradient(to bottom,#8A929B 0 4px,#4A5058 4px 6px);border-radius:2px}
+.rmap::before{left:34px}.rmap::after{left:94px}
+.rmap-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 8px 12px;margin-bottom:6px;border-bottom:2px solid rgba(255,255,255,.85)}
+.rmap-t{font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.rmap-x{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin:-6px -4px -6px 0;border:0;border-radius:6px;background:transparent;color:#FFFFFF;font:inherit;font-size:22px;line-height:1;cursor:pointer;transition:background-color 150ms ease}
+@media (hover:hover){.rmap-x:hover{background:rgba(255,255,255,.14)}}
+.rmap ul{list-style:none;margin:0;padding:0}
+.rmap li + li{border-top:1px solid rgba(255,255,255,.18)}
+.rmap a.rm{display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:14px;padding:11px 8px;border-radius:6px;color:#FFFFFF;text-decoration:none;transition:background-color 150ms ease}
+@media (hover:hover){.rmap a.rm:hover{background:rgba(255,255,255,.1);color:#FFFFFF}}
+.rmap a.rm:focus-visible{outline:3px solid #FFB21A;outline-offset:-3px}
+.rm-j{box-sizing:content-box;display:inline-flex;align-items:center;justify-content:center;height:30px;border-radius:4px;background:#121417;color:#FFFFFF;box-shadow:inset 0 0 0 2px #FFFFFF;font-weight:800;font-size:14px;padding-top:2px}
+.rm-txt{display:flex;flex-direction:column;min-width:0}
+.rm-name{font-weight:800;font-size:18px;line-height:1.2}
+.rm-sub{font-weight:600;font-size:13px;line-height:1.35;color:#DCE6F3}
+.rm-tag{font-weight:800;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#FFB21A;white-space:nowrap}
+.rm-arrow{font-weight:800;font-size:20px;line-height:1}
+.rmap a.rm.rm-go .rm-j{background:#FFB21A;color:#121417;box-shadow:none}
+.rmap a.rm[aria-current] .rm-j{background:#FFFFFF;color:#1D4F91}
+.rmap-f{margin:10px 8px 2px;font-size:12.5px;font-weight:600;line-height:1.45;color:#DCE6F3}
+@media (max-width:900px){.tb-links{display:none}.tb-btn{margin-left:auto}}
+@media (max-width:640px){
+  .tb-wrap{padding-inline:18px}
+  .tb-btn{min-height:44px;padding:4px 14px 0;font-size:14px}
+  .rmap{position:fixed;top:72px;left:16px;right:16px;width:auto;max-width:none}
+  .rmap::before,.rmap::after{display:none}
+}
+@media (prefers-reduced-motion:reduce){.rmap,.tb-menu.open .rmap{transform:none;transition:opacity 120ms ease,visibility 0s}.tb-chev{transition:none}}
+`

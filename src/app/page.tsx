@@ -1,25 +1,11 @@
 import Link from 'next/link'
-import { CompassDiagram } from '@/components/graphics'
 import { Gantry } from '@/components/gantry'
-import { SiteCheck } from '@/components/site-check'
-import { Comparison } from '@/components/comparison'
-import { comparisons } from '@/lib/discover'
-import {
-  ArrowLink,
-  ButtonLink,
-  CardCta,
-  Container,
-  Display,
-  Label,
-  Section,
-  StatementBand,
-} from '@/components/ui'
 import { currency, site } from '@/lib/site'
 import {
   ADVANCED_MANAGEMENT_PRICE,
-  ANNUAL_TERMS,
-  COMPLIMENTARY_MONTH_TERMS,
+  TIMELINE_TERMS,
   buildPackages,
+  junctions,
   managementPlans,
 } from '@/lib/services'
 
@@ -46,284 +32,202 @@ export default function HomePage() {
   }
 
   return (
-    <>
+    <div className="home">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* ── Hero: the gantry ──────────────────────────────────── */}
       <Gantry />
 
-      {/* ── Junctions: the route a project takes ──────────────── */}
-      <Section id="how" className="scroll-mt-20 border-b border-line">
-        <Container>
-          <div className="flex items-start justify-between">
-            <Label index="02">How it works</Label>
-            <span className="label text-ink-faint">Three junctions</span>
+      {/* ── Prices: a distance sign ─────────────────────────────── */}
+      <section className="sec" id="prices" aria-labelledby="prices-h">
+        <div className="wrap">
+          <div className="sign-b big">
+            <div className="sign-top">
+              <span className="shield" aria-hidden>
+                NB
+              </span>
+              <h2 className="h2" id="prices-h">
+                Fixed prices
+              </h2>
+            </div>
+            <dl className="dist">
+              {buildPackages.map((pkg) => (
+                <div key={pkg.slug}>
+                  <dt>{pkg.name}</dt>
+                  <dd>
+                    {pkg.variable ? <small>from</small> : null}
+                    {currency.format(pkg.price)}
+                  </dd>
+                </div>
+              ))}
+              <div className="split">
+                <dt>Management</dt>
+                <dd>
+                  <small>from</small>
+                  {currency.format(ADVANCED_MANAGEMENT_PRICE)}
+                  <span className="after">/month</span>
+                </dd>
+              </div>
+            </dl>
           </div>
-          <Display className="mt-6">Route</Display>
-          <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted">
-            Three junctions between first message and live site. You know the
-            price before the first one, and nothing goes live until you have
-            approved it.
+
+          <div className="detail">
+            {buildPackages.map((pkg) => (
+              <div className="pk" key={pkg.slug}>
+                <h3>{pkg.name}</h3>
+                <ul>
+                  {pkg.highlights.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+                <p className="time">{pkg.timeline}</p>
+                <Link className="pk-go" href={`/contact?package=${pkg.enquiryParam}`}>
+                  {pkg.cta} <span aria-hidden>→</span>
+                </Link>
+              </div>
+            ))}
+          </div>
+          <p className="terms">
+            Half to start, and half once it is complete and approved, before it
+            goes live. {TIMELINE_TERMS} Hosting, domains and provider fees are
+            separate. <Link href="/services">Everything each package includes</Link>.
           </p>
 
-          <ol className="route mt-16">
-            {[
-              {
-                j: 'J1',
-                title: 'Tell me the plan',
-                body: 'Your business, what you want from it, and what the website needs to do. A call, no charge — and if a smaller package would do the job, that is the one I will point you at.',
-              },
-              {
-                j: 'J2',
-                title: 'Make it yours',
-                body: 'We agree the brief, I build the first version on a live preview link you can check any time, and we refine it together through your revision rounds.',
-              },
-              {
-                j: 'J3',
-                title: 'Put it out there',
-                body: 'Once you have approved it and paid the balance, it goes live — a careful DNS switch, planned so nothing goes dark. Management keeps it running afterwards, if you want it to.',
-              },
-            ].map((step) => (
-              <li key={step.j} className="relative pl-24 sm:pl-28">
-                <span aria-hidden className="jn">{step.j}</span>
-                <h3 className="display text-3xl sm:text-4xl">{step.title}</h3>
-                <p className="mt-3 max-w-xl text-base leading-relaxed text-ink-muted">
-                  {step.body}
-                </p>
+          <div className="sign-b care">
+            <div>
+              <h3>Looked after, every month</h3>
+              <p>
+                Management from {currency.format(ADVANCED_MANAGEMENT_PRICE)} a
+                month, with hosting included while it&apos;s active. It is
+                optional, and not a condition of the build. Your first month is
+                free and does not turn into a paid plan by itself. Pay annually
+                and get twelve months for the price of ten.
+              </p>
+            </div>
+            <dl>
+              {managementPlans.map((plan) => (
+                <div key={plan.slug}>
+                  <dt>{plan.name}</dt>
+                  <dd>{plan.changeTimeShort}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+          <p className="terms">
+            Unused update time does not roll over to the next month, and safety
+            and security fixes never count against it.
+          </p>
+        </div>
+      </section>
+
+      {/* ── How it works: the route ─────────────────────────────── */}
+      <section className="sec" id="how" aria-labelledby="how-h">
+        <div className="wrap route-sec">
+          <h2 className="h2" id="how-h">
+            Three junctions to a live site.
+          </h2>
+          <ol className="route">
+            {junctions.map((j) => (
+              <li key={j.code}>
+                <span className="jn">{j.code}</span>
+                <h3>{j.title}</h3>
+                <p>{j.body}</p>
               </li>
             ))}
           </ol>
-        </Container>
-        <style>{`
-          .route{position:relative;list-style:none;margin:0;padding:6px 0;display:flex;flex-direction:column;gap:52px}
-          .route::before{content:"";position:absolute;left:26px;top:0;bottom:0;width:14px;border-radius:3px;background:var(--ink)}
-          .route::after{content:"";position:absolute;left:32px;top:0;bottom:0;width:2px;background:repeating-linear-gradient(to bottom,var(--paper) 0 14px,transparent 14px 30px)}
-          .jn{position:absolute;left:0;top:2px;z-index:1;display:inline-flex;align-items:center;justify-content:center;min-width:66px;padding:9px 10px 7px;border-radius:4px;background:var(--ink);color:var(--paper);border:3px solid var(--paper);box-shadow:0 0 0 2px var(--ink);font-family:var(--font-display);font-size:1.2rem;line-height:1;letter-spacing:.04em}
-          @media (max-width:640px){.route{gap:40px}.jn{min-width:58px;font-size:1.05rem}}
-        `}</style>
-      </Section>
-
-      {/* ── Discover teaser: one live comparison, then the push ── */}
-      <section
-        aria-labelledby="discover-heading"
-        className="border-b border-line bg-paper-sunk"
-      >
-        <Container className="py-20 sm:py-28">
-          <div className="flex items-start justify-between">
-            <Label index="03">Discover</Label>
-            <span className="label text-accent">Drag it</span>
-          </div>
-
-          <div className="mt-6 grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-16">
-            <div>
-              <Display as="h2" className="mt-0">
-                Seen
-              </Display>
-              <p className="mt-8 max-w-md text-lg leading-relaxed text-ink-muted">
-                This is {comparisons[0].business}&apos;s website in 2009, and
-                the one it should be. Drag the handle. Then go and see three
-                more — a bakery, a lash studio and a dog groomer — with what
-                changed on each one and why.
-              </p>
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-                <ButtonLink href="/discover" size="lg">
-                  See the difference
-                </ButtonLink>
-                <ArrowLink href="/discover#methods">Builder vs agency vs me</ArrowLink>
-              </div>
-            </div>
-            <div>
-              <Comparison data={comparisons[0]} />
-              <p className="mt-3 text-xs text-ink-faint">
-                {comparisons[0].business} is a made-up business. The problems are
-                real ones.
-              </p>
-            </div>
-          </div>
-        </Container>
+        </div>
       </section>
 
-      {/* ── Site self-check ───────────────────────────────────── */}
-      <div id="check" className="scroll-mt-20">
-        <SiteCheck />
-      </div>
-
-      {/* ── Judged ───────────────────────────────────────────── */}
-      <StatementBand
-        index="04"
-        aside="Northbound"
-        word="Judged"
-        lede="People decide whether to trust a business before they read a word of it. A site that looks considered says the business is. See what that looks like, side by side, on Discover."
-      >
-        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-          <ButtonLink href="/discover" variant="inverse" size="lg">
-            See the difference
-          </ButtonLink>
-          <ArrowLink href="/contact" className="text-cream">Or start a project</ArrowLink>
+      {/* ── The exit ────────────────────────────────────────────── */}
+      <section className="sec end" id="start" aria-label="Start a project">
+        <div className="wrap">
+          <Link className="sign-b exit" href="/contact">
+            <svg viewBox="0 0 96 96" width="96" height="96" aria-hidden>
+              <path
+                d="M43 81V44L24 63 14 53 48 19l34 34-10 10-19-19v37z"
+                fill="#FFFFFF"
+                transform="rotate(45 48 50)"
+              />
+            </svg>
+            <span className="exit-txt">
+              Start a project
+              <span className="exit-sub">
+                Tell us what your business needs a website to do. We&apos;ll reply
+                with a price before anything starts.
+              </span>
+            </span>
+          </Link>
         </div>
-      </StatementBand>
+      </section>
 
-      {/* ── Packages ─────────────────────────────────────────── */}
-      <Section id="packages" className="scroll-mt-20 border-b border-line">
-        <Container>
-          <div className="flex items-start justify-between">
-            <Label index="05">Packages</Label>
-            <span className="label text-ink-faint">Fixed prices</span>
-          </div>
-
-          <Display className="mt-6">Built</Display>
-
-          <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-muted">
-            You should not have to sit through a sales call to find out what a
-            website costs. Pick the size that fits, or ask me which one does.
-          </p>
-
-          <ul className="mt-16 grid border-t border-l border-line sm:grid-cols-2 lg:grid-cols-4">
-            {buildPackages.map((pkg) => (
-              <li
-                key={pkg.slug}
-                className="group relative flex flex-col border-r border-b border-line p-7 transition-colors hover:bg-paper-raised focus-within:bg-paper-raised"
-              >
-                {/* Reserved row so the badge never knocks one price out of
-                    alignment with the others. */}
-                <div className="mb-4 flex h-5 items-center">
-                  {pkg.badge ? (
-                    <span className="label flex items-center gap-2 text-accent">
-                      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
-                      {pkg.badge}
-                    </span>
-                  ) : null}
-                </div>
-
-                <h3 className="label text-ink-faint">{pkg.name}</h3>
-
-                <p className="display mt-3 text-[clamp(2.75rem,6vw,4rem)] text-ink">
-                  {pkg.variable ? (
-                    <>
-                      <span className="block text-sm tracking-[0.16em] text-ink-faint">
-                        From
-                      </span>
-                      {currency.format(pkg.price)}
-                    </>
-                  ) : (
-                    currency.format(pkg.price)
-                  )}
-                </p>
-
-                <p className="mt-5 flex-1 text-[15px] leading-relaxed text-ink-muted">
-                  {pkg.summary}
-                </p>
-
-                <p className="mt-5 text-[13px] leading-relaxed text-ink-faint">
-                  First month of management free, worth{' '}
-                  {currency.format(ADVANCED_MANAGEMENT_PRICE)}.
-                </p>
-
-                <CardCta
-                  href={`/contact?package=${pkg.enquiryParam}`}
-                  className="mt-7"
-                >
-                  {pkg.cta}
-                </CardCta>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mt-8 text-sm text-ink-muted">
-            <Link href="/services" className="text-accent underline-offset-4 hover:underline">
-              See what each package includes
-            </Link>{' '}
-            — page limits, revision rounds and timescales.
-          </p>
-        </Container>
-      </Section>
-
-      {/* ── Management: green band, then the plans on paper ──── */}
-      <StatementBand
-        index="06"
-        eyebrow="After launch"
-        aside="First month free"
-        word="Kept"
-        lede="Optional, and not a condition of the build. Hosting is included while a plan is active, the first month is free, and a year paid up front is twelve months for the price of ten. Plans are rolling — cancel before your next billing date and future renewals stop."
-      />
-
-      <Section className="border-b border-line">
-        <Container>
-          <ul className="grid border-t border-l border-line sm:grid-cols-3">
-            {managementPlans.map((plan) => (
-              <li
-                key={plan.slug}
-                className="group relative flex flex-col border-r border-b border-line p-7 transition-colors hover:bg-paper-raised focus-within:bg-paper-raised"
-              >
-                <h3 className="label text-ink-faint">{plan.name}</h3>
-                <p className="display mt-3 text-[clamp(2.5rem,5.5vw,3.5rem)] text-ink">
-                  <span className="block text-sm tracking-[0.16em] text-ink-faint">
-                    From
-                  </span>
-                  {currency.format(plan.price)}
-                  <span className="label ml-1 align-middle text-ink-faint">
-                    /mo
-                  </span>
-                </p>
-                <p className="mt-5 flex-1 text-[15px] leading-relaxed text-ink-muted">
-                  {plan.summary}
-                </p>
-                <p className="mt-6 border-t border-line pt-5 text-sm leading-relaxed text-ink-faint">
-                  {plan.changeTime}
-                </p>
-                <CardCta
-                  href={`/contact?package=${plan.enquiryParam}`}
-                  className="mt-6"
-                >
-                  {plan.cta}
-                </CardCta>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-faint">
-            {COMPLIMENTARY_MONTH_TERMS} {ANNUAL_TERMS} Safety and security
-            fixes never count against your update hours.
-          </p>
-        </Container>
-      </Section>
-
-      {/* ── Closing ──────────────────────────────────────────── */}
-      <Section>
-        <Container>
-          <div className="reveal">
-            <div className="grid items-end gap-12 lg:grid-cols-[1fr_auto]">
-              <div>
-                <Label index="07" />
-                <Display className="mt-6">Northbound</Display>
-                <p className="display mt-8 text-2xl leading-tight text-ink-muted sm:text-3xl">
-                  Rebuild. Rebrand. Relaunch.
-                </p>
-                <p className="mt-8 max-w-lg text-lg leading-relaxed text-ink-muted">
-                  Websites for small businesses that want to look the part. Tell
-                  me what you are trying to do and I will tell you which package
-                  fits.
-                </p>
-                <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-                  <ButtonLink href="/contact" size="lg">
-                    Start a project
-                  </ButtonLink>
-                  <a
-                    href={`mailto:${site.email}`}
-                    className="label text-ink-muted underline-offset-4 hover:text-accent hover:underline"
-                  >
-                    {site.email}
-                  </a>
-                </div>
-              </div>
-              <CompassDiagram className="w-40 justify-self-start text-ink sm:w-56 lg:w-64" />
-            </div>
-          </div>
-        </Container>
-      </Section>
-    </>
+      <style>{css}</style>
+    </div>
   )
 }
+
+const css = `
+.home{font-size:18px;line-height:1.55}
+.home .wrap{max-width:1320px;margin-inline:auto;padding-inline:40px;box-sizing:border-box}
+.home .sec{padding-top:clamp(96px,10vw,140px);scroll-margin-top:24px}
+.home .h2{text-wrap:wrap;margin:0;font-weight:900;font-size:clamp(34px,4.2vw,56px);line-height:1;letter-spacing:-.02em}
+.sign-b{background:#1D4F91;border-radius:16px;box-shadow:inset 0 0 0 7px #1D4F91,inset 0 0 0 11px #FFFFFF;color:#FFFFFF}
+.home .big{padding:44px 52px 40px}
+.sign-top{display:flex;align-items:center;gap:20px;padding-bottom:22px;margin-bottom:8px;border-bottom:3px solid rgba(255,255,255,.9)}
+.shield{display:inline-flex;align-items:center;padding:8px 14px 4px;background:#1D4F91;border-radius:6px;box-shadow:inset 0 0 0 3px #FFFFFF;font-weight:900;font-size:26px;line-height:1}
+.dist{margin:0}
+.dist div{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 24px;padding:14px 0 10px}
+.dist dt{font-weight:800;font-size:clamp(26px,3.4vw,46px);line-height:1}
+.dist dd{margin:0 0 0 auto;display:inline-flex;flex-wrap:wrap;align-items:baseline;justify-content:flex-end;gap:0 8px;font-weight:900;font-size:clamp(30px,4vw,56px);line-height:1;font-variant-numeric:tabular-nums;text-align:right}
+.dist small{font-size:.42em;font-weight:700}
+.dist .after{font-size:.38em;font-weight:700;white-space:nowrap}
+.dist .split{border-top:3px dashed rgba(255,255,255,.55);margin-top:10px;padding-top:22px}
+.detail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:40px}
+.pk{display:flex;flex-direction:column}
+.pk h3{align-self:flex-start;margin:0 0 14px;display:inline-flex;padding:6px 12px 2px;background:#1D4F91;border-radius:5px;box-shadow:inset 0 0 0 2px #FFFFFF;font-weight:800;font-size:18px}
+.pk ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:16px;line-height:1.45;color:#D5D9DE}
+.pk li{padding-left:20px;position:relative}
+.pk li::before{content:"";position:absolute;left:0;top:.5em;width:10px;height:4px;background:#FFB21A;border-radius:1px}
+.pk .time{margin:14px 0 0;font-size:14px;color:#9AA1AA}
+.pk-go{align-self:flex-start;margin-top:14px;font-weight:800;font-size:15px;color:#FFFFFF;text-decoration:none;border-bottom:2px solid rgba(255,178,26,.6);padding-top:2px;transition:color 150ms ease,border-color 150ms ease}
+@media (hover:hover){.pk-go:hover{color:#FFB21A;border-color:#FFB21A}}
+.home .terms{margin:32px 0 0;max-width:48em;font-size:14px;line-height:1.55;color:#9AA1AA}
+.home .terms a{color:#D5D9DE;text-decoration:underline;text-underline-offset:3px}
+@media (hover:hover){.home .terms a:hover{color:#FFB21A}}
+.care{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:center;margin-top:72px;padding:40px 48px}
+.care h3{margin:0;font-weight:900;font-size:32px;line-height:1.05}
+.care p{margin:12px 0 0;font-size:17px;color:#E6EBF2}
+.care dl{margin:0}
+.care dl div{display:flex;justify-content:space-between;gap:20px;padding:12px 0 8px;border-bottom:2px solid rgba(255,255,255,.35)}
+.care dl div:last-child{border-bottom:0}
+.care dt{font-weight:800}
+.care dd{margin:0;color:#E6EBF2;text-align:right}
+.route-sec{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:48px;align-items:start}
+.route{position:relative;margin:0;padding:6px 0 6px 92px;list-style:none;display:flex;flex-direction:column;gap:44px}
+.route::before{content:"";position:absolute;left:30px;top:0;bottom:0;width:16px;background:#3B4048;border-radius:3px}
+.route::after{content:"";position:absolute;left:37px;top:0;bottom:0;width:2px;background:repeating-linear-gradient(to bottom,#FFFFFF 0 14px,transparent 14px 30px)}
+.route li{position:relative}
+.jn{box-sizing:content-box;position:absolute;left:-92px;top:2px;z-index:1;display:inline-flex;align-items:center;justify-content:center;min-width:52px;padding:7px 8px 3px;background:#000000;color:#FFFFFF;border:3px solid #FFFFFF;border-radius:4px;font-weight:900;font-size:18px;line-height:1}
+.route h3{margin:0;font-weight:800;font-size:24px;line-height:1.15}
+.route p{margin:8px 0 0;font-size:17px;color:#C9CED4}
+.exit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:36px;align-items:center;padding:48px 56px 44px;text-decoration:none;transition:transform 200ms var(--ease-out),filter 150ms ease}
+.exit:active{transform:scale(.985);transition-duration:90ms}
+@media (hover:hover){.exit:hover{color:#FFFFFF;filter:brightness(1.1)}}
+.exit-txt{font-weight:900;font-size:clamp(38px,5vw,72px);line-height:.98;letter-spacing:-.02em}
+.exit-sub{display:block;margin-top:14px;font-weight:600;font-size:18px;line-height:1.45;color:#E6EBF2;letter-spacing:0}
+.home .end{padding-bottom:clamp(96px,10vw,140px)}
+@media (max-width:980px){
+  .route-sec,.care{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  .home .wrap{padding-inline:18px}
+  .home .big{padding:28px 22px 24px}
+  .sign-top{gap:14px;padding-bottom:16px}
+  .shield{font-size:20px;padding:7px 10px 3px}
+  .dist dd{width:100%;justify-content:flex-start;margin-left:0;text-align:left}
+  .detail{grid-template-columns:minmax(0,1fr)}
+  .exit{grid-template-columns:minmax(0,1fr);padding:36px 30px}
+  .care{padding:32px 28px}
+}
+`

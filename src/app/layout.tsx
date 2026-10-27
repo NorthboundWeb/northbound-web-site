@@ -1,21 +1,15 @@
 import type { Metadata } from 'next'
-import { Anton, Inter } from 'next/font/google'
+import { Overpass } from 'next/font/google'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { site } from '@/lib/site'
 import './globals.css'
 
-const body = Inter({
+// Overpass is inspired by Highway Gothic, the lettering on road signs. One
+// variable font carries both the body copy and the 900-weight headlines.
+const body = Overpass({
   subsets: ['latin'],
   variable: '--font-body',
-  display: 'swap',
-})
-
-// Condensed, heavy, uppercase — the poster voice.
-const display = Anton({
-  subsets: ['latin'],
-  weight: '400',
-  variable: '--font-display',
   display: 'swap',
 })
 
@@ -63,10 +57,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en-GB" className={`${body.variable} ${display.variable}`}>
+    <html lang="en-GB" className={body.variable}>
       <body className="relative flex min-h-dvh flex-col bg-paper text-ink">
-        {/* Print grain, drawn once over the whole page. */}
-        <div aria-hidden className="grain-overlay" />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-ink"
