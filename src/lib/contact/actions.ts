@@ -18,6 +18,13 @@ import {
   type StartState,
 } from './start'
 import { composeStartMessage } from './start-message'
+import {
+  budgetLabel,
+  composeBookingMessage,
+  readBooking,
+  validateAll as validateBooking,
+  type BookingState,
+} from './booking'
 
 /** Bots fill every field they find, including ones a human never sees. */
 const HONEYPOT_FIELD = 'website'
@@ -262,5 +269,53 @@ export async function submitStart(
     status: 'success',
     ref,
     message: 'Thanks — your route is with me. I normally reply within one working day.',
+  }
+}
+
+/**
+ * The "Book a call" flow. Same protections as the other two write paths
+ * (traps, rate limit, server-side validation). The preferred day and time are
+ * re-checked here against the same weekday window the picker drew from, so a
+ * hand-edited request cannot ask for a Sunday in 2031.
+ */
+export async function submitBooking(
+  _previous: BookingState,
+  formData: FormData
+): Promise<BookingState> {
+  const gate = await screen(formData)
+  if (gate === 'trap') return { status: 'success' }
+  if (gate === 'limited') return { status: 'error', message: LIMITED_ERROR }
+
+  const input = readBooking(formData)
+  const errors = validateBooking(input)
+  if (Object.keys(errors).length > 0) {
+    return {
+      status: 'error',
+      message: 'Please check the highlighted fields.',
+      errors,
+    }
+  }
+
+  const ref = `NB-${crypto.randomUUID().slice(0, 8).toUpperCase()}`
+  const message = composeBookingMessage(input, ref)
+
+  const sent = await deliver(
+    {
+      name: input.name.trim(),
+      email: input.email.trim(),
+      business: input.business.trim(),
+      projectType: 'Discovery call',
+      budget: budgetLabel(input.budget),
+      message,
+    },
+    ref
+  )
+  if (!sent) return { status: 'error', message: GENERIC_ERROR }
+
+  return {
+    status: 'success',
+    ref,
+    message:
+      'Thanks — your request is with me. I will confirm the time by email, normally within one working day.',
   }
 }
