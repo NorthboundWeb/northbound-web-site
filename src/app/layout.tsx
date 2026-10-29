@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Inter_Tight, JetBrains_Mono } from 'next/font/google'
 import { Curtain } from '@/components/curtain'
 import { DotCursor } from '@/components/dot-cursor'
@@ -19,6 +19,14 @@ export const metadata: Metadata = {
   openGraph: { type: 'website', locale: 'en_GB', url: site.url, siteName: site.name, title: `${site.name} — ${site.tagline}`, description: site.description },
   twitter: { card: 'summary_large_image', title: `${site.name} — ${site.tagline}`, description: site.description },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large' } },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  colorScheme: 'dark light',
+  themeColor: '#06080d',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
