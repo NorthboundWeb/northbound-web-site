@@ -1,78 +1,69 @@
-# This is NOT the Next.js you know
+# Northbound Web — live site
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+The live marketing site (northboundweb.co.uk). It replaced the earlier motorway
+design on 2026-10-29; the old version is on the `backup-before-trial-switch`
+branch. Next.js 16 App Router, Tailwind CSS v4, TypeScript, deployed on Vercel.
+Old routes (/contact, /discover, /projects, /approach) redirect in
+`next.config.ts` and must keep doing so.
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+This version of Next.js may differ from your training data. Read the relevant
+guide in `node_modules/next/dist/docs/` before writing code, and heed
+deprecation notices.
 
----
+## Look
 
-## Project notes
+Laid out like Averlo's booking page (plain white page, mark top left, step
+counter top right, hairline progress bar, one narrow column, Continue pinned to
+the bottom) but with Northbound's own mark, intro, copy and blue. Do not copy
+Averlo's logo, wording, icons or colours. The intro curtain
+(`src/components/intro.tsx`, art in `public/brand/`) plays once per browser
+session.
 
-Marketing site for Northbound Web. Next.js 16 App Router, Tailwind CSS v4,
-TypeScript. Every route is static; there is no database and no auth.
+## Pages
 
-**Copy lives in data files, not JSX.** Packages, management plans, prices, the
-process steps and the build standards are all in `src/lib/services.ts`; the
-business name, URL and contact email are in `src/lib/site.ts`. Edit copy there
-rather than in pages.
+`/` home, `/services` and `/services/[pro|ultimate|custom|management]`,
+`/work` and `/work/[slug]` (made-up concept businesses from
+`src/lib/discover.ts`; always labelled as concepts), `/about`, `/tools` (the
+site self-check, runs in the browser only), `/start`, `/demos/[slug]`. Package
+copy, prices and terms come from `src/lib/services.ts`, copied from the live
+site; keep the two in step. Swiping right on a touch screen goes back a page (`src/components/swipe-back.tsx`); booking steps are history entries (`?step=N`) so back, edge-swipe and the swipe step back one question. Clicking the logo plays the curtain
+(`src/components/curtain.tsx`) and goes home.
 
-**Prices are real, not illustrative.** Pro £249, Ultimate £349 and management
-from £39 a month are the actual advertised prices. Do **not** describe them as
-example, indicative or "starting from" figures. Only Custom carries a "from"
-(£349), because its scope is agreed per project. Management: Pro Management
-includes 2 hours of updates a month, Ultimate Management 4 hours; the first
-month is free; a year paid up front is twelve months for the price of ten
-(`ANNUAL_TERMS`). Never describe the annual deal as "last month free" on a
-rolling monthly plan — only an annual term can honour it. Use the exported
-`ADVANCED_MANAGEMENT_PRICE` wherever the free month's value is quoted.
+## How it fits together
 
-**Promises are bounded on purpose.** Never write unlimited fixes, updates or
-support. No absolutes ("every time"), no guaranteed same-day response. Included
-change time does not roll over, and extra work is quoted before it is done. The
-complimentary month must never be described as auto-renewing. A management plan
-is optional and must not read as a condition of having a site built. Custom's
-£349 must not imply accounts, databases, payments, portals or ecommerce are
-included.
+- `/start` — "Start a project", the free-build request
+  (`src/components/start-flow.tsx`): offer, what to build, details, photos
+  (up to 6, shrunk in the browser), links, delivery date, about you, review.
+  The calendar marks today Processing, the next 3 days Building (neither
+  pickable) and days 4–6 "may move for big requests". The step rail, the
+  summary panel and every review row jump to their step. Copy, dates and
+  validation are in `src/lib/start/options.ts`, not JSX.
+- There is no server write path and no inbox. Sending the request opens a
+  WhatsApp chat with Che (`whatsappHref` in `src/lib/contact.ts`) with the
+  whole request typed out (`composeRequest`); photos are then shared with the
+  Web Share API where the phone supports it, or attached in the chat. The
+  home "Message me directly" box opens WhatsApp the same way.
+- "Message me" opens WhatsApp (`src/lib/contact.ts`). No phone calls anywhere.
+- Home hero: `site-wall.tsx` (the demo sites drifting on a tilted plane, with
+  a dot-field morph on a canvas) and `service-ticker.tsx`. Demo sites are in
+  `src/lib/showcase.ts`, drawn by `demo-site.tsx`, full pages at
+  `/demos/[slug]`; all made-up businesses, always labelled.
+- `theme-toggle.tsx` (light/dark, circle reveal; dark is the default until
+  someone picks light), `dot-cursor.tsx` (mouse only), `aurora.tsx` (the
+  pointer-reactive canvas background behind the home "Message me" panel).
 
-**Commercial terms are load-bearing.** Payment is 50% deposit to begin and 50%
-once complete and approved, before go-live — never imply the balance is
-optional at that point. Timelines are estimates and must always render with
-`TIMELINE_TERMS` beside them; never write "guaranteed in X days". Cancelling a
-plan stops future renewals and does not part-refund the current period, and
-must never be described as taking the site offline. Copywriting, photography,
-logo/brand design and paid stock are not in the fixed packages. Northbound is
-not VAT registered: say so once in the commercial terms and nowhere else.
+## Copy rules (same as the live site)
 
-"Priority support" is a **place in the queue, not an SLA** — Ultimate
-Management requests go ahead of Pro Management ones. Never attach a response
-time to it. Safety and security fixes never count against update hours. The
-packaged booking setups are **configuring an existing booking service** for
-one calendar (Pro) or several (Ultimate); bespoke booking systems,
-availability logic, custom payment flows, accounts or automated workflows are
-quoted separately. Revision
-feedback is asked for within **10 working days** of a preview, after which the
-project may pause and the date may move — and **silence is never treated as
-approval**.
+Prices are real: Pro £249, Ultimate £349, management from £39 a month with the
+first month free and optional. No unlimited or guaranteed promises, no invented
+social proof. The free build is for a client's **first** website only (no deposit, buy it
+only if you like it, no further contact if not); every later website or system
+starts with the 50% deposit. That is Che's own wording; keep it as written.
+The 72-hour build is an estimate, never a guarantee.
 
-These constraints are encoded in `managementTerms`, `commercialTerms`,
-`TIMELINE_TERMS`, `COMPLIMENTARY_MONTH_TERMS`, each plan's `changeTime`, and
-the `note` fields on the Ultimate and Custom packages.
+## Known gaps
 
-**Do not invent social proof.** No testimonials, client logos, case studies,
-review counts or years-of-experience claims unless Che supplies real ones. The
-About page is deliberately written to make no checkable claims.
-
-**The enquiry form is the only write path.** `src/lib/contact/actions.ts` is a
-server action — a public POST endpoint. Validate on the server there, not only
-in the browser. It has a honeypot, a submit-time trap and an in-memory rate
-limit, then posts the enquiry to a Google Apps Script web app
-(`apps-script/enquiries.gs`), which re-validates it, HTML-escapes it into the
-notification email and stores it in a Google Sheet with formula characters
-neutralised. Keep all of those if you touch either side. There is no Resend and
-no email provider in the Next.js app.
-
-**Secrets are server-side.** `ENQUIRY_WEBHOOK_URL` and `ENQUIRY_WEBHOOK_TOKEN`
-must never be renamed to anything `NEXT_PUBLIC_*` — that prefix ships the value
-to the browser.
+Supabase and the Google Sheet inbox are no longer used (the old `nb_booking`
+schema can be dropped). No env vars are needed.
 
 Run `npm run typecheck && npm run lint && npm run build` before committing.
