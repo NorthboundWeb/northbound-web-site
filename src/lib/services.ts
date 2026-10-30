@@ -56,7 +56,7 @@ export const buildPackages: BuildPackage[] = [
     price: 249,
     badge: 'Most popular',
     summary:
-      'A proper small-business site: every page designed for mobile and desktop, with bookings handled for you.',
+      'A professional small-business site: every page designed for mobile and desktop, with bookings handled for you.',
     bestFor:
       'Sole traders and small teams who take enquiries and bookings and want to look the part.',
     includes: [
@@ -81,7 +81,7 @@ export const buildPackages: BuildPackage[] = [
     price: 349,
     freeAdvancedMonth: true,
     summary:
-      'More pages, local search set up properly, and a booking system that runs a whole team.',
+      'Enhanced pages, local search set up properly, and a booking system that runs a whole team.',
     bestFor:
       'Businesses with several services or staff, where bookings and local search matter.',
     includes: [
