@@ -30,7 +30,14 @@ const GAP = 28
 const PITCH = CARD_W + GAP
 const ROW_H = CARD_H + 40
 const TOP = (PLANE_H - ROW_H * 3 + 40) / 2
-const PER_ROW = Math.ceil(PLANE_W / PITCH) + 1
+/**
+ * Each row owns its own slice of the demos (12 demos, 3 rows: 4 each) and
+ * repeats it, so the same site can never appear in two rows at once, and the
+ * loop wraps exactly on a repeat, so there is no jump when it restarts.
+ */
+const PERIOD = Math.max(1, Math.floor(demos.length / 3))
+const SPAN = PITCH * PERIOD
+const PER_ROW = Math.ceil((PLANE_W + SPAN) / PITCH) + 1
 const SPEEDS = [-16, 22, -12] // px per second, per row
 const SCALE = CARD_W / 1280
 
@@ -173,9 +180,8 @@ export function SiteWall() {
       const drawNow = !(small && a > 0 && (skip = !skip))
       for (let r = 0; r < 3; r++) {
         // Wrap within one set of cards so the loop is seamless.
-        const span = PITCH * PER_ROW
-        let o = (t * SPEEDS[r]) % span
-        if (o > 0) o -= span
+        let o = (t * SPEEDS[r]) % SPAN
+        if (o > 0) o -= SPAN
         offsets[r] = o
         const row = rows.current[r]
         // While the dots fully cover the sites, stop moving the hidden DOM.
@@ -225,10 +231,10 @@ export function SiteWall() {
               ref={(n) => {
                 rows.current[r] = n
               }}
-              style={{ top: TOP + r * ROW_H, width: PITCH * PER_ROW * 2 }}
+              style={{ top: TOP + r * ROW_H, width: PITCH * PER_ROW }}
             >
-              {Array.from({ length: PER_ROW * 2 }, (_, i) => {
-                const d = demos[(r * 4 + i) % demos.length]
+              {Array.from({ length: PER_ROW }, (_, i) => {
+                const d = demos[r * PERIOD + (i % PERIOD)]
                 return (
                   <Link
                     key={i}
