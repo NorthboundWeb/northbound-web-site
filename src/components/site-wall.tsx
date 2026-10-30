@@ -17,6 +17,9 @@ import { THEME_EVENT } from './theme-toggle'
  * and the dot canvas share one tilted plane and one clock, so the dots line
  * up with the cards they replace.
  *
+ * You can swipe, drag or scroll sideways across it; the rows follow your
+ * hand and, once you let go, glide back to their normal drift.
+ *
  * Purely decorative for assistive tech (the same demos are listed as normal
  * links lower down the page). Stops when off screen or when the tab is
  * hidden; holds still for people who prefer reduced motion.
@@ -39,6 +42,11 @@ const PERIOD = Math.max(1, Math.floor(demos.length / 3))
 const SPAN = PITCH * PERIOD
 const PER_ROW = Math.ceil((PLANE_W + SPAN) / PITCH) + 1
 const SPEEDS = [-16, 22, -12] // px per second, per row
+/** How far each row follows a finger or trackpad, so the rows keep their depth. */
+const GRAB = [1, 1.3, 0.8]
+/** After the last touch the wall waits this long, then glides back to its normal drift. */
+const RETURN_AFTER = 0.55 // seconds
+const RETURN_RATE = 3.2 // higher = quicker glide back
 const SCALE = CARD_W / 1280
 
 // Morph timeline, seconds: sites → dots → sites.
@@ -96,18 +104,95 @@ export function SiteWall() {
     })
     io.observe(el)
 
+    // Hand movement: u[r] is how far row r has been pushed from its normal place.
+    const u = [0, 0, 0]
+    const hand = { id: -1, startX: 0, startY: 0, lastX: 0, lastT: 0, vel: 0, active: false, moved: false, lastInput: 0 }
+    const planeScale = () => {
+      const v = parseFloat(getComputedStyle(el!).getPropertyValue('--wall-scale'))
+      return v > 0 ? v : 0.62
+    }
+    const push = (dxPlane: number) => {
+      for (let r = 0; r < 3; r++) u[r] += dxPlane * GRAB[r]
+    }
+
+    const onDown = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return
+      hand.id = e.pointerId
+      hand.startX = hand.lastX = e.clientX
+      hand.startY = e.clientY
+      hand.lastT = performance.now()
+      hand.vel = 0
+      hand.moved = false
+    }
     const onMove = (e: PointerEvent) => {
       const r = el.getBoundingClientRect()
       // Linear map into the plane: ignores the tilt, close enough for a glow.
       pointer.x = ((e.clientX - r.left) / r.width) * PLANE_W
       pointer.y = ((e.clientY - r.top) / r.height) * PLANE_H
+
+      if (e.pointerId !== hand.id) return
+      if (!hand.active) {
+        const dx = e.clientX - hand.startX
+        const dy = e.clientY - hand.startY
+        // Sideways intent only; a mostly vertical move is the page scrolling.
+        if (Math.abs(dx) < 6 || Math.abs(dx) < Math.abs(dy)) return
+        hand.active = true
+        hand.moved = true
+        hand.lastX = e.clientX
+        hand.lastT = performance.now()
+        try {
+          el.setPointerCapture(e.pointerId)
+        } catch {}
+        el.classList.add('is-dragging')
+      }
+      const now = performance.now()
+      const step = (e.clientX - hand.lastX) / planeScale()
+      const dt = Math.max(0.001, (now - hand.lastT) / 1000)
+      hand.vel = hand.vel * 0.6 + (step / dt) * 0.4
+      hand.lastX = e.clientX
+      hand.lastT = now
+      hand.lastInput = now
+      push(step)
+    }
+    const release = (e: PointerEvent) => {
+      if (e.pointerId !== hand.id) return
+      hand.id = -1
+      if (hand.active) {
+        hand.active = false
+        hand.lastInput = performance.now()
+        // A pause before letting go means no fling.
+        if (performance.now() - hand.lastT > 90) hand.vel = 0
+        hand.vel = Math.max(-2500, Math.min(2500, hand.vel))
+        el.classList.remove('is-dragging')
+      }
+    }
+    // A drag must not count as a click on the card underneath.
+    const onClickCapture = (e: MouseEvent) => {
+      if (hand.moved) {
+        e.preventDefault()
+        e.stopPropagation()
+        hand.moved = false
+      }
+    }
+    // Sideways wheel or two-finger trackpad swipe. Up and down is left to the page.
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return
+      e.preventDefault()
+      push(-e.deltaX / planeScale())
+      hand.vel = 0
+      hand.lastInput = performance.now()
     }
     const onLeave = () => {
       pointer.x = -9999
       pointer.y = -9999
     }
+    el.addEventListener('pointerdown', onDown)
     el.addEventListener('pointermove', onMove)
+    el.addEventListener('pointerup', release)
+    el.addEventListener('pointercancel', release)
     el.addEventListener('pointerleave', onLeave)
+    el.addEventListener('click', onClickCapture, true)
+    el.addEventListener('wheel', onWheel, { passive: false })
 
     const offsets = [0, 0, 0]
     let dark = document.documentElement.dataset.theme === 'dark'
@@ -174,14 +259,30 @@ export function SiteWall() {
       if (!visible || document.hidden) return
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
-      if (!reduced) t += dt
+      if (!reduced && !hand.active) t += dt
       const a = reduced ? 0 : dotPhase(t)
       // Phones draw the dots every other frame; the sites themselves stay at full rate.
       const drawNow = !(small && a > 0 && (skip = !skip))
+      if (!hand.active) {
+        if (Math.abs(hand.vel) > 8) {
+          // Carry on a little after a flick, slowing down.
+          for (let r = 0; r < 3; r++) u[r] += hand.vel * GRAB[r] * dt
+          hand.vel *= Math.exp(-dt * 3.5)
+          hand.lastInput = now
+        } else {
+          hand.vel = 0
+          if (now - hand.lastInput > RETURN_AFTER * 1000) {
+            for (let r = 0; r < 3; r++) {
+              // The loop repeats every SPAN, so take the short way back.
+              u[r] -= Math.round(u[r] / SPAN) * SPAN
+              u[r] = Math.abs(u[r]) < 0.3 ? 0 : u[r] * Math.exp(-dt * RETURN_RATE)
+            }
+          }
+        }
+      }
       for (let r = 0; r < 3; r++) {
         // Wrap within one set of cards so the loop is seamless.
-        let o = (t * SPEEDS[r]) % SPAN
-        if (o > 0) o -= SPAN
+        const o = ((((t * SPEEDS[r] + u[r]) % SPAN) + SPAN) % SPAN) - SPAN
         offsets[r] = o
         const row = rows.current[r]
         // While the dots fully cover the sites, stop moving the hidden DOM.
@@ -213,8 +314,13 @@ export function SiteWall() {
     return () => {
       cancelAnimationFrame(raf)
       io.disconnect()
+      el.removeEventListener('pointerdown', onDown)
       el.removeEventListener('pointermove', onMove)
+      el.removeEventListener('pointerup', release)
+      el.removeEventListener('pointercancel', release)
       el.removeEventListener('pointerleave', onLeave)
+      el.removeEventListener('click', onClickCapture, true)
+      el.removeEventListener('wheel', onWheel)
       document.removeEventListener('visibilitychange', onVis)
       window.removeEventListener(THEME_EVENT, onTheme)
     }
@@ -240,6 +346,8 @@ export function SiteWall() {
                     key={i}
                     href={`/demos/${d.slug}`}
                     tabIndex={-1}
+                    draggable={false}
+                    onDragStart={(e) => e.preventDefault()}
                     className="wall-card"
                     style={{ left: i * PITCH, width: CARD_W, height: CARD_H }}
                   >

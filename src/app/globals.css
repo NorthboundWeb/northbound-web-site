@@ -480,6 +480,9 @@ html:not([data-nb-intro="seen"]) body { overflow: hidden; }
 .wall-plane { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotateX(16deg) rotateY(-12deg) rotateZ(-4deg) scale(var(--wall-scale, .62)); transform-style: preserve-3d; }
 @media (min-width: 900px) { .wall { --wall-scale: .72; } }
 @media (max-width: 560px) { .wall { --wall-scale: .42; } }
+.wall { touch-action: pan-y; cursor: grab; -webkit-user-select: none; user-select: none; overscroll-behavior-x: contain; }
+.wall.is-dragging { cursor: grabbing; }
+.wall-card { -webkit-user-drag: none; }
 .wall-cards { position: absolute; inset: 0; transition: opacity .2s linear; }
 .wall-row { position: absolute; left: 0; height: 250px; will-change: transform; }
 .wall-card { position: absolute; top: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(12,18,32,.55); outline: 1px solid rgba(12,18,32,.08); }
