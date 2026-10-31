@@ -5,8 +5,7 @@ import { useEffect, useRef } from 'react'
 /**
  * The end of the home page loops back to the start. The last panel repeats
  * the opening headline; once it fills the screen and the scroll has settled,
- * the page jumps to the very top, which looks the same, so the next swipe
- * carries on from the start.
+ * the page glides smoothly back to the very top.
  */
 export function LoopToTop() {
   const ref = useRef<HTMLDivElement>(null)
@@ -21,13 +20,13 @@ export function LoopToTop() {
 
     // Jumping while a finger is down, or while momentum is still carrying the
     // page, makes the browser drop the scroll (iOS especially), so the visitor
-    // gets stuck at the bottom. Wait until everything has settled, then jump.
+    // gets stuck at the bottom. Wait until everything has settled, then glide up.
     const jump = () => {
       if (touching) return
       const max = document.documentElement.scrollHeight - window.innerHeight
       if (armed && window.scrollY >= max - 2) {
         armed = false
-        window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       }
     }
     const onScroll = () => {
