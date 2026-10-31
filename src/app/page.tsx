@@ -25,14 +25,14 @@ const SERVICES = [
     n: '01',
     href: '/services/pro',
     kicker: 'Pro · £249',
-    title: 'A proper small-business site',
+    title: 'A professional small-business site',
     body: 'Up to five pages designed for mobile and desktop, a contact form, basic SEO and bookings for one calendar.',
   },
   {
     n: '02',
     href: '/services/ultimate',
     kicker: 'Ultimate · £349',
-    title: 'More pages, local search, a whole team booked in',
+    title: 'Enhanced pages, local search, a whole team booked in',
     body: 'Up to eight pages, local SEO set up properly, and bookings across several staff calendars with reminders and payments.',
   },
   {
@@ -46,7 +46,7 @@ const SERVICES = [
     n: '04',
     href: '/services/management',
     kicker: `Management · from £${ADVANCED_MANAGEMENT_PRICE}/month`,
-    title: 'Looked after once it is live',
+    title: 'Website maintenance also available',
     body: 'Hosting, security, monitoring and a set amount of update time each month. Optional, and the first month is free.',
   },
 ]
