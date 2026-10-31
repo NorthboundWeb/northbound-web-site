@@ -66,7 +66,7 @@ export function LoopToTop() {
         Websites that get you found.
         <span>Priced before we start.</span>
       </p>
-      <p className="loop-cue">Keep scrolling</p>
+      <p className="loop-cue">Scroll to go back to the top</p>
     </div>
   )
 }
