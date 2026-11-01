@@ -3,7 +3,7 @@ export function Flag({ code, size = 22, fill = false }: { code: string; size?: n
   const w = size
   const h = Math.round(size * 0.68)
   const common = fill
-    ? { 'aria-hidden': true as const, focusable: false as const, className: 'flag flag-fill', preserveAspectRatio: 'xMidYMid slice' as const }
+    ? { 'aria-hidden': true as const, focusable: false as const, className: 'flag flag-fill', preserveAspectRatio: (code === 'en' ? 'xMidYMid slice' : 'none') as 'none' | 'xMidYMid slice' }
     : { width: w, height: h, 'aria-hidden': true as const, focusable: false as const, className: 'flag' }
   if (code === 'es')
     return (
