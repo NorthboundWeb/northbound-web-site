@@ -1104,3 +1104,13 @@ html[data-theme="dark"] .ww-floor { background: radial-gradient(ellipse at cente
 .lang-pop button { display: flex; align-items: center; }
 .lang-name { background: rgba(8,12,24,.78); color: #fff; text-shadow: none; padding: 6px 12px; border-radius: 999px; font-size: 15px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 .lang-pop button:active { transform: scale(.98); }
+
+/* Start-a-project half: its own cool aurora, so both halves of the panel are alive */
+.split-start { background: #0a0d14; color: #fff; border-color: rgba(255,255,255,.08); }
+.split-start > .aurora, .split-start > .split-grain { position: absolute; }
+.split-start .split-big { color: #fff; }
+.split-start .split-sub { color: rgba(255,255,255,.72); }
+.split-start .split-word { color: #9dbcff; }
+.split-start .split-jump { border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.12); color: #fff; box-shadow: 0 6px 16px -10px rgba(0,0,0,.6); }
+.split-start .split-jump:hover { background: var(--accent); border-color: var(--accent); }
+.split-start .split-spot { background: radial-gradient(420px circle at var(--mx) var(--my), rgba(255,255,255,.08), transparent 60%); }

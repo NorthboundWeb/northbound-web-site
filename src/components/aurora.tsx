@@ -20,7 +20,19 @@ const PALETTE = [
   [195, 90, 50], // cyan
 ] as const
 
-export function Aurora({ className }: { className?: string }) {
+/** Cooler bands for the "Start a project" half: blues, cyan and indigo around the brand accent. */
+export const COOL_PALETTE = [
+  [222, 95, 58], // brand blue
+  [200, 90, 52], // cyan
+  [250, 75, 56], // indigo
+  [232, 90, 62], // sky
+  [185, 80, 46], // teal
+  [262, 65, 50], // violet
+] as const
+
+type Palette = readonly (readonly [number, number, number])[]
+
+export function Aurora({ className, palette = PALETTE, base = '#0a0d14' }: { className?: string; palette?: Palette; base?: string }) {
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -38,7 +50,7 @@ export function Aurora({ className }: { className?: string }) {
     let t = Math.random() * 1000
     const pointer = { x: 0.5, y: 0.5, on: false, tx: 0.5, ty: 0.5 }
 
-    const blobs: Blob[] = PALETTE.map(([hue, sat], i) => ({
+    const blobs: Blob[] = palette.map(([hue, sat], i) => ({
       x: Math.random(),
       y: Math.random(),
       r: 0.45 + Math.random() * 0.3,
@@ -46,7 +58,7 @@ export function Aurora({ className }: { className?: string }) {
       vy: (Math.random() - 0.5) * 0.0012,
       hue,
       sat,
-      phase: (i / PALETTE.length) * Math.PI * 2,
+      phase: (i / palette.length) * Math.PI * 2,
     }))
 
     const resize = () => {
@@ -63,7 +75,7 @@ export function Aurora({ className }: { className?: string }) {
       pointer.y += (pointer.ty - pointer.y) * 0.06
 
       ctx.globalCompositeOperation = 'source-over'
-      ctx.fillStyle = '#0a0d14'
+      ctx.fillStyle = base
       ctx.fillRect(0, 0, w, h)
       ctx.globalCompositeOperation = 'lighter'
 
@@ -145,7 +157,7 @@ export function Aurora({ className }: { className?: string }) {
       host.removeEventListener('pointerleave', onLeave)
       document.removeEventListener('visibilitychange', onVis)
     }
-  }, [])
+  }, [palette, base])
 
   return <canvas ref={ref} className={className ?? 'aurora'} aria-hidden="true" />
 }

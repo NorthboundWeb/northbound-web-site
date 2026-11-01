@@ -4,14 +4,15 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { WHATSAPP_NUMBER, whatsappHref } from '@/lib/contact'
-import { Aurora } from './aurora'
+import { Aurora, COOL_PALETTE } from './aurora'
 import { useT } from './lang-provider'
 
 /**
  * The panel after the home page's first screen. Left: type a message (or tap
  * an idea), watch it appear as a WhatsApp bubble, and send it straight to Che.
  * Right: start a free build; anywhere on the panel goes to /start, and each
- * chip goes to the matching heading there. Both halves light up under the
+ * chip goes to the matching heading there. Both halves have a living aurora
+ * behind them (warm on the left, cool on the right) that leans towards the
  * cursor.
  */
 const DISPLAY_NUMBER = WHATSAPP_NUMBER.replace(/^44/, '0').replace(/^(\d{5})(\d{6})$/, '$1 $2')
@@ -121,6 +122,8 @@ export function ContactSplit() {
           router.push('/start')
         }}
       >
+        <Aurora palette={COOL_PALETTE} />
+        <div className="split-grain" aria-hidden="true" />
         <div className="split-spot" aria-hidden="true" />
         <p className="split-k" aria-live="off">
           {pre}
