@@ -82,9 +82,9 @@ export function Aurora({ className }: { className?: string }) {
         const cx = b.x * w
         const cy = b.y * h
         const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad)
-        const light = 48 + 6 * Math.sin(t + b.phase)
-        g.addColorStop(0, `hsla(${b.hue}, ${b.sat}%, ${light}%, .55)`)
-        g.addColorStop(0.55, `hsla(${b.hue}, ${b.sat}%, ${light - 10}%, .18)`)
+        const light = 40 + 5 * Math.sin(t + b.phase)
+        g.addColorStop(0, `hsla(${b.hue}, ${b.sat}%, ${light}%, .3)`)
+        g.addColorStop(0.55, `hsla(${b.hue}, ${b.sat}%, ${light - 10}%, .1)`)
         g.addColorStop(1, 'hsla(0, 0%, 0%, 0)')
         ctx.fillStyle = g
         ctx.fillRect(cx - rad, cy - rad, rad * 2, rad * 2)
@@ -96,7 +96,7 @@ export function Aurora({ className }: { className?: string }) {
         const py = pointer.y * h
         const r = Math.max(w, h) * 0.35
         const g = ctx.createRadialGradient(px, py, 0, px, py, r)
-        g.addColorStop(0, 'rgba(255,255,255,.14)')
+        g.addColorStop(0, 'rgba(255,255,255,.06)')
         g.addColorStop(1, 'rgba(255,255,255,0)')
         ctx.fillStyle = g
         ctx.fillRect(px - r, py - r, r * 2, r * 2)
