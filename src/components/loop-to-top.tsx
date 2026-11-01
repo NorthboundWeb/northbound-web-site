@@ -8,6 +8,9 @@ import { useT } from './lang-provider'
  * the opening headline; once it fills the screen and the scroll has settled,
  * the page glides smoothly back to the very top.
  */
+/** How long the visitor must stay at the very bottom before the page glides up. */
+const DWELL = 3000
+
 export function LoopToTop() {
   const t = useT()
   const ref = useRef<HTMLDivElement>(null)
@@ -36,7 +39,7 @@ export function LoopToTop() {
       // Only loop after the visitor has actually scrolled down the page.
       if (window.scrollY > window.innerHeight) armed = true
       window.clearTimeout(timer)
-      if (armed && window.scrollY >= max - 2) timer = window.setTimeout(jump, 140)
+      if (armed && window.scrollY >= max - 2) timer = window.setTimeout(jump, DWELL)
     }
     const onTouchStart = () => {
       touching = true
@@ -46,7 +49,7 @@ export function LoopToTop() {
       touching = false
       // Momentum may follow the lift; the next scroll event re-arms the wait.
       window.clearTimeout(timer)
-      timer = window.setTimeout(jump, 220)
+      timer = window.setTimeout(jump, DWELL)
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('touchstart', onTouchStart, { passive: true })
@@ -67,7 +70,7 @@ export function LoopToTop() {
         {t('Websites that get you found.')}
         <span>{t('Priced before we start.')}</span>
       </p>
-      <p className="loop-cue">{t('Scroll to go back to the top')}</p>
+      <p className="loop-cue">{t('Stay here to go back to the top')}</p>
     </div>
   )
 }

@@ -34,7 +34,7 @@ export const pl: Record<string, string> = {
   'Websites that get you found.': 'Strony, dzięki którym Cię znajdą.',
   'Priced before we start.': 'Z ceną ustaloną przed startem.',
   'Scroll down': 'Przewiń w dół',
-  'Scroll to go back to the top': 'Przewiń, aby wrócić na górę',
+  'Stay here to go back to the top': 'Zostań tutaj, aby wrócić na górę',
   'Small-business websites': 'Strony dla małych firm',
   'Website redesigns': 'Przebudowa stron',
   'Landing pages': 'Landing page',
