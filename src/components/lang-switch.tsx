@@ -48,15 +48,15 @@ export function LangSwitch() {
         title={t('Language')}
         onClick={() => setOpen((o) => !o)}
       >
-        <Flag code={here.code} fill />
+        {here.short}
       </button>
       {open && (
         <ul className="lang-pop" role="listbox" aria-label={t('Language')}>
           {LANGS.map((l) => (
             <li key={l.code} role="option" aria-selected={l.code === lang}>
               <button type="button" lang={l.html} onClick={() => choose(l.code)} className={l.code === lang ? 'on' : undefined}>
-                <Flag code={l.code} size={26} />
-                {l.name}
+                <Flag code={l.code} fill />
+                <span className="lang-name">{l.name}</span>
               </button>
             </li>
           ))}
