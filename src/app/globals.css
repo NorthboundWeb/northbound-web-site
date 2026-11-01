@@ -1080,3 +1080,8 @@ html[data-theme="dark"] .ww-floor { background: radial-gradient(ellipse at cente
 .split-start { cursor: pointer; }
 @keyframes nb-nudge { 0%, 60%, 100% { transform: translateX(0); } 75% { transform: translateX(7px); } }
 @media (prefers-reduced-motion: reduce) { .split-go span, .split-big span { animation: none; } }
+
+/* Language flags */
+.flag { display: block; flex: none; border-radius: 3px; box-shadow: 0 0 0 1px rgba(12,18,32,.18); }
+.lang-btn .flag { border-radius: 4px; }
+.lang-pop button { display: flex; align-items: center; gap: 12px; }

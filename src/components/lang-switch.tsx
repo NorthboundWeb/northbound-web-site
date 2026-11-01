@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { LANGS, LANG_COOKIE } from '@/lib/i18n'
+import { Flag } from './flag'
 import { useLang, useT } from './lang-provider'
 
 /** The little language chip in the header pill. Opens a short list; the choice sticks for a year. */
@@ -47,13 +48,14 @@ export function LangSwitch() {
         title={t('Language')}
         onClick={() => setOpen((o) => !o)}
       >
-        {here.short}
+        <Flag code={here.code} size={26} />
       </button>
       {open && (
         <ul className="lang-pop" role="listbox" aria-label={t('Language')}>
           {LANGS.map((l) => (
             <li key={l.code} role="option" aria-selected={l.code === lang}>
               <button type="button" lang={l.html} onClick={() => choose(l.code)} className={l.code === lang ? 'on' : undefined}>
+                <Flag code={l.code} size={26} />
                 {l.name}
               </button>
             </li>
