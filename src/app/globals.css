@@ -1062,3 +1062,21 @@ html[data-theme="dark"] .ww-floor { background: radial-gradient(ellipse at cente
 .lang-pop button { width: 100%; text-align: left; border: 0; background: none; color: inherit; font: inherit; font-size: 15px; padding: 11px 14px; min-height: 44px; border-radius: 10px; cursor: pointer; }
 .lang-pop button:hover { background: #eef1f6; }
 .lang-pop button.on { font-weight: 600; background: #eef1f6; }
+
+/* Split panel: make everything tappable look tappable */
+.split-idea { border-color: rgba(255,255,255,.5); background: rgba(255,255,255,.12); padding-left: 12px; gap: 8px; display: inline-flex; align-items: center; box-shadow: 0 6px 16px -10px rgba(0,0,0,.6); }
+.split-idea::before { content: '+'; display: grid; place-items: center; flex: none; width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,.22); font-size: 14px; line-height: 1; transition: transform .2s var(--ease), background-color .15s; }
+.split-idea:hover::before { transform: rotate(90deg); }
+.split-idea:active { transform: scale(.97); }
+.split-idea[aria-pressed="true"]::before { content: '✓'; background: rgba(12,18,32,.12); font-size: 11px; }
+.split-go { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 8px; text-decoration-color: var(--accent); }
+.split-go span, .split-big span { animation: nb-nudge 1.8s ease-in-out infinite; }
+.split-go:hover span, .split-start:hover .split-big span { animation: none; }
+.split-big { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 9px; text-decoration-color: var(--accent); }
+.split-jump { border: 1.5px solid var(--ink); background: color-mix(in srgb, var(--ink) 6%, var(--bg)); font-weight: 500; gap: 8px; box-shadow: 0 6px 16px -12px rgba(0,0,0,.5); }
+.split-jump::after { content: '→'; font-size: 13px; transition: transform .2s var(--ease); }
+.split-jump:hover::after { transform: translateX(4px); }
+.split-jump:active { transform: scale(.97); }
+.split-start { cursor: pointer; }
+@keyframes nb-nudge { 0%, 60%, 100% { transform: translateX(0); } 75% { transform: translateX(7px); } }
+@media (prefers-reduced-motion: reduce) { .split-go span, .split-big span { animation: none; } }
