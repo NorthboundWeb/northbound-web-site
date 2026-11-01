@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react'
 import { demos } from '@/lib/showcase'
 import { DemoSite } from './demo-site'
 import { demoComponents } from './demos/registry'
+import { useT } from './lang-provider'
 import { THEME_EVENT } from './theme-toggle'
 
 /**
@@ -69,6 +70,7 @@ function dotPhase(t: number) {
 }
 
 export function SiteWall() {
+  const t = useT()
   const wrap = useRef<HTMLDivElement>(null)
   const rows = useRef<(HTMLDivElement | null)[]>([])
   const cardsLayer = useRef<HTMLDivElement>(null)
@@ -327,6 +329,7 @@ export function SiteWall() {
   }, [])
 
   return (
+    <div className="wall-wrap">
     <div className="wall" ref={wrap} aria-hidden="true">
       <div className="wall-plane" style={{ width: PLANE_W, height: PLANE_H }}>
         <div className="wall-cards" ref={cardsLayer}>
@@ -365,6 +368,16 @@ export function SiteWall() {
         </div>
         <canvas ref={canvas} className="wall-dots" style={{ width: PLANE_W, height: PLANE_H }} />
       </div>
+    </div>
+    <p className="wall-hint">
+      <span className="wall-hint-cursor" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="rgba(0,0,0,.25)" strokeWidth="1">
+          <path d="M5 3l14 7.2-6 1.9-2 6.4z" />
+        </svg>
+      </span>
+      <span className="wall-hint-mouse">{t('Click a site to open it')}</span>
+      <span className="wall-hint-touch">{t('Tap a site to open it')}</span>
+    </p>
     </div>
   )
 }

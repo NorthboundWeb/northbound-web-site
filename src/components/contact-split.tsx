@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { WHATSAPP_NUMBER, whatsappHref } from '@/lib/contact'
 import { Aurora } from './aurora'
+import { useT } from './lang-provider'
 
 /**
  * The panel after the home page's first screen. Left: type a message (or tap
@@ -34,6 +35,7 @@ function spot(e: React.PointerEvent<HTMLElement>) {
 }
 
 export function ContactSplit() {
+  const t = useT()
   const router = useRouter()
   const [text, setText] = useState('')
   const [word, setWord] = useState(0)
@@ -59,25 +61,26 @@ export function ContactSplit() {
   }
 
   const shown = text.trim()
+  const [pre, post] = t('Get your first {word} built free').split('{word}')
 
   return (
-    <section id="contact" className="split" aria-label="Get in touch">
+    <section id="contact" className="split" aria-label={t('Get in touch')}>
       <div className="split-text" onPointerMove={spot}>
         <Aurora />
         <div className="split-grain" aria-hidden="true" />
         <div className="split-in">
-          <p className="split-k">Message me directly · {DISPLAY_NUMBER}</p>
+          <p className="split-k">{t('Message me directly · {n}', { n: DISPLAY_NUMBER })}</p>
 
-          <div className="split-ideas" role="group" aria-label="Quick ideas">
+          <div className="split-ideas" role="group" aria-label={t('Quick ideas')}>
             {IDEAS.map((idea) => (
               <button key={idea} type="button" className="split-idea" aria-pressed={text === idea} onClick={() => setText(text === idea ? '' : idea)}>
-                {idea}
+                {t(idea)}
               </button>
             ))}
           </div>
 
           <div className="split-bubble" aria-hidden="true">
-            <span className="split-bubble-who">You → Che</span>
+            <span className="split-bubble-who">{t('You → Che')}</span>
             {shown ? (
               <p key="t">{shown}</p>
             ) : (
@@ -91,9 +94,9 @@ export function ContactSplit() {
 
           <form className="split-form" onSubmit={send} noValidate>
             <label htmlFor="split-msg" className="sr">
-              Your message
+              {t('Your message')}
             </label>
-            <input id="split-msg" type="text" placeholder="Or type your own message…" value={text} onChange={(e) => setText(e.target.value)} autoComplete="off" />
+            <input id="split-msg" type="text" placeholder={t('Or type your own message…')} value={text} onChange={(e) => setText(e.target.value)} autoComplete="off" />
             <button
               ref={btn}
               type="submit"
@@ -103,10 +106,10 @@ export function ContactSplit() {
                 if (btn.current) btn.current.style.transform = ''
               }}
             >
-              Message me <span aria-hidden="true">→</span>
+              {t('Message me')} <span aria-hidden="true">→</span>
             </button>
           </form>
-          <p className="split-note">Opens WhatsApp with your message ready to send. No calls.</p>
+          <p className="split-note">{t('Opens WhatsApp with your message ready to send. No calls.')}</p>
         </div>
       </div>
 
@@ -120,20 +123,20 @@ export function ContactSplit() {
       >
         <div className="split-spot" aria-hidden="true" />
         <p className="split-k" aria-live="off">
-          Get your first{' '}
+          {pre}
           <span key={word} className="split-word">
-            {WORDS[word]}
-          </span>{' '}
-          built free
+            {t(WORDS[word])}
+          </span>
+          {post}
         </p>
         <Link href="/start" className="split-big">
-          Start a project <span aria-hidden="true">→</span>
+          {t('Start a project')} <span aria-hidden="true">→</span>
         </Link>
-        <p className="split-sub">No deposit. Like it? Buy it. Don’t? I won’t contact you again.</p>
-        <div className="split-jumps" role="group" aria-label="Jump straight to what you need">
+        <p className="split-sub">{t('No deposit. Like it? Buy it. Don’t? I won’t contact you again.')}</p>
+        <div className="split-jumps" role="group" aria-label={t('Jump straight to what you need')}>
           {JUMPS.map((j) => (
             <Link key={j.build} href={`/start?build=${j.build}`} className="split-jump">
-              {j.label}
+              {t(j.label)}
             </Link>
           ))}
         </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { useT } from './lang-provider'
 
 /**
  * The end of the home page loops back to the start. The last panel repeats
@@ -8,6 +9,7 @@ import { useEffect, useRef } from 'react'
  * the page glides smoothly back to the very top.
  */
 export function LoopToTop() {
+  const t = useT()
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -62,10 +64,10 @@ export function LoopToTop() {
   return (
     <div ref={ref} className="loop" aria-hidden="true">
       <p className="hero-h">
-        Websites that get you found.
-        <span>Priced before we start.</span>
+        {t('Websites that get you found.')}
+        <span>{t('Priced before we start.')}</span>
       </p>
-      <p className="loop-cue">Scroll to go back to the top</p>
+      <p className="loop-cue">{t('Scroll to go back to the top')}</p>
     </div>
   )
 }

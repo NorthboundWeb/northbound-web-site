@@ -5,6 +5,7 @@ import { LoopToTop } from '@/components/loop-to-top'
 import { PageShell } from '@/components/page-shell'
 import { ServiceTicker } from '@/components/service-ticker'
 import { SiteWall } from '@/components/site-wall'
+import { getT } from '@/lib/i18n/server'
 import { ADVANCED_MANAGEMENT_PRICE, commercialTerms, managementTerms, process } from '@/lib/services'
 
 /** The clickable list beside the wall: each one opens the page that covers it. */
@@ -78,20 +79,21 @@ const FAQS = [
   },
 ]
 
-export default function Home() {
+export default async function Home() {
+  const { t, lang } = await getT()
   return (
     <PageShell after={<LoopToTop />}>
       <section className="hero wrap">
         <SiteWall />
-        <ServiceTicker items={TAGS} />
+        <ServiceTicker items={TAGS.map((x) => ({ ...x, label: t(x.label) }))} />
         <div className="hero-text">
-          <p className="hero-line">An independent web studio building fast, honest websites for UK small businesses.</p>
+          <p className="hero-line">{t('An independent web studio building fast, honest websites for UK small businesses.')}</p>
           <h1 className="hero-h">
-            Websites that get you found.
-            <span>Priced before we start.</span>
+            {t('Websites that get you found.')}
+            <span>{t('Priced before we start.')}</span>
           </h1>
           <a className="scroll-cue" href="#contact">
-            Scroll down
+            {t('Scroll down')}
           </a>
         </div>
       </section>
@@ -99,22 +101,22 @@ export default function Home() {
       <ContactSplit />
 
       <section id="about" className="band wrap">
-        <p className="eyebrow">Design, build, bookings and care. One person, start to finish.</p>
+        <p className="eyebrow">{t('Design, build, bookings and care. One person, start to finish.')}</p>
         <h2 className="section-h">
-          What I build.
-          <span>And look after.</span>
+          {t('What I build.')}
+          <span>{t('And look after.')}</span>
         </h2>
         <div className="svc-list">
           {SERVICES.map((s) => (
             <article key={s.n} className="svc">
               <span className="svc-n">{s.n}</span>
               <div>
-                <p className="label">{s.kicker}</p>
-                <h3>{s.title}</h3>
-                <p>{s.body}</p>
+                <p className="label">{t(s.kicker)}</p>
+                <h3>{t(s.title)}</h3>
+                <p>{t(s.body)}</p>
               </div>
               <Link className="svc-go" href={s.href}>
-                Explore in detail <span aria-hidden="true">→</span>
+                {t('Explore in detail')} <span aria-hidden="true">→</span>
               </Link>
             </article>
           ))}
@@ -123,50 +125,51 @@ export default function Home() {
 
       <section className="band wrap">
         <h2 className="section-h">
-          From first message
-          <span>to a live site.</span>
+          {t('From first message')}
+          <span>{t('to a live site.')}</span>
         </h2>
-        <p className="section-sub">How it works</p>
-        <Process steps={process} />
+        <p className="section-sub">{t('How it works')}</p>
+        <Process steps={process.map((x) => ({ ...x, title: t(x.title), body: t(x.body) }))} />
       </section>
 
       <section className="band wrap faq-band">
         <div>
-          <p className="eyebrow">FAQs</p>
+          <p className="eyebrow">{t('FAQs')}</p>
           <h2 className="section-h">
-            Straight answers.
-            <span>No small print surprises.</span>
+            {t('Straight answers.')}
+            <span>{t('No small print surprises.')}</span>
           </h2>
         </div>
-        <Faq items={FAQS} />
+        <Faq items={FAQS.map((x) => ({ q: t(x.q), a: t(x.a) }))} />
       </section>
 
       <section id="terms" className="band wrap terms-band" aria-labelledby="terms-h">
-        <p className="eyebrow">The small print, in plain English</p>
+        <p className="eyebrow">{t('The small print, in plain English')}</p>
         <h2 id="terms-h" className="section-h">
-          Terms.
-          <span>Written down before we start.</span>
+          {t('Terms.')}
+          <span>{t('Written down before we start.')}</span>
         </h2>
         <div className="terms-grid">
-          {commercialTerms.map((t) => (
-            <div key={t.title}>
-              <h3>{t.title}</h3>
+          {commercialTerms.map((g) => (
+            <div key={g.title}>
+              <h3>{t(g.title)}</h3>
               <ul>
-                {t.points.map((x) => (
-                  <li key={x}>{x}</li>
+                {g.points.map((x) => (
+                  <li key={x}>{t(x)}</li>
                 ))}
               </ul>
             </div>
           ))}
           <div>
-            <h3>Management plans</h3>
+            <h3>{t('Management plans')}</h3>
             <ul>
               {managementTerms.map((x) => (
-                <li key={x}>{x}</li>
+                <li key={x}>{t(x)}</li>
               ))}
             </ul>
           </div>
         </div>
+        {lang !== 'en' && <p className="note" style={{ marginTop: 24 }}>{t('Translations are provided for convenience. If anything differs, the English version applies.')}</p>}
       </section>
 
     </PageShell>

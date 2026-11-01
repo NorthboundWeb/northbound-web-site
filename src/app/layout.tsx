@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Inter_Tight, JetBrains_Mono } from 'next/font/google'
 import { Curtain } from '@/components/curtain'
+import { LangProvider } from '@/components/lang-provider'
+import { LANGS, tr } from '@/lib/i18n'
+import { getLang } from '@/lib/i18n/server'
 import { DotCursor } from '@/components/dot-cursor'
 import { Intro } from '@/components/intro'
 import { SwipeBack } from '@/components/swipe-back'
@@ -29,19 +32,23 @@ export const viewport: Viewport = {
   themeColor: '#06080d',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const lang = await getLang()
+  const htmlLang = LANGS.find((l) => l.code === lang)?.html ?? 'en-GB'
   return (
-    <html lang="en-GB" data-theme="dark" className={`${sans.variable} ${display.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html lang={htmlLang} data-theme="dark" className={`${sans.variable} ${display.variable} ${mono.variable}`} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
         <Intro />
         <Curtain />
         <SwipeBack />
         <DotCursor />
-        <a className="skip" href="#main">
-          Skip to content
-        </a>
-        {children}
+        <LangProvider lang={lang}>
+          <a className="skip" href="#main">
+            {tr(lang, 'Skip to content')}
+          </a>
+          {children}
+        </LangProvider>
       </body>
     </html>
   )

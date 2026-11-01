@@ -6,6 +6,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { messageHref, messageLabel } from '@/lib/contact'
 import { PAGES } from '@/lib/nav'
 import { search } from '@/lib/search'
+import { LangSwitch } from './lang-switch'
+import { useT } from './lang-provider'
 import { LogoLink } from './logo-link'
 import { ThemeToggle } from './theme-toggle'
 
@@ -18,6 +20,7 @@ import { ThemeToggle } from './theme-toggle'
  * address underneath. Typing in the search swaps the page list for results.
  */
 export function SiteNav() {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
   const pathname = usePathname()
@@ -76,15 +79,13 @@ export function SiteNav() {
               <i />
               <i />
             </span>
-            {open ? 'Close' : 'Menu'}
+            {open ? t('Close') : t('Menu')}
           </button>
           <ThemeToggle />
-          <span className="pillbar-chip" title="Working across the UK">
-            UK
-          </span>
+          <LangSwitch />
         </div>
         <Link className="btn dark nav-cta" href="/start">
-          Start a project
+          {t('Start a project')}
         </Link>
       </header>
 
@@ -98,13 +99,13 @@ export function SiteNav() {
                 <path d="M20 20l-3.5-3.5" />
               </svg>
               <label htmlFor="menu-q" className="sr">
-                Search the site
+                {t('Search the site')}
               </label>
               <input
                 ref={input}
                 id="menu-q"
                 type="search"
-                placeholder="Search"
+                placeholder={t('Search')}
                 autoComplete="off"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
@@ -126,7 +127,7 @@ export function SiteNav() {
                   </ul>
                 ) : (
                   <p className="menu-none">
-                    Nothing found for &ldquo;{q.trim()}&rdquo;. Try &ldquo;bookings&rdquo;, &ldquo;price&rdquo; or &ldquo;SEO&rdquo;.
+                    {t('Nothing found for “{q}”. Try “bookings”, “price” or “SEO”.', { q: q.trim() })}
                   </p>
                 )}
               </div>
@@ -136,7 +137,7 @@ export function SiteNav() {
                   {PAGES.map((p, i) => (
                     <li key={p.href} style={{ animationDelay: `${80 + i * 55}ms` }}>
                       <Link href={p.href} aria-current={pathname === p.href ? 'page' : undefined} onClick={close}>
-                        {p.label}
+                        {t(p.label)}
                       </Link>
                     </li>
                   ))}
@@ -144,8 +145,8 @@ export function SiteNav() {
               </nav>
             )}
 
-            <a className="menu-message" href={messageHref()} target="_blank" rel="noopener noreferrer" aria-label={messageLabel}>
-              Message me
+            <a className="menu-message" href={messageHref()} target="_blank" rel="noopener noreferrer" aria-label={t(messageLabel)}>
+              {t('Message me')}
               <span aria-hidden="true">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4A8 8 0 1 1 20 12z" />
@@ -154,10 +155,10 @@ export function SiteNav() {
             </a>
 
             <div className="menu-contact">
-              <p>Get in touch</p>
+              <p>{t('Get in touch')}</p>
               <div className="menu-contact-links">
-                <a href="/email">Email me</a>
-                <a href="/portal">Client login</a>
+                <a href="/email">{t('Email me')}</a>
+                <a href="/portal">{t('Client login')}</a>
               </div>
             </div>
           </div>
