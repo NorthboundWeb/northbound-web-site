@@ -10,6 +10,7 @@ const routes = [
   { path: '/services/management', priority: 0.7 },
   { path: '/work', priority: 0.8 },
   { path: '/about', priority: 0.6 },
+  { path: '/privacy', priority: 0.3 },
   { path: '/start', priority: 0.9 },
   { path: '/email', priority: 0.5 },
 ]
