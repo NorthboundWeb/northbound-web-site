@@ -1,8 +1,10 @@
 /** Small inline SVG flags (emoji flags do not draw on Windows). Decorative; the label sits beside them. */
-export function Flag({ code, size = 22 }: { code: string; size?: number }) {
+export function Flag({ code, size = 22, fill = false }: { code: string; size?: number; fill?: boolean }) {
   const w = size
   const h = Math.round(size * 0.68)
-  const common = { width: w, height: h, 'aria-hidden': true as const, focusable: false as const, className: 'flag' }
+  const common = fill
+    ? { 'aria-hidden': true as const, focusable: false as const, className: 'flag flag-fill', preserveAspectRatio: 'xMidYMid slice' as const }
+    : { width: w, height: h, 'aria-hidden': true as const, focusable: false as const, className: 'flag' }
   if (code === 'es')
     return (
       <svg {...common} viewBox="0 0 30 20">

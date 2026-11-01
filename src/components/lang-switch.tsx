@@ -48,7 +48,7 @@ export function LangSwitch() {
         title={t('Language')}
         onClick={() => setOpen((o) => !o)}
       >
-        <Flag code={here.code} size={26} />
+        <Flag code={here.code} fill />
       </button>
       {open && (
         <ul className="lang-pop" role="listbox" aria-label={t('Language')}>
