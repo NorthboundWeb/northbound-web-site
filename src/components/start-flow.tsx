@@ -625,7 +625,7 @@ export function StartFlow() {
                     {!f.build.length && (
                       <p className="sf-hint">
                         Not sure yet? <Link href="/work">View the models</Link>, see what structure you like and{' '}
-                        <Link href="/services">view our features</Link>. We have over {FEATURE_COUNT} features to choose from.
+                        <Link href="/services">view our features</Link>. We have over {FEATURE_COUNT} features to offer.
                       </p>
                     )}
                     {err('build')}
