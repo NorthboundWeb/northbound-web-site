@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { messageHref, messageLabel } from '@/lib/contact'
 import { PAGES } from '@/lib/nav'
 import { search } from '@/lib/search'
+import { Aurora, COOL_PALETTE } from './aurora'
 import { LangSwitch } from './lang-switch'
 import { useT } from './lang-provider'
 import { LogoLink } from './logo-link'
@@ -36,6 +37,7 @@ export function SiteNav() {
   }
 
   const results = useMemo(() => search(q), [q])
+  const livingMenu = pathname?.startsWith('/store') ?? false
 
   useEffect(() => {
     if (!open) return
@@ -90,8 +92,16 @@ export function SiteNav() {
       </header>
 
       {open && (
-        <div id="site-menu" className="menu-full" role="dialog" aria-modal="true" aria-label="Site menu">
-          <div className="menu-glow" aria-hidden="true" />
+        <div id="site-menu" className={`menu-full${livingMenu ? ' menu-living' : ''}`} role="dialog" aria-modal="true" aria-label="Site menu">
+          {/* Trial: a living aurora behind the menu, on the store only for now. */}
+          {livingMenu ? (
+            <>
+              <Aurora palette={COOL_PALETTE} base="#0d1226" />
+              <div className="split-grain menu-grain" aria-hidden="true" />
+            </>
+          ) : (
+            <div className="menu-glow" aria-hidden="true" />
+          )}
           <div className="menu-inner">
             <form className="menu-search" role="search" onSubmit={(e) => e.preventDefault()}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">

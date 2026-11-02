@@ -1440,3 +1440,8 @@ html[data-theme="dark"] .st-reqform input { background: #eef1f6; }
 .st-reqbar .st-list .btn { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); }
 .st-reqbar .st-list .btn.dark { background: #fff; color: #0c1220; border-color: #fff; }
 @media (max-width: 640px) { .st-reqbar .st-reqform { padding-block: 24px; } }
+
+/* Trial (store only): living aurora behind the full-screen menu */
+.menu-living .aurora { position: fixed; inset: -6%; width: 112%; height: 112%; z-index: 0; opacity: .95; filter: blur(30px) saturate(1) brightness(.9); }
+.menu-living .menu-grain { position: fixed; z-index: 0; }
+.menu-living .menu-inner { z-index: 1; }
