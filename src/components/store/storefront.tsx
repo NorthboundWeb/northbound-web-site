@@ -56,7 +56,6 @@ export function Storefront() {
   const requestBox = useRef<HTMLInputElement>(null)
   const closeSheet = useCallback(() => setOpen(null), [])
   const [hideTools, setHideTools] = useState(false)
-  const [, setBarDown] = useState(false)
   const lastY = useRef(0)
   const focused = useRef(false)
 
@@ -172,7 +171,6 @@ export function Storefront() {
               type="button"
               className="st-basket"
               onClick={() => {
-                setBarDown(false)
                 setListOpen((o) => !o)
               }}
               aria-label={t('Basket')}
