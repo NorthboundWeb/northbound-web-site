@@ -56,7 +56,7 @@ export function Storefront() {
   const requestBox = useRef<HTMLInputElement>(null)
   const closeSheet = useCallback(() => setOpen(null), [])
   const [hideTools, setHideTools] = useState(false)
-  const [barDown, setBarDown] = useState(false)
+  const [barDown, setBarDown] = useState(true)
   const lastY = useRef(0)
   const focused = useRef(false)
 
