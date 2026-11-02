@@ -1445,3 +1445,70 @@ html[data-theme="dark"] .st-reqform input { background: #eef1f6; }
 .menu-living .aurora { position: fixed; inset: -6%; width: 112%; height: 112%; z-index: 0; opacity: .95; filter: blur(30px) saturate(1) brightness(.9); }
 .menu-living .menu-grain { position: fixed; z-index: 0; }
 .menu-living .menu-inner { z-index: 1; }
+
+/* ======================================================================
+   Light mode only: the living (aurora) parts get a pale, airy look with
+   dark text. Nothing below applies in dark mode.
+   ====================================================================== */
+html:not([data-theme="dark"]) .aurora { filter: blur(28px) saturate(1.05); opacity: 1; }
+html:not([data-theme="dark"]) .split-grain { opacity: .22; mix-blend-mode: multiply; }
+
+/* Message me panel */
+html:not([data-theme="dark"]) .split-text { background: #f1f5ff; color: var(--ink); }
+html:not([data-theme="dark"]) .split-text::after { background: linear-gradient(90deg, rgba(255,255,255,.35), transparent 40%, rgba(255,255,255,.25)); }
+html:not([data-theme="dark"]) .split-text .split-spot { background: radial-gradient(360px circle at var(--mx) var(--my), rgba(255,255,255,.5), transparent 60%); }
+html:not([data-theme="dark"]) .split-idea { border-color: rgba(12,18,32,.22); background: rgba(255,255,255,.6); color: var(--ink); box-shadow: 0 6px 16px -12px rgba(12,18,32,.35); }
+html:not([data-theme="dark"]) .split-idea::before { background: rgba(12,18,32,.08); }
+html:not([data-theme="dark"]) .split-idea:hover { background: #fff; border-color: var(--ink); }
+html:not([data-theme="dark"]) .split-idea[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+html:not([data-theme="dark"]) .split-idea[aria-pressed="true"]::before { background: rgba(255,255,255,.2); }
+html:not([data-theme="dark"]) .split-bubble-who { color: var(--muted); }
+html:not([data-theme="dark"]) .split-bubble p.typing { background: rgba(12,18,32,.08); }
+html:not([data-theme="dark"]) .split-bubble .typing i { background: var(--ink); }
+html:not([data-theme="dark"]) .split-form input { border-color: rgba(12,18,32,.2); background: rgba(255,255,255,.65); color: var(--ink); }
+html:not([data-theme="dark"]) .split-form input::placeholder { color: var(--muted); }
+html:not([data-theme="dark"]) .split-form input:focus { background: #fff; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(47,123,255,.18); }
+html:not([data-theme="dark"]) .split-go { color: var(--ink); }
+html:not([data-theme="dark"]) .split-note { color: var(--muted); }
+
+/* Start a project half */
+html:not([data-theme="dark"]) .split-start { background: #f1f5ff; color: var(--ink); border-color: var(--line); }
+html:not([data-theme="dark"]) .split-start .split-big { color: var(--ink); }
+html:not([data-theme="dark"]) .split-start .split-sub { color: var(--muted); }
+html:not([data-theme="dark"]) .split-start .split-word { color: var(--accent-deep); }
+html:not([data-theme="dark"]) .split-start .split-jump { border-color: rgba(12,18,32,.5); background: rgba(255,255,255,.6); color: var(--ink); box-shadow: 0 6px 16px -12px rgba(12,18,32,.35); }
+html:not([data-theme="dark"]) .split-start .split-jump:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+html:not([data-theme="dark"]) .split-start .split-spot { background: radial-gradient(420px circle at var(--mx) var(--my), rgba(255,255,255,.55), transparent 60%); }
+
+/* Store request strip */
+html:not([data-theme="dark"]) .st-reqbar { background: #f1f5ff; color: var(--ink); border-top: 1px solid var(--line); }
+html:not([data-theme="dark"]) .st-reqbar .st-reqform { color: var(--ink); }
+html:not([data-theme="dark"]) .st-reqbar .st-reqform input { background: rgba(255,255,255,.7); color: var(--ink); border-color: rgba(12,18,32,.16); }
+html:not([data-theme="dark"]) .st-reqbar .st-reqform input::placeholder { color: var(--muted); }
+html:not([data-theme="dark"]) .st-reqbar .st-listbtn { background: rgba(255,255,255,.8); color: var(--ink); border-color: rgba(12,18,32,.16); }
+html:not([data-theme="dark"]) .st-reqbar .st-list { background: rgba(255,255,255,.75); color: var(--ink); border-color: rgba(12,18,32,.1); }
+html:not([data-theme="dark"]) .st-reqbar .st-list li { border-color: var(--line); }
+html:not([data-theme="dark"]) .st-reqbar .st-list small, html:not([data-theme="dark"]) .st-reqbar .st-small { color: var(--muted); }
+html:not([data-theme="dark"]) .st-reqbar .st-qty { border-color: var(--line2); }
+html:not([data-theme="dark"]) .st-reqbar .st-qty button, html:not([data-theme="dark"]) .st-reqbar .st-x { background: var(--soft); color: var(--ink); }
+html:not([data-theme="dark"]) .st-reqbar .st-list .btn { color: var(--ink); border-color: var(--line2); }
+html:not([data-theme="dark"]) .st-reqbar .st-list .btn.dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* Full-screen menu */
+html:not([data-theme="dark"]) .menu-full { background: #f1f5ff; color: var(--ink); }
+html:not([data-theme="dark"]) .nav.is-open .nav-logo img { filter: brightness(0); }
+html:not([data-theme="dark"]) .nav.is-open .pillbar { box-shadow: 0 10px 30px -16px rgba(12,18,32,.35); }
+html:not([data-theme="dark"]) .nav.is-open .nav-cta { background: var(--ink); border-color: var(--ink); color: #fff; }
+html:not([data-theme="dark"]) .menu-search { border-bottom-color: rgba(12,18,32,.25); color: var(--muted); }
+html:not([data-theme="dark"]) .menu-search input { color: var(--ink); }
+html:not([data-theme="dark"]) .menu-search input::placeholder { color: var(--faint); }
+html:not([data-theme="dark"]) .menu-search:focus-within { border-bottom-color: var(--ink); color: var(--ink); }
+html:not([data-theme="dark"]) .menu-search input::-webkit-search-cancel-button { filter: none; }
+html:not([data-theme="dark"]) .menu-big a { color: var(--ink); }
+html:not([data-theme="dark"]) .menu-big a:hover, html:not([data-theme="dark"]) .menu-big a[aria-current="page"] { color: var(--accent-deep); }
+html:not([data-theme="dark"]) .menu-results a { color: var(--ink); border-bottom-color: rgba(12,18,32,.1); }
+html:not([data-theme="dark"]) .menu-results span, html:not([data-theme="dark"]) .menu-none { color: var(--muted); }
+html:not([data-theme="dark"]) .menu-results a:hover b { color: var(--accent-deep); }
+html:not([data-theme="dark"]) .menu-message { background: var(--ink); color: #fff; }
+html:not([data-theme="dark"]) .menu-contact p { color: var(--muted); }
+html:not([data-theme="dark"]) .menu-contact a { color: var(--ink); }

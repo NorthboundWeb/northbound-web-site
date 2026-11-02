@@ -37,7 +37,6 @@ export function SiteNav() {
   }
 
   const results = useMemo(() => search(q), [q])
-  const livingMenu = pathname?.startsWith('/store') ?? false
 
   useEffect(() => {
     if (!open) return
@@ -92,16 +91,10 @@ export function SiteNav() {
       </header>
 
       {open && (
-        <div id="site-menu" className={`menu-full${livingMenu ? ' menu-living' : ''}`} role="dialog" aria-modal="true" aria-label="Site menu">
-          {/* Trial: a living aurora behind the menu, on the store only for now. */}
-          {livingMenu ? (
-            <>
-              <Aurora palette={COOL_PALETTE} base="#0d1226" />
-              <div className="split-grain menu-grain" aria-hidden="true" />
-            </>
-          ) : (
-            <div className="menu-glow" aria-hidden="true" />
-          )}
+        <div id="site-menu" className="menu-full menu-living" role="dialog" aria-modal="true" aria-label="Site menu">
+          {/* A living aurora behind the menu (light and dark each have their own look). */}
+          <Aurora palette={COOL_PALETTE} base="#0d1226" />
+          <div className="split-grain menu-grain" aria-hidden="true" />
           <div className="menu-inner">
             <form className="menu-search" role="search" onSubmit={(e) => e.preventDefault()}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">

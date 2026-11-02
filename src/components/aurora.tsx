@@ -69,15 +69,24 @@ export function Aurora({ className, palette = PALETTE, base = '#0a0d14' }: { cla
       canvas.height = h
     }
 
+    // Light mode gets its own look: a pale base with soft tinted bands that darken
+    // (multiply) instead of glow. Dark mode is drawn exactly as before.
+    let lightMode = document.documentElement.dataset.theme !== 'dark'
+    const mo = new MutationObserver(() => {
+      lightMode = document.documentElement.dataset.theme !== 'dark'
+      if (reduced) frame()
+    })
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+
     const frame = () => {
       t += 0.004
       pointer.x += (pointer.tx - pointer.x) * 0.06
       pointer.y += (pointer.ty - pointer.y) * 0.06
 
       ctx.globalCompositeOperation = 'source-over'
-      ctx.fillStyle = base
+      ctx.fillStyle = lightMode ? '#f1f5ff' : base
       ctx.fillRect(0, 0, w, h)
-      ctx.globalCompositeOperation = 'lighter'
+      ctx.globalCompositeOperation = lightMode ? 'multiply' : 'lighter'
 
       for (const b of blobs) {
         // Slow wander, a gentle orbit, and a pull towards the pointer when present.
@@ -94,21 +103,29 @@ export function Aurora({ className, palette = PALETTE, base = '#0a0d14' }: { cla
         const cx = b.x * w
         const cy = b.y * h
         const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad)
-        const light = 40 + 5 * Math.sin(t + b.phase)
-        g.addColorStop(0, `hsla(${b.hue}, ${b.sat}%, ${light}%, .3)`)
-        g.addColorStop(0.55, `hsla(${b.hue}, ${b.sat}%, ${light - 10}%, .1)`)
-        g.addColorStop(1, 'hsla(0, 0%, 0%, 0)')
+        if (lightMode) {
+          const l = 78 + 4 * Math.sin(t + b.phase)
+          g.addColorStop(0, `hsla(${b.hue}, ${b.sat}%, ${l}%, .75)`)
+          g.addColorStop(0.55, `hsla(${b.hue}, ${b.sat}%, ${l + 6}%, .3)`)
+          g.addColorStop(1, 'hsla(0, 0%, 100%, 0)')
+        } else {
+          const light = 40 + 5 * Math.sin(t + b.phase)
+          g.addColorStop(0, `hsla(${b.hue}, ${b.sat}%, ${light}%, .3)`)
+          g.addColorStop(0.55, `hsla(${b.hue}, ${b.sat}%, ${light - 10}%, .1)`)
+          g.addColorStop(1, 'hsla(0, 0%, 0%, 0)')
+        }
         ctx.fillStyle = g
         ctx.fillRect(cx - rad, cy - rad, rad * 2, rad * 2)
       }
 
       // A faint highlight that follows the pointer.
       if (pointer.on) {
+        ctx.globalCompositeOperation = lightMode ? 'source-over' : 'lighter'
         const px = pointer.x * w
         const py = pointer.y * h
         const r = Math.max(w, h) * 0.35
         const g = ctx.createRadialGradient(px, py, 0, px, py, r)
-        g.addColorStop(0, 'rgba(255,255,255,.06)')
+        g.addColorStop(0, lightMode ? 'rgba(255,255,255,.35)' : 'rgba(255,255,255,.06)')
         g.addColorStop(1, 'rgba(255,255,255,0)')
         ctx.fillStyle = g
         ctx.fillRect(px - r, py - r, r * 2, r * 2)
@@ -151,6 +168,7 @@ export function Aurora({ className, palette = PALETTE, base = '#0a0d14' }: { cla
 
     return () => {
       stop()
+      mo.disconnect()
       ro.disconnect()
       io.disconnect()
       host.removeEventListener('pointermove', onMove)
