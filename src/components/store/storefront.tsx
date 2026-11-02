@@ -55,6 +55,24 @@ export function Storefront() {
   const loaded = useRef(false)
   const requestBox = useRef<HTMLInputElement>(null)
   const closeSheet = useCallback(() => setOpen(null), [])
+  const [hideTools, setHideTools] = useState(false)
+  const lastY = useRef(0)
+  const focused = useRef(false)
+
+  // Slide the search and categories away when scrolling down; bring them back on any scroll up.
+  useEffect(() => {
+    lastY.current = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      const dy = y - lastY.current
+      if (Math.abs(dy) < 6) return
+      lastY.current = y
+      if (focused.current || y < 160) setHideTools(false)
+      else setHideTools(dy > 0)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   useEffect(() => {
     const id = setTimeout(() => {
@@ -120,7 +138,7 @@ export function Storefront() {
       </section>
 
       {/* ---- search + categories (sticky) ---------------------------------- */}
-      <div className="st-tools">
+      <div className={`st-tools${hideTools ? ' away' : ''}`} onFocus={() => { focused.current = true; setHideTools(false) }} onBlur={() => { focused.current = false }}>
         <div className="wrap">
           <form className="st-search" role="search" onSubmit={(e) => e.preventDefault()}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">

@@ -1374,3 +1374,8 @@ html[data-theme="dark"] .pa-standface, html[data-theme="dark"] .pa-ipad { box-sh
   .st-send { min-height: 40px; padding: 0 16px; }
   .st-reqbar { padding-inline: 10px; }
 }
+
+/* Search and categories slide away on the way down, return on the way up */
+.st-tools { transition: transform .3s var(--ease); will-change: transform; }
+.st-tools.away { transform: translateY(calc(-100% - 80px)); pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .st-tools { transition: none; } }
