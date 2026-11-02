@@ -1522,3 +1522,13 @@ html:has(.demo-bar), body:has(.demo-bar) { overflow-x: clip; max-width: 100%; }
 
 /* Concept sites: keep the two sticky bars on their own layers so they do not shake while scrolling on iPhone */
 .demo-bar { transform: translateZ(0); -webkit-transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+
+/* iPhone gives date boxes a fixed minimum width, so on the concept sites they could poke out past
+   their card (and widen the whole page). Make every date/time box obey its container. */
+.demo-bar ~ main input[type="date"],
+.demo-bar ~ main input[type="time"],
+.demo-bar ~ main input[type="datetime-local"],
+.demo-bar ~ main input[type="month"] { min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box; -webkit-appearance: none; appearance: none; display: block; }
+.demo-bar ~ main input[type="date"]::-webkit-date-and-time-value,
+.demo-bar ~ main input[type="time"]::-webkit-date-and-time-value { text-align: left; min-height: 1.4em; }
+.demo-bar ~ main input, .demo-bar ~ main select, .demo-bar ~ main textarea { max-width: 100%; }
