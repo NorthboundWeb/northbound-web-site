@@ -1337,3 +1337,40 @@ html[data-theme="dark"] .pa-standface, html[data-theme="dark"] .pa-ipad { box-sh
   .pa-tick { stroke-dashoffset: 0; }
   .pa > *, .st-item-open { transition: none; }
 }
+
+/* Northbound mark on the product pictures (the mark is white, so it is darkened on light surfaces) */
+.pa-logo { display: block; width: 24%; height: auto; aspect-ratio: 359 / 156; object-fit: contain; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.pa-cardface .pa-logo { position: absolute; right: 8%; bottom: 10%; width: 22%; opacity: .95; }
+.pa-wood .pa-logo { filter: brightness(0) opacity(.75); }
+.pa-standface .pa-logo { width: 46%; margin-bottom: -2%; }
+.pa-plaqueface .pa-logo { width: 34%; filter: brightness(0); margin-bottom: -2%; }
+.pa-screen .pa-logo { width: 22%; filter: brightness(0); align-self: flex-start; flex: none; }
+.pa-lg .pa-cardface .pa-logo { width: 22%; }
+
+/* ---- Store: calmer on phones ---- */
+@media (max-width: 640px) {
+  .st-head { padding-bottom: 0; }
+  .st-head .section-sub { display: none; }
+  .st-tools { top: 70px; margin-top: 14px; padding-block: 8px; }
+  .st-search { min-height: 44px; }
+  .st-search input { min-height: 42px; font-size: 16px; }
+  .st-cats { margin-top: 8px; }
+  .st-body { padding-bottom: 110px; }
+  .st-group { padding-top: 28px; }
+  .st-group-head p { display: none; }
+  .st-group-head h2 { font-size: 24px; }
+  .st-more { grid-row: 1; }
+  .st-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .st-item-open { padding: 8px 8px 12px; border-radius: 18px; gap: 4px; }
+  .st-art { aspect-ratio: 1 / .82; margin-bottom: 4px; border-radius: 12px; }
+  .st-item-name { font-size: 14px; padding-inline: 4px; padding-right: 0; line-height: 1.2; }
+  .st-item-sum { display: none; }
+  .st-item-price { font-size: 12px; padding-inline: 4px; margin-top: 2px; padding-right: 34px; }
+  .st-badge { top: 14px; left: 14px; font-size: 9px; padding: 3px 7px; }
+  .st-add { width: 32px; height: 32px; right: 8px; bottom: 8px; font-size: 18px; }
+  .st-reqform { padding: 4px; }
+  .st-listbtn { width: 40px; height: 40px; }
+  .st-reqform input { min-height: 40px; font-size: 16px; }
+  .st-send { min-height: 40px; padding: 0 16px; }
+  .st-reqbar { padding-inline: 10px; }
+}

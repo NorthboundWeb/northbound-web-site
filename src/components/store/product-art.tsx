@@ -59,6 +59,7 @@ export function ProductArt({ art, large = false }: { art: Art; large?: boolean }
               <i />
               <i />
             </span>
+            <img className="pa-logo" src="/brand/mark.png" alt="" draggable={false} />
             <b>Your Name</b>
             <small>Your business</small>
             <i className="pa-shine" />
@@ -69,6 +70,7 @@ export function ProductArt({ art, large = false }: { art: Art; large?: boolean }
       return (
         <div className={cls} aria-hidden="true">
           <div className="pa-standface">
+            <img className="pa-logo" src="/brand/mark.png" alt="" draggable={false} />
             {art.stars && <span className="pa-stars">★★★★★</span>}
             <span className="pa-phone" />
             <b>{art.label}</b>
@@ -82,6 +84,7 @@ export function ProductArt({ art, large = false }: { art: Art; large?: boolean }
       return (
         <div className={cls} aria-hidden="true">
           <div className="pa-plaqueface">
+            <img className="pa-logo" src="/brand/mark.png" alt="" draggable={false} />
             <span className="pa-stars">★★★★★</span>
             <b>Loved us?</b>
             <small>Tap or scan to review</small>
@@ -108,6 +111,7 @@ export function ProductArt({ art, large = false }: { art: Art; large?: boolean }
         <div className={`${cls} pa-tab-${art.mode}`} aria-hidden="true">
           <div className="pa-ipad">
             <div className="pa-screen">
+              <img className="pa-logo" src="/brand/mark.png" alt="" draggable={false} />
               {art.mode === 'menu' && (
                 <>
                   <div className="pa-tabs">
