@@ -353,6 +353,7 @@ function Sheet({ product: p, onClose, onAdd }: { product: Product; onClose: () =
   const t = useT()
   const [option, setOption] = useState(p.options?.choices[0])
   const [qty, setQty] = useState(1)
+  const [custom, setCustom] = useState(false)
   const closeBtn = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -399,6 +400,20 @@ function Sheet({ product: p, onClose, onAdd }: { product: Product; onClose: () =
               </div>
             </div>
           )}
+          {p.customDesign && (
+            <div className="st-opt">
+              <p className="label">{t('Design')}</p>
+              <div className="st-opt-row">
+                <button type="button" className="pill sm" aria-pressed={!custom} onClick={() => setCustom(false)}>
+                  {t('My design')}
+                </button>
+                <button type="button" className="pill sm" aria-pressed={custom} onClick={() => setCustom(true)}>
+                  {t('Custom design (optional)')}
+                </button>
+              </div>
+              <p className="st-small">{custom ? t('You send me your own design or ideas and I make the card to match.') : t('I design the card for you, in Northbound style, with your details.')}</p>
+            </div>
+          )}
           {p.quantity && (
             <div className="st-opt">
               <p className="label">{t('How many')}</p>
@@ -419,7 +434,7 @@ function Sheet({ product: p, onClose, onAdd }: { product: Product; onClose: () =
               type="button"
               className="btn dark"
               onClick={() => {
-                onAdd(p, qty, option)
+                onAdd(p, qty, [option, p.customDesign && custom ? 'Custom design' : ''].filter(Boolean).join(' · ') || undefined)
                 onClose()
               }}
             >

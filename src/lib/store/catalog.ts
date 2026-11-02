@@ -45,6 +45,8 @@ export type Product = {
   art: Art
   /** Choices shown in the product sheet, e.g. finishes. */
   options?: { label: string; choices: string[] }
+  /** Cards: my design by default, or the customer's own design as an option. */
+  customDesign?: boolean
   /** Show a quantity stepper (physical items). */
   quantity?: boolean
   /** Where the main button goes; default adds to the request list. */
@@ -92,6 +94,7 @@ const physical: Product[] = [
     price: null,
     tags: ['nfc', 'business card', 'contactless', 'tap', 'metal', 'steel', 'premium', 'digital business card'],
     art: { kind: 'card', material: 'metal' },
+    customDesign: true,
     options: { label: 'Finish', choices: ['Black', 'Silver', 'Gold'] },
     quantity: true,
     badge: 'Premium',
@@ -105,6 +108,7 @@ const physical: Product[] = [
     price: null,
     tags: ['nfc', 'business card', 'contactless', 'tap', 'plastic', 'pvc', 'printed', 'team'],
     art: { kind: 'card', material: 'plastic' },
+    customDesign: true,
     options: { label: 'Finish', choices: ['Matte', 'Gloss'] },
     quantity: true,
   },
@@ -117,6 +121,7 @@ const physical: Product[] = [
     price: null,
     tags: ['nfc', 'business card', 'contactless', 'tap', 'wood', 'bamboo', 'eco', 'natural'],
     art: { kind: 'card', material: 'wood' },
+    customDesign: true,
     options: { label: 'Wood', choices: ['Light', 'Dark'] },
     quantity: true,
   },
@@ -152,6 +157,7 @@ const physical: Product[] = [
     price: null,
     tags: ['google', 'reviews', 'card', 'trades', 'mobile', 'nfc', 'tap', 'bill'],
     art: { kind: 'card', material: 'plastic' },
+    customDesign: true,
     quantity: true,
   },
   {
