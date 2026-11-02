@@ -56,19 +56,31 @@ export function Storefront() {
   const requestBox = useRef<HTMLInputElement>(null)
   const closeSheet = useCallback(() => setOpen(null), [])
   const [hideTools, setHideTools] = useState(false)
+  const [barDown, setBarDown] = useState(false)
   const lastY = useRef(0)
   const focused = useRef(false)
 
-  // Slide the search and categories away when scrolling down; bring them back on any scroll up.
+  // Slide the search and categories away when scrolling down. They only come back after a
+  // proper scroll up (about 160px), so a small nudge or a bounce does not bring them straight back.
   useEffect(() => {
     lastY.current = window.scrollY
+    let up = 0
     const onScroll = () => {
       const y = window.scrollY
       const dy = y - lastY.current
-      if (Math.abs(dy) < 6) return
       lastY.current = y
-      if (focused.current || y < 160) setHideTools(false)
-      else setHideTools(dy > 0)
+      if (focused.current || y < 160) {
+        up = 0
+        setHideTools(false)
+        return
+      }
+      if (dy > 0) {
+        up = 0
+        if (dy > 4) setHideTools(true)
+      } else if (dy < 0) {
+        up += -dy
+        if (up > 160) setHideTools(false)
+      }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -208,7 +220,15 @@ export function Storefront() {
       {open && <Sheet product={open} onClose={closeSheet} onAdd={add} />}
 
       {/* ---- request bar ---------------------------------------------------- */}
-      <div className="st-reqbar">
+      <div className={`st-reqbar${barDown ? ' down' : ''}`}>
+        <button type="button" className="st-peek" onClick={() => setBarDown(false)} aria-label={t('Open request bar')} tabIndex={barDown ? 0 : -1}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 7h12l-1 13H7z" />
+            <path d="M9 7a3 3 0 0 1 6 0" />
+          </svg>
+          {count > 0 && <em>{count}</em>}
+        </button>
+        <div className="st-reqwrap" inert={barDown}>
         {listOpen && (
           <div className="st-list" role="dialog" aria-label={t('Your list')}>
             <div className="st-list-head">
@@ -278,10 +298,14 @@ export function Storefront() {
             {t('Request something')}
           </label>
           <input ref={requestBox} id="st-req" value={request} onChange={(e) => setRequest(e.target.value)} placeholder={t('Can’t see it? Request anything…')} autoComplete="off" />
+          <button type="button" className="st-hide" onClick={() => { setBarDown(true); setListOpen(false) }} aria-label={t('Minimise')}>
+            ×
+          </button>
           <button type="submit" className="st-send" disabled={!request.trim() && list.length === 0}>
             {t('Send')}
           </button>
         </form>
+        </div>
         <p className={`st-flash${flash ? ' show' : ''}`} role="status">
           {flash}
         </p>
