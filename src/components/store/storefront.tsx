@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { whatsappHref } from '@/lib/contact'
 import { CATEGORIES, PRODUCTS, priceLabel, searchProducts, type CategoryId, type Product } from '@/lib/store/catalog'
 import { useT } from '../lang-provider'
+import { Aurora, COOL_PALETTE } from '../aurora'
 import { ProductArt } from './product-art'
 
 /**
@@ -239,6 +240,8 @@ export function Storefront() {
 
       {/* ---- request bar ---------------------------------------------------- */}
       <div className="st-reqbar" id="st-request">
+        <Aurora palette={COOL_PALETTE} />
+        <div className="split-grain" aria-hidden="true" />
         <div className="st-reqwrap">
         {listOpen && (
           <div className="st-list" role="dialog" aria-label={t('Your basket')}>

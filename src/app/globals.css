@@ -1420,3 +1420,23 @@ html[data-theme="dark"] .st-reqform input { background: #eef1f6; }
 .st-flash { position: fixed; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 45; }
 .st-body { padding-bottom: 72px; }
 @media (max-width: 640px) { .st-body { padding-bottom: 48px; } .st-reqform { padding-block: 12px; padding-inline: 10px; } }
+
+/* Request strip: living aurora behind it, same look in light and dark */
+.st-reqbar { position: relative; overflow: hidden; isolation: isolate; background: #0a0d14; color: #fff; }
+.st-reqbar > .aurora { z-index: -2; }
+.st-reqbar > .split-grain { z-index: -1; }
+.st-reqbar .st-reqwrap { position: relative; }
+.st-reqbar .st-reqform, html[data-theme="dark"] .st-reqbar .st-reqform { background: transparent; color: #fff; border-top: 0; padding-block: 34px; max-width: 900px; margin-inline: auto; }
+.st-reqbar .st-reqform input, html[data-theme="dark"] .st-reqbar .st-reqform input { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.22); min-height: 50px; padding-inline: 18px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.st-reqbar .st-reqform input::placeholder, html[data-theme="dark"] .st-reqbar .st-reqform input::placeholder { color: rgba(255,255,255,.7); }
+.st-reqbar .st-listbtn, html[data-theme="dark"] .st-reqbar .st-listbtn { width: 50px; height: 50px; background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.22); }
+.st-reqbar .st-send { min-height: 50px; }
+.st-reqbar .st-send:disabled { opacity: .55; }
+.st-reqbar .st-list { background: rgba(10,13,20,.6); color: #fff; border-color: rgba(255,255,255,.14); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.st-reqbar .st-list li { border-color: rgba(255,255,255,.12); }
+.st-reqbar .st-list small, .st-reqbar .st-small { color: rgba(255,255,255,.7); }
+.st-reqbar .st-qty { border-color: rgba(255,255,255,.22); }
+.st-reqbar .st-qty button, .st-reqbar .st-x { background: rgba(255,255,255,.14); color: #fff; }
+.st-reqbar .st-list .btn { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); }
+.st-reqbar .st-list .btn.dark { background: #fff; color: #0c1220; border-color: #fff; }
+@media (max-width: 640px) { .st-reqbar .st-reqform { padding-block: 24px; } }
