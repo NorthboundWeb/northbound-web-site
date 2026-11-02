@@ -61,6 +61,14 @@ site; keep the two in step. Swiping right on a touch screen goes back a page (`s
   server-side, never `NEXT_PUBLIC_*`: `PORTAL_SCRIPT_URL`,
   `PORTAL_SCRIPT_TOKEN` (also used to derive the session key unless
   `SESSION_SECRET` is set), `ADMIN_EMAILS` (comma-separated).
+- `/store` — the store, locked while it is built (`src/lib/store/gate.ts`).
+  Visitors see an under-construction screen; entering `STORE_CODE` (env var)
+  or being signed in as an admin shows the real page
+  (`src/components/store/storefront.tsx`): an order builder over the real
+  packages and plans, flip cards, a compare slider and a basket bar that
+  hands the order to `/start` or WhatsApp. Nothing is charged on the site.
+  `/privacy` and `/terms` are plain pages; terms are generated from
+  `src/lib/services.ts`.
 - "Message me" opens WhatsApp (`src/lib/contact.ts`). No phone calls anywhere.
 - Home hero: `site-wall.tsx` (the demo sites drifting on a tilted plane, with
   a dot-field morph on a canvas) and `service-ticker.tsx`. Demo sites are in
