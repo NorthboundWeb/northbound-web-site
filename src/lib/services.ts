@@ -54,7 +54,6 @@ export const buildPackages: BuildPackage[] = [
     slug: 'pro',
     name: 'Pro',
     price: 249,
-    badge: 'Most popular',
     summary:
       'A professional small-business site: every page designed for mobile and desktop, with bookings handled for you.',
     bestFor:
@@ -79,6 +78,7 @@ export const buildPackages: BuildPackage[] = [
     slug: 'ultimate',
     name: 'Ultimate',
     price: 349,
+    badge: 'Most popular',
     freeAdvancedMonth: true,
     summary:
       'Enhanced pages, local search set up properly, and a booking system that runs a whole team.',

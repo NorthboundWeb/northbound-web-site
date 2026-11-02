@@ -114,7 +114,7 @@ export function Storefront() {
       if (i === -1) return [...cur, { id: p.id, qty, option }]
       return cur.map((l, j) => (j === i ? { ...l, qty: l.qty + qty } : l))
     })
-    setFlash(`${p.name} ${t('added to your list')}`)
+    setFlash(`${p.name} ${t('added to your basket')}`)
     window.setTimeout(() => setFlash(''), 1800)
   }
 
@@ -152,21 +152,40 @@ export function Storefront() {
       {/* ---- search + categories (sticky) ---------------------------------- */}
       <div className={`st-tools${hideTools ? ' away' : ''}`} onFocus={() => { focused.current = true; setHideTools(false) }} onBlur={() => { focused.current = false }}>
         <div className="wrap">
-          <form className="st-search" role="search" onSubmit={(e) => e.preventDefault()}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-              <circle cx="11" cy="11" r="7" />
-              <path d="M20 20l-3.5-3.5" />
-            </svg>
-            <label htmlFor="st-q" className="sr">
-              {t('Search the store')}
-            </label>
-            <input id="st-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Search the store, e.g. “review”, “metal”, “iPad”')} autoComplete="off" />
-            {q && (
-              <button type="button" className="st-clear" onClick={() => setQ('')} aria-label={t('Clear search')}>
-                ×
-              </button>
-            )}
-          </form>
+          <div className="st-toolrow">
+            <form className="st-search" role="search" onSubmit={(e) => e.preventDefault()}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20l-3.5-3.5" />
+              </svg>
+              <label htmlFor="st-q" className="sr">
+                {t('Search the store')}
+              </label>
+              <input id="st-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Search the store, e.g. “review”, “metal”, “iPad”')} autoComplete="off" />
+              {q && (
+                <button type="button" className="st-clear" onClick={() => setQ('')} aria-label={t('Clear search')}>
+                  ×
+                </button>
+              )}
+            </form>
+            <button
+              type="button"
+              className="st-basket"
+              onClick={() => {
+                setBarDown(false)
+                setListOpen((o) => !o)
+              }}
+              aria-label={t('Basket')}
+              aria-expanded={listOpen}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 7h12l-1 13H7z" />
+                <path d="M9 7a3 3 0 0 1 6 0" />
+              </svg>
+              <span className="st-basket-t">{t('Basket')}</span>
+              {count > 0 && <em key={count}>{count}</em>}
+            </button>
+          </div>
           <div className="st-cats" role="tablist" aria-label={t('Categories')}>
             <button type="button" role="tab" aria-selected={cat === 'all'} className="pill sm" aria-pressed={cat === 'all'} onClick={() => setCat('all')}>
               {t('All')}
@@ -230,15 +249,15 @@ export function Storefront() {
         </button>
         <div className="st-reqwrap" inert={barDown}>
         {listOpen && (
-          <div className="st-list" role="dialog" aria-label={t('Your list')}>
+          <div className="st-list" role="dialog" aria-label={t('Your basket')}>
             <div className="st-list-head">
-              <b>{t('Your list')}</b>
+              <b>{t('Your basket')}</b>
               <button type="button" className="st-x" onClick={() => setListOpen(false)} aria-label={t('Close')}>
                 ×
               </button>
             </div>
             {list.length === 0 ? (
-              <p className="st-small">{t('Nothing on it yet. Tap + on anything to add it.')}</p>
+              <p className="st-small">{t('Nothing in it yet. Tap + on anything to add it.')}</p>
             ) : (
               <ul>
                 {list.map((l, i) => {
