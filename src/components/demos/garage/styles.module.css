@@ -165,11 +165,8 @@
   position: sticky;
   top: 40px;
   z-index: 30;
-  background: rgba(255, 255, 255, .94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
-}
+  background: #ffffff;
+  border-bottom: 1px solid var(--line); transform: translateZ(0); -webkit-transform: translateZ(0); }
 
 .navIn {
   max-width: 1240px;

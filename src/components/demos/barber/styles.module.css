@@ -46,7 +46,7 @@
 .btnLine:hover { border-color: var(--gold); color: var(--gold); }
 
 /* ---------- nav ---------- */
-.nav { position: sticky; top: 40px; z-index: 30; background: rgba(18, 17, 16, .94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.nav { position: sticky; top: 40px; z-index: 30; background: #121110; border-bottom: 1px solid var(--line); transform: translateZ(0); -webkit-transform: translateZ(0); }
 .navIn { max-width: 1280px; margin: 0 auto; height: 68px; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
 .brand { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; min-height: 44px; margin-right: auto; }
 .brand::before {

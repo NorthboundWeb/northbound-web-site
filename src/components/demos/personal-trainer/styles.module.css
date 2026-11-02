@@ -114,6 +114,8 @@
   z-index: 30;
   background: var(--bg);
   border-bottom: 2px solid var(--ink);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 .navInner {
   max-width: 1320px;
