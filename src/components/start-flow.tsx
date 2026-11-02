@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { whatsappHref } from '@/lib/contact'
+import { demoBySlug, demos } from '@/lib/showcase'
 import {
   BUILD_GROUPS,
   buildValue,
@@ -30,6 +31,8 @@ import { goWithCurtain } from './curtain'
 import { EmailFallback } from './email-fallback'
 import { SWIPE_BACK_EVENT } from './swipe-back'
 import { TopBar } from './top-bar'
+
+const FEATURE_COUNT = Math.floor(new Set(demos.flatMap((d) => [...d.shows, ...d.points.map((p) => p.title)]).map((x) => x.toLowerCase())).size / 5) * 5
 
 /**
  * "Start a project": the free-build request.
@@ -126,6 +129,21 @@ export function StartFlow() {
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search)
+    const like = demoBySlug(q.get('like') ?? '')
+    if (like) {
+      // Arrived from "Want one like this?" on a concept site: fill the request in.
+      const feats = like.points.map((p) => p.title).join(', ')
+      const text = `I'd like a website like the Northbound concept "${like.name}" (${like.trade.toLowerCase()}, ${like.place}). I liked: ${like.shows.join(', ').toLowerCase()}. Features I'd want: ${feats.toLowerCase()}.`
+      const booking = /book/i.test(like.shows.join(' ') + like.ctaA)
+      const pick = BUILD_GROUPS.find((g) => g.id === (booking ? 'booking' : 'website'))
+      const val = pick ? buildValue(pick, booking ? 'Appointments' : 'Business or services site') : ''
+      window.history.replaceState(null, '', window.location.pathname)
+      window.history.pushState(null, '', '?step=details')
+      setTimeout(() => {
+        setF((x) => ({ ...x, build: x.build.length ? x.build : val ? [val] : [], details: x.details.trim() ? x.details : text }))
+        setStep('details')
+      }, 0)
+    }
     const jump = q.get('build')
     if (jump && BUILD_GROUPS.some((g) => g.id === jump)) {
       // Arrived from a chip on the home page: open straight onto that heading.
@@ -137,7 +155,7 @@ export function StartFlow() {
       }, 0)
     } else if (q.has('step')) window.history.replaceState(null, '', window.location.pathname)
     const t0 = setTimeout(() => {
-      const d = loadDraft()
+      const d = like ? null : loadDraft()
       if (d && (d.f.build?.length || d.f.details?.trim() || d.f.name?.trim() || d.photoCount)) setDraft(d)
       ready.current = true
     }, 0)
@@ -604,6 +622,12 @@ export function StartFlow() {
                         )
                       })}
                     </div>
+                    {!f.build.length && (
+                      <p className="sf-hint">
+                        Not sure yet? <Link href="/work">View the models</Link>, see what structure you like and{' '}
+                        <Link href="/services">view our features</Link>. We have over {FEATURE_COUNT} features to choose from.
+                      </p>
+                    )}
                     {err('build')}
                   </div>
                 </>

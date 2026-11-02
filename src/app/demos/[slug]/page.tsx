@@ -52,7 +52,7 @@ export default async function DemoPage({ params }: Props) {
             ))}
           </ul>
         </div>
-        <Link className="btn solid" href="/start">
+        <Link className="btn solid" href={`/start?like=${d.slug}`}>
           Want one like this?
         </Link>
       </aside>

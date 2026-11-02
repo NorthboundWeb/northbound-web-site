@@ -1532,3 +1532,6 @@ html:has(.demo-bar), body:has(.demo-bar) { overflow-x: clip; max-width: 100%; }
 .demo-bar ~ main input[type="date"]::-webkit-date-and-time-value,
 .demo-bar ~ main input[type="time"]::-webkit-date-and-time-value { text-align: left; min-height: 1.4em; }
 .demo-bar ~ main input, .demo-bar ~ main select, .demo-bar ~ main textarea { max-width: 100%; }
+
+.sf-hint { margin: 14px 2px 0; font-size: 14px; line-height: 1.5; color: var(--muted, #667085); }
+.sf-hint a { color: inherit; text-decoration: underline; font-weight: 600; }
