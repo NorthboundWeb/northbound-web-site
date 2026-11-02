@@ -56,7 +56,7 @@ export function Storefront() {
   const requestBox = useRef<HTMLInputElement>(null)
   const closeSheet = useCallback(() => setOpen(null), [])
   const [hideTools, setHideTools] = useState(false)
-  const [barDown, setBarDown] = useState(true)
+  const [, setBarDown] = useState(false)
   const lastY = useRef(0)
   const focused = useRef(false)
 
@@ -239,15 +239,8 @@ export function Storefront() {
       {open && <Sheet product={open} onClose={closeSheet} onAdd={add} />}
 
       {/* ---- request bar ---------------------------------------------------- */}
-      <div className={`st-reqbar${barDown ? ' down' : ''}`}>
-        <button type="button" className="st-peek" onClick={() => setBarDown(false)} aria-label={t('Open request bar')} tabIndex={barDown ? 0 : -1}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M6 7h12l-1 13H7z" />
-            <path d="M9 7a3 3 0 0 1 6 0" />
-          </svg>
-          {count > 0 && <em>{count}</em>}
-        </button>
-        <div className="st-reqwrap" inert={barDown}>
+      <div className="st-reqbar">
+        <div className="st-reqwrap">
         {listOpen && (
           <div className="st-list" role="dialog" aria-label={t('Your basket')}>
             <div className="st-list-head">
@@ -317,9 +310,6 @@ export function Storefront() {
             {t('Request something')}
           </label>
           <input ref={requestBox} id="st-req" value={request} onChange={(e) => setRequest(e.target.value)} placeholder={t('Can’t see it? Request anything…')} autoComplete="off" />
-          <button type="button" className="st-hide" onClick={() => { setBarDown(true); setListOpen(false) }} aria-label={t('Minimise')}>
-            ×
-          </button>
           <button type="submit" className="st-send" disabled={!request.trim() && list.length === 0}>
             {t('Send')}
           </button>

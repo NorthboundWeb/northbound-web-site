@@ -1400,3 +1400,14 @@ html[data-theme="dark"] .st-peek { background: #fff; color: #0c1220; }
 .st-basket:active { transform: scale(.96); }
 .st-basket em { position: absolute; top: -6px; right: -4px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--accent); color: #fff; font-style: normal; font-size: 12px; font-weight: 600; display: grid; place-items: center; animation: st-pop .35s var(--ease) both; }
 @media (max-width: 640px) { .st-basket { min-height: 44px; padding: 0 12px; } .st-basket-t { display: none; } }
+
+/* Request bar: a full-width strip along the bottom of the page, always there */
+.st-reqwrap { left: 0; right: 0; bottom: 0; max-width: none; margin-inline: 0; }
+.st-reqform { border-radius: 0; border: 0; border-top: 1px solid rgba(255,255,255,.12); box-shadow: 0 -14px 40px -20px rgba(0,0,0,.7); padding: 10px max(14px, env(safe-area-inset-left, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)); gap: 10px; }
+.st-reqform input { padding-inline: 12px; background: rgba(255,255,255,.08); border-radius: 999px; min-height: 46px; }
+html[data-theme="dark"] .st-reqform { border-top-color: rgba(0,0,0,.1); }
+html[data-theme="dark"] .st-reqform input { background: #eef1f6; }
+.st-list { max-width: 760px; margin: 0 auto 0; border-radius: 22px 22px 0 0; border-bottom: 0; width: calc(100% - 20px); }
+.st-flash { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+.st-body { padding-bottom: 110px; }
+@media (max-width: 640px) { .st-reqwrap { left: 0; right: 0; } .st-reqform { padding-inline: 10px; gap: 8px; } .st-reqform input { min-height: 42px; } .st-body { padding-bottom: 96px; } }
