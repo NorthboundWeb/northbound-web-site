@@ -30,7 +30,13 @@ function useReveal(root: React.RefObject<HTMLElement | null>) {
       return
     }
     const io = new IntersectionObserver(
-      (es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add('in'), io.unobserve(e.target))),
+      (es) => {
+        for (const e of es) {
+          if (!e.isIntersecting) continue
+          e.target.classList.add('in')
+          io.unobserve(e.target)
+        }
+      },
       { threshold: 0.18 },
     )
     items.forEach((i) => io.observe(i))
@@ -122,8 +128,8 @@ export function Storefront() {
 
   // ---- compare slider -------------------------------------------------------
   const [split, setSplit] = useState(50)
-  const pro = buildPackages[0]
-  const ult = buildPackages[1]
+  const pro = buildPackages.find((p) => p.slug === 'pro') ?? buildPackages[0]
+  const ult = buildPackages.find((p) => p.slug === 'ultimate') ?? buildPackages[1]
 
   const tiles = [
     { k: 'pro', name: 'Pro', price: gbp(249), sub: t('Fixed price') },
@@ -253,7 +259,7 @@ export function Storefront() {
             {t('No plan')}
           </button>
           {managementPlans.map((m) => (
-            <button key={m.slug} type="button" role="radio" aria-checked={plan === m.slug} className="pill" aria-pressed={plan === m.slug} onClick={() => setPlan(m.slug)}>
+            <button key={m.slug} type="button" role="radio" aria-checked={plan === m.slug} className="pill" onClick={() => setPlan(m.slug)}>
               {m.name} · {gbp(m.price)}
               {m.slug === 'custom-management' ? '+' : ''}/{t('mo')}
             </button>
@@ -336,7 +342,7 @@ export function Storefront() {
             <span>{t('Drag the handle to see both.')}</span>
           </h2>
         </div>
-        <div className="st-cmp" data-reveal style={{ ['--split' as string]: `${split}%` }}>
+        <div className="st-cmp" data-reveal style={{ '--split': `${split}%` } as React.CSSProperties}>
           <div className="st-cmp-pane st-cmp-a">
             <h3>
               {pro.name} <b>{gbp(pro.price)}</b>
