@@ -162,9 +162,11 @@
   position: sticky;
   top: 40px;
   z-index: 30;
-  background: rgba(250, 248, 245, 0.9);
-  backdrop-filter: blur(12px);
+  /* Opaque, no blur: a translucent blurred sticky bar jitters while scrolling on iPhone. */
+  background: var(--bg);
   border-bottom: 1px solid var(--line);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .navIn {
