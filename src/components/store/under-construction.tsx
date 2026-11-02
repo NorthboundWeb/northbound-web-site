@@ -16,8 +16,16 @@ export function UnderConstruction() {
 
   return (
     <section className="st-uc" aria-labelledby="st-uc-h">
-      <div className="st-uc-grid" aria-hidden="true" />
-      <div className="st-uc-glow" aria-hidden="true" />
+      <div className="st-uc-bg" aria-hidden="true">
+        <svg className="st-uc-grid" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMax slice">
+          {Array.from({ length: 21 }, (_, i) => {
+            const x = i * 50
+            return <line key={`v${i}`} x1={500 + (x - 500) * 0.18} y1="0" x2={500 + (x - 500) * 2.2} y2="600" />
+          })}
+        </svg>
+        <div className="st-uc-rows" />
+        <div className="st-uc-glow" />
+      </div>
       <div className="st-uc-in">
         <p className="eyebrow">{t('Store')}</p>
         <h1 id="st-uc-h" className="section-h big">
