@@ -1411,3 +1411,12 @@ html[data-theme="dark"] .st-reqform input { background: #eef1f6; }
 .st-flash { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .st-body { padding-bottom: 110px; }
 @media (max-width: 640px) { .st-reqwrap { left: 0; right: 0; } .st-reqform { padding-inline: 10px; gap: 8px; } .st-reqform input { min-height: 42px; } .st-body { padding-bottom: 96px; } }
+
+/* Request bar: sits at the very end of the store, in the page, not floating */
+.st-reqbar { position: static; height: auto; z-index: auto; margin-top: 0; }
+.st-reqwrap { position: static; left: auto; right: auto; bottom: auto; }
+.st-reqform { box-shadow: none; padding-block: 18px; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
+.st-list { position: static; width: auto; max-width: none; margin: 0; border-radius: 0; border-inline: 0; max-height: none; }
+.st-flash { position: fixed; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 45; }
+.st-body { padding-bottom: 72px; }
+@media (max-width: 640px) { .st-body { padding-bottom: 48px; } .st-reqform { padding-block: 12px; padding-inline: 10px; } }

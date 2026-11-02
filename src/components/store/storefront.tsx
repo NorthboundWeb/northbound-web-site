@@ -171,7 +171,8 @@ export function Storefront() {
               type="button"
               className="st-basket"
               onClick={() => {
-                setListOpen((o) => !o)
+                setListOpen(true)
+                document.getElementById('st-request')?.scrollIntoView({ behavior: 'smooth', block: 'end' })
               }}
               aria-label={t('Basket')}
               aria-expanded={listOpen}
@@ -237,7 +238,7 @@ export function Storefront() {
       {open && <Sheet product={open} onClose={closeSheet} onAdd={add} />}
 
       {/* ---- request bar ---------------------------------------------------- */}
-      <div className="st-reqbar">
+      <div className="st-reqbar" id="st-request">
         <div className="st-reqwrap">
         {listOpen && (
           <div className="st-list" role="dialog" aria-label={t('Your basket')}>
