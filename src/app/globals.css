@@ -1512,3 +1512,10 @@ html:not([data-theme="dark"]) .menu-results a:hover b { color: var(--accent-deep
 html:not([data-theme="dark"]) .menu-message { background: var(--ink); color: #fff; }
 html:not([data-theme="dark"]) .menu-contact p { color: var(--muted); }
 html:not([data-theme="dark"]) .menu-contact a { color: var(--ink); }
+
+/* Concept sites (/demos/…): nothing may widen the page sideways. Something wider
+   than the screen made iPhone zoom the whole page out, leaving a dark strip on the
+   right. clip (not hidden) so the sticky bar at the top still sticks. */
+html:has(.demo-bar), body:has(.demo-bar) { overflow-x: clip; max-width: 100%; }
+.demo-bar ~ main { overflow-x: clip; max-width: 100vw; }
+.demo-bar ~ main > * { position: relative; max-width: 100%; }
