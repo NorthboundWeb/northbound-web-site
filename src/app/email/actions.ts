@@ -62,7 +62,7 @@ export async function emailRequest(input: { name: string; email: string; ref: st
   return deliver({
     name: String(input.name ?? ''),
     email: String(input.email ?? ''),
-    subject: `Free website request ${String(input.ref ?? '').slice(0, 20)}`,
+    subject: `Website request ${String(input.ref ?? '').slice(0, 20)}`,
     message: String(input.message ?? ''),
     startedAt: Number(input.startedAt),
     trap: '',

@@ -55,7 +55,7 @@ const SERVICES = [
 const FAQS = [
   {
     q: 'What does a website cost?',
-    a: `Pro is £249 and Ultimate is £349. Those are the prices, not starting points. Custom work starts from £349 and is quoted in writing before anything begins. Your first website is built free with no deposit: if you like it you buy it, and if you do not you owe nothing. After that, a 50% deposit starts each new website or system and the rest is due once you have approved it, before it goes live.`,
+    a: `Pro is £249 and Ultimate is £349. Those are the prices, not starting points. Custom work starts from £349 and is quoted in writing before anything begins. Your first website is built with no deposit up front: if you like it you buy it, and if you do not you owe nothing. After that, a 50% deposit starts each new website or system and the rest is due once you have approved it, before it goes live.`,
   },
   {
     q: 'How long does it take?',

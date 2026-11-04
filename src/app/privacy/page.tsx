@@ -27,7 +27,7 @@ const sections = [
   },
   {
     title: 'What I do not do',
-    body: 'I do not sell your details, share them with advertisers, or contact you after a free build unless you say you want to go ahead.',
+    body: 'I do not sell your details, share them with advertisers, or contact you after a first build unless you say you want to go ahead.',
   },
   {
     title: 'Your rights',

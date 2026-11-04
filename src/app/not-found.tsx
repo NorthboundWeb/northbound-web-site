@@ -8,7 +8,7 @@ export default function NotFound() {
         That page is not here<span className="kick">.</span>
       </h1>
       <p className="sub" style={{ marginInline: 'auto' }}>
-        It may have moved. Head home, or start your free website.
+        It may have moved. Head home, or start your first website.
       </p>
       <p style={{ marginTop: 28, display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
         <Link className="btn solid" href="/">

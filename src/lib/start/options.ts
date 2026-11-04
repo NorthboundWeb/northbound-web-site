@@ -5,9 +5,9 @@
  */
 
 export const OFFER = {
-  headline: 'I will build your first website for free.',
+  headline: 'I will build your first website before you pay.',
   points: [
-    { id: 'free', title: 'Free to build', body: 'Your first website: no deposit and nothing to pay up front. After that, new work starts with a 50% deposit.' },
+    { id: 'free', title: 'No deposit', body: 'Your first website: no deposit and nothing to pay up front. After that, new work starts with a 50% deposit.' },
     { id: 'buy', title: 'Like it? Buy it.', body: 'If you love it, you buy it. If you do not, I will not contact you again.' },
     { id: 'any', title: 'Websites or systems', body: 'Sites, booking systems, shops, portals, tools. Tell me what you need.' },
     { id: 'no-obligation', title: 'No obligation', body: 'If you do not like my approach at all, you do not have to go ahead with anything.' },
@@ -210,7 +210,7 @@ export function composeRequest(f: StartForm, today: string, photoCount: number) 
   const socials = f.socials.map((s) => s.trim()).filter(Boolean)
   const kind = f.date ? dayKind(today, f.date) : 'open'
   const lines = [
-    'Hi Che, here is my free website request.',
+    'Hi Che, here is my website request.',
     '',
     f.name.trim() ? `Name: ${f.name.trim()}` : '',
     `Wanted by: ${f.date ? fmtDay(f.date, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '-'}${kind === 'maybe' ? ' (inside the possible-delay window)' : ''}`,

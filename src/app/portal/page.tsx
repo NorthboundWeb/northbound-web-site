@@ -34,7 +34,7 @@ export default async function PortalPage({ searchParams }: { searchParams: Promi
           )}
           <SignInForm googleClientId={process.env.GOOGLE_CLIENT_ID || undefined} />
           <p className="note" style={{ marginTop: 28 }}>
-            Not a client yet? <Link href="/start">Get your first website built free</Link>.
+            Not a client yet? <Link href="/start">Get your first website built, pay only if you like it</Link>.
           </p>
         </section>
       </PageShell>

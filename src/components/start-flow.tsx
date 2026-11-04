@@ -483,7 +483,7 @@ export function StartFlow() {
 
   return (
     <>
-      <TopBar count={isOffer ? 'Free build' : `${at} / ${STEPS.length - 1}`} progress={at / (STEPS.length - 1)} />
+      <TopBar count={isOffer ? 'First build' : `${at} / ${STEPS.length - 1}`} progress={at / (STEPS.length - 1)} />
       <div className="sf-wrap" id="main">
         <nav className="sf-rail" aria-label="Steps">
           <ol>
@@ -537,7 +537,7 @@ export function StartFlow() {
                   <h1 className="display sf-hero" tabIndex={-1} ref={heading}>
                     {OFFER.headline}
                   </h1>
-                  <p className="sub">Your first website is on me. Tell me what you need and I build it. If you love it, you buy it. If you do not, I will not contact you again. After that, new websites and systems start with a 50% deposit.</p>
+                  <p className="sub">Your first website is built before you pay. Tell me what you need and I build it. If you love it, you buy it. If you do not, I will not contact you again. After that, new websites and systems start with a 50% deposit.</p>
                   <div className="sf-offer">
                     {OFFER.points.map((p) => (
                       <button key={p.id} type="button" className="sf-offer-card" onClick={() => goTo('build')}>
@@ -938,7 +938,7 @@ export function StartFlow() {
             </button>
           )}
           <button className="btn solid grow" type="submit" form="sf-form" disabled={processing}>
-            {isOffer ? 'Get my free website' : step === 'review' ? 'Send on WhatsApp' : step === 'photos' && !photos.length ? 'Skip for now' : 'Continue'}
+            {isOffer ? 'Get my first website' : step === 'review' ? 'Send on WhatsApp' : step === 'photos' && !photos.length ? 'Skip for now' : 'Continue'}
           </button>
         </div>
         {!isOffer && saved && <p className="fine">Saved on this device. You can close this and come back.</p>}

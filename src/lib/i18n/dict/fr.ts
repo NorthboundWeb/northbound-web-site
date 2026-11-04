@@ -58,7 +58,7 @@ export const fr: Record<string, string> = {
   'Your message': 'Votre message',
   'Or type your own message…': 'Ou écrivez votre propre message…',
   'Opens WhatsApp with your message ready to send. No calls.': 'Ouvre WhatsApp avec votre message prêt à envoyer. Pas d’appels.',
-  'Get your first {word} built free': 'Première réalisation offerte : {word}',
+  'Get your first {word} built, pay only if you like it': 'Votre première réalisation : {word}. Vous ne payez que si ça vous plaît',
   website: 'site web',
   'booking system': 'système de réservation',
   'Shopify shop': 'boutique Shopify',
@@ -102,7 +102,6 @@ export const fr: Record<string, string> = {
 
   // home: FAQ
   'What does a website cost?': 'Combien coûte un site web ?',
-  'Pro is £249 and Ultimate is £349. Those are the prices, not starting points. Custom work starts from £349 and is quoted in writing before anything begins. Your first website is built free with no deposit: if you like it you buy it, and if you do not you owe nothing. After that, a 50% deposit starts each new website or system and the rest is due once you have approved it, before it goes live.': 'Pro coûte £249 et Ultimate £349. Ce sont les prix, pas des prix de départ. Le sur-mesure commence à £349 et fait l’objet d’un devis écrit avant tout démarrage. Votre premier site est réalisé gratuitement et sans acompte : s’il vous plaît, vous l’achetez, sinon vous ne devez rien. Ensuite, un acompte de 50 % lance chaque nouveau site ou système, et le solde est dû une fois que vous l’avez approuvé, avant la mise en ligne.',
   'How long does it take?': 'Combien de temps cela prend-il ?',
   'Up to 24 hours to process your request, then an estimated 72 hours to build. Larger requests, custom builds and systems take longer, and I tell you the date before I start. These are estimates, not guarantees: slow content or feedback moves the date.': 'Jusqu’à 24 heures pour traiter votre demande, puis environ 72 heures estimées de réalisation. Les demandes plus importantes, le sur-mesure et les systèmes prennent plus de temps, et je vous donne la date avant de commencer. Ce sont des estimations, pas des garanties : un contenu ou des retours tardifs décalent la date.',
   'Do I own the website?': 'Le site m’appartient-il ?',
@@ -118,7 +117,6 @@ export const fr: Record<string, string> = {
   Conversation: 'Échange',
   'A few messages to work out what the site is for, who it is talking to, and which package fits. No charge and no obligation — and if a smaller package would do the job, that is the one I will point you at.': 'Quelques messages pour comprendre à quoi sert le site, à qui il s’adresse et quel forfait convient. Sans frais et sans engagement ; et si un forfait plus petit suffit, c’est celui-là que je vous conseillerai.',
   Confirmation: 'Confirmation',
-  'You know the price before anything starts, because it is published. For a Custom build, the scope and the final figure are agreed in writing first. Your first website is built free with no deposit, and you only pay if you want to keep it. After that, a 50% deposit secures each project, and the remaining 50% is payable once it is complete and approved, before it goes live.': 'Vous connaissez le prix avant de commencer, car il est publié. Pour le sur-mesure, le périmètre et le montant final sont d’abord convenus par écrit. Votre premier site est réalisé gratuitement et sans acompte, et vous ne payez que si vous voulez le garder. Ensuite, un acompte de 50 % sécurise chaque projet, et les 50 % restants sont dus une fois le travail terminé et approuvé, avant la mise en ligne.',
   Design: 'Conception',
   'Structure and layout first, then the visual design, reviewed with you before a line of production code is written. Changing a design is cheap; changing a built site is not.': 'D’abord la structure et la mise en page, puis le design visuel, validés avec vous avant d’écrire la moindre ligne de code définitif. Modifier un design coûte peu ; modifier un site déjà construit, beaucoup plus.',
   Build: 'Réalisation',
@@ -130,7 +128,6 @@ export const fr: Record<string, string> = {
 
   // home: terms
   Payment: 'Paiement',
-  'Your first website with Northbound is built free, with no deposit. If you like it, you buy it at the package price; if you do not, you owe nothing and I will not contact you again.': 'Votre premier site avec Northbound est réalisé gratuitement, sans acompte. S’il vous plaît, vous l’achetez au prix du forfait ; sinon, vous ne devez rien et je ne vous recontacterai pas.',
   'After that, any further website or system starts with a 50% deposit — £124.50 on Pro, £174.50 on Ultimate.': 'Ensuite, tout autre site ou système démarre avec un acompte de 50 % : £124,50 en Pro, £174,50 en Ultimate.',
   'On deposit work, the remaining 50% is payable once it is complete and approved, before it goes live.': 'Pour les travaux avec acompte, les 50 % restants sont dus une fois le travail terminé et approuvé, avant la mise en ligne.',
   'Northbound is not VAT registered, so no VAT is added to any price.': 'Northbound n’est pas assujettie à la TVA ; aucune TVA n’est donc ajoutée aux prix.',

@@ -241,7 +241,7 @@ export const commercialTerms: { title: string; points: string[] }[] = [
   {
     title: 'Payment',
     points: [
-      'Your first website with Northbound is built free, with no deposit. If you like it, you buy it at the package price; if you do not, you owe nothing and I will not contact you again.',
+      'Your first website with Northbound is built with no deposit. If you like it, you buy it at the package price; if you do not, you owe nothing and I will not contact you again.',
       'After that, any further website or system starts with a 50% deposit — £124.50 on Pro, £174.50 on Ultimate.',
       'On deposit work, the remaining 50% is payable once it is complete and approved, before it goes live.',
       'Northbound is not VAT registered, so no VAT is added to any price.',
@@ -295,7 +295,7 @@ export const process = [
   {
     step: '02',
     title: 'Confirmation',
-    body: 'You know the price before anything starts, because it is published. For a Custom build, the scope and the final figure are agreed in writing first. Your first website is built free with no deposit, and you only pay if you want to keep it. After that, a 50% deposit secures each project, and the remaining 50% is payable once it is complete and approved, before it goes live.',
+    body: 'You know the price before anything starts, because it is published. For a Custom build, the scope and the final figure are agreed in writing first. Your first website is built with no deposit, and you only pay if you want to keep it. After that, a 50% deposit secures each project, and the remaining 50% is payable once it is complete and approved, before it goes live.',
   },
   {
     step: '03',

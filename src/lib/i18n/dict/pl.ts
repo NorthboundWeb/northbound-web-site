@@ -58,7 +58,7 @@ export const pl: Record<string, string> = {
   'Your message': 'Twoja wiadomość',
   'Or type your own message…': 'Albo wpisz własną wiadomość…',
   'Opens WhatsApp with your message ready to send. No calls.': 'Otwiera WhatsApp z gotową wiadomością. Bez telefonów.',
-  'Get your first {word} built free': 'Pierwsza realizacja za darmo: {word}',
+  'Get your first {word} built, pay only if you like it': 'Twoja pierwsza realizacja: {word}. Płacisz tylko, jeśli ci się spodoba',
   website: 'strona internetowa',
   'booking system': 'system rezerwacji',
   'Shopify shop': 'sklep Shopify',
@@ -102,7 +102,6 @@ export const pl: Record<string, string> = {
 
   // home: FAQ
   'What does a website cost?': 'Ile kosztuje strona internetowa?',
-  'Pro is £249 and Ultimate is £349. Those are the prices, not starting points. Custom work starts from £349 and is quoted in writing before anything begins. Your first website is built free with no deposit: if you like it you buy it, and if you do not you owe nothing. After that, a 50% deposit starts each new website or system and the rest is due once you have approved it, before it goes live.': 'Pro kosztuje £249, a Ultimate £349. To są ceny, a nie kwoty „od”. Prace na zamówienie zaczynają się od £349 i są wyceniane na piśmie przed startem. Pierwsza strona jest zbudowana za darmo i bez zaliczki: jeśli Ci się spodoba, kupujesz ją, a jeśli nie, nic nie jesteś winien. Potem zaliczka 50% rozpoczyna każdą kolejną stronę lub system, a reszta jest płatna po Twojej akceptacji, przed publikacją.',
   'How long does it take?': 'Jak długo to trwa?',
   'Up to 24 hours to process your request, then an estimated 72 hours to build. Larger requests, custom builds and systems take longer, and I tell you the date before I start. These are estimates, not guarantees: slow content or feedback moves the date.': 'Do 24 godzin na przetworzenie zgłoszenia, potem szacunkowo 72 godziny na budowę. Większe zgłoszenia, prace na zamówienie i systemy trwają dłużej, a datę podaję przed startem. To szacunki, nie gwarancje: opóźnione materiały lub uwagi przesuwają termin.',
   'Do I own the website?': 'Czy strona należy do mnie?',
@@ -118,7 +117,6 @@ export const pl: Record<string, string> = {
   Conversation: 'Rozmowa',
   'A few messages to work out what the site is for, who it is talking to, and which package fits. No charge and no obligation — and if a smaller package would do the job, that is the one I will point you at.': 'Kilka wiadomości, by ustalić, do czego służy strona, do kogo mówi i który pakiet pasuje. Bez opłat i bez zobowiązań, a jeśli wystarczy mniejszy pakiet, to właśnie jego Ci wskażę.',
   Confirmation: 'Potwierdzenie',
-  'You know the price before anything starts, because it is published. For a Custom build, the scope and the final figure are agreed in writing first. Your first website is built free with no deposit, and you only pay if you want to keep it. After that, a 50% deposit secures each project, and the remaining 50% is payable once it is complete and approved, before it goes live.': 'Cenę znasz przed startem, bo jest opublikowana. Przy pracy na zamówienie zakres i końcową kwotę ustalamy najpierw na piśmie. Pierwsza strona jest zbudowana za darmo i bez zaliczki, a płacisz tylko wtedy, gdy chcesz ją zatrzymać. Potem zaliczka 50% zabezpiecza każdy projekt, a pozostałe 50% płatne jest po ukończeniu i akceptacji, przed publikacją.',
   Design: 'Projekt',
   'Structure and layout first, then the visual design, reviewed with you before a line of production code is written. Changing a design is cheap; changing a built site is not.': 'Najpierw struktura i układ, potem projekt graficzny, omawiany z Tobą, zanim powstanie choć linijka docelowego kodu. Zmiana projektu jest tania; zmiana gotowej strony nie.',
   Build: 'Budowa',
@@ -130,7 +128,6 @@ export const pl: Record<string, string> = {
 
   // home: terms
   Payment: 'Płatność',
-  'Your first website with Northbound is built free, with no deposit. If you like it, you buy it at the package price; if you do not, you owe nothing and I will not contact you again.': 'Pierwsza strona w Northbound jest zbudowana za darmo, bez zaliczki. Jeśli Ci się spodoba, kupujesz ją w cenie pakietu; jeśli nie, nic nie jesteś winien i nie odezwę się więcej.',
   'After that, any further website or system starts with a 50% deposit — £124.50 on Pro, £174.50 on Ultimate.': 'Potem każda kolejna strona lub system zaczyna się od zaliczki 50%: £124,50 w Pro, £174,50 w Ultimate.',
   'On deposit work, the remaining 50% is payable once it is complete and approved, before it goes live.': 'Przy pracach z zaliczką pozostałe 50% jest płatne po ukończeniu i akceptacji, przed publikacją.',
   'Northbound is not VAT registered, so no VAT is added to any price.': 'Northbound nie jest zarejestrowana jako płatnik VAT, więc do żadnej ceny nie dolicza się VAT.',
