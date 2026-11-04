@@ -942,7 +942,7 @@ export function StartFlow() {
           </button>
         </div>
         {!isOffer && saved && <p className="fine">Saved on this device. You can close this and come back.</p>}
-        {isOffer && <p className="fine">First website free · No deposit · No calls</p>}
+        {isOffer && <p className="fine">Pay only if you like it · No deposit · No calls</p>}
       </div>
     </>
   )

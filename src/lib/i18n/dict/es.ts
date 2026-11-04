@@ -24,7 +24,7 @@ export const es: Record<string, string> = {
   Pages: 'Páginas',
   'Websites for UK small businesses. Priced up front, built properly, yours to keep.': 'Sitios web para pequeñas empresas del Reino Unido. Con precio desde el principio, bien hechos y tuyos para siempre.',
   '© Northbound Web · United Kingdom': '© Northbound Web · Reino Unido',
-  'First website free': 'Primer sitio web gratis',
+  'Pay only if you like it': 'Paga solo si te gusta',
   'Click a site to open it': 'Haz clic en un sitio para abrirlo',
   'Tap a site to open it': 'Toca un sitio para abrirlo',
   'Translations are provided for convenience. If anything differs, the English version applies.': 'Las traducciones son a modo orientativo. Si algo difiere, prevalece la versión en inglés.',

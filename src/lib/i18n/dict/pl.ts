@@ -24,7 +24,7 @@ export const pl: Record<string, string> = {
   Pages: 'Strony',
   'Websites for UK small businesses. Priced up front, built properly, yours to keep.': 'Strony internetowe dla małych firm w Wielkiej Brytanii. Cena z góry, solidne wykonanie, na zawsze Twoje.',
   '© Northbound Web · United Kingdom': '© Northbound Web · Wielka Brytania',
-  'First website free': 'Pierwsza strona za darmo',
+  'Pay only if you like it': 'Płacisz tylko, jeśli ci się spodoba',
   'Click a site to open it': 'Kliknij stronę, aby ją otworzyć',
   'Tap a site to open it': 'Dotknij strony, aby ją otworzyć',
   'Translations are provided for convenience. If anything differs, the English version applies.': 'Tłumaczenia mają charakter pomocniczy. W razie rozbieżności obowiązuje wersja angielska.',
