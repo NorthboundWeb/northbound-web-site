@@ -172,7 +172,7 @@ textarea { resize: vertical; }
 .foot a { color: inherit; }
 
 /* Northbound intro curtain (from Northbound Intro v2.3.0). Plays once per browser session. */
-.nb-intro { position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center; background: #05070a; animation: nb-lift 1.2s cubic-bezier(.76, 0, .24, 1) 3.95s forwards; will-change: transform; }
+.nb-intro { position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center; background: #000; animation: nb-lift 1.2s cubic-bezier(.76, 0, .24, 1) 3.95s forwards; will-change: transform; }
 .nb-intro__art { position: relative; width: max(204px, min(54vw, 426px, 110vh)); aspect-ratio: 468/256; animation: nb-settle .9s cubic-bezier(.4, 0, .2, 1) 3.3s forwards; }
 .nb-intro__mark { position: absolute; left: 16.03%; top: 0; width: 76.71%; aspect-ratio: 359/156; }
 .nb-intro__wordmark { position: absolute; left: 0; top: 70.7%; width: 100%; aspect-ratio: 468/75; }
@@ -419,7 +419,7 @@ html:not([data-nb-intro="seen"]) body { overflow: hidden; }
 .message-pill:hover { background: #000; }
 
 /* logo curtain: a short cut of the intro used on page changes */
-.nb-curtain { position: fixed; inset: 0; z-index: 99998; background: #05070a; display: grid; place-items: center; }
+.nb-curtain { position: fixed; inset: 0; z-index: 99998; background: #000; display: grid; place-items: center; }
 .nb-curtain.is-cover { animation: nb-cover .65s cubic-bezier(.76, 0, .24, 1) both; }
 .nb-curtain.is-lift { animation: nb-lift .75s cubic-bezier(.76, 0, .24, 1) forwards; }
 @keyframes nb-cover { from { transform: translateY(100%); } to { transform: translateY(0); } }
