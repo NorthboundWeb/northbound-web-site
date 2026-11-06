@@ -407,7 +407,7 @@ export function StartFlow() {
       done: !!(f.website.trim() || filledSocials.length || f.portfolio.trim()),
     },
     { id: 'date', label: 'Wanted by', value: f.date ? fmtDay(f.date, { weekday: 'short', day: 'numeric', month: 'short' }) : 'Pick a date', done: !!f.date },
-    { id: 'you', label: 'You', value: f.name.trim() ? `${f.name.trim()} · ${f.replyVia === 'whatsapp' ? 'WhatsApp' : f.replyVia === 'email' ? 'Email' : 'reply?'}` : 'Not filled in', done: !!(f.name.trim() && f.replyVia && (f.replyVia !== 'email' || f.email.trim())) },
+    { id: 'you', label: 'You', value: f.name.trim() ? `${f.name.trim()} · ${f.replyVia === 'whatsapp' ? 'WhatsApp' : f.replyVia === 'email' ? 'Email' : 'reply?'}` : 'Not filled in', done: !!(f.name.trim() && ((f.replyVia === 'email' && f.email.trim()) || (f.replyVia === 'whatsapp' && f.phone.trim()))) },
   ]
   const doneCount = summary.filter((s) => s.done).length
 
@@ -864,10 +864,7 @@ export function StartFlow() {
                   </h1>
                   <p className="sub">No calls. Your request goes to me as a WhatsApp message, and I reply there or by email.</p>
                   <div className="body stack">
-                    <div className="grid2">
-                      {input('name', 'Your name', { ac: 'name' })}
-                      {input('email', 'Email', { type: 'email', ac: 'email', optional: f.replyVia !== 'email' })}
-                    </div>
+                    {input('name', 'Your name', { ac: 'name' })}
                     <div className="cards" role="group" aria-label="How should I reply" id="sf-replyVia" tabIndex={-1}>
                       {REPLY_OPTIONS.map((r) => (
                         <button key={r.id} type="button" className="card" aria-pressed={f.replyVia === r.id} onClick={() => set('replyVia', r.id)}>
@@ -877,6 +874,18 @@ export function StartFlow() {
                       ))}
                     </div>
                     {err('replyVia')}
+                    {f.replyVia === 'whatsapp' && (
+                      <>
+                        {input('phone', 'Your WhatsApp number', { type: 'tel', ac: 'tel', placeholder: '07123 456789' })}
+                        <p className="sub">Put the phone number you use for WhatsApp so I can message you back.</p>
+                      </>
+                    )}
+                    {f.replyVia === 'email' && (
+                      <>
+                        {input('email', 'Your email', { type: 'email', ac: 'email', placeholder: 'you@example.com' })}
+                        <p className="sub">Put the email address you would like the reply sent to.</p>
+                      </>
+                    )}
                   </div>
                 </>
               )}

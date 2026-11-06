@@ -190,8 +190,15 @@ export function validateStep(step: StepId, f: StartForm, today: string): Record<
     else if (n.length > 100) e.name = 'That name is too long.'
     if (!REPLY_OPTIONS.some((r) => r.id === f.replyVia)) e.replyVia = 'Pick how you would like me to reply.'
     const em = f.email.trim()
-    if (f.replyVia === 'email' && !em) e.email = 'Add the email you would like the reply sent to.'
-    else if (em && (!EMAIL_RE.test(em) || em.length > 200)) e.email = 'That email address does not look complete.'
+    if (f.replyVia === 'email') {
+      if (!em) e.email = 'Add the email you would like the reply sent to.'
+      else if (!EMAIL_RE.test(em) || em.length > 200) e.email = 'That email address does not look complete.'
+    }
+    if (f.replyVia === 'whatsapp') {
+      const digits = f.phone.replace(/[^\d]/g, '')
+      if (!f.phone.trim()) e.phone = 'Add the phone number you use for WhatsApp.'
+      else if (digits.length < 10 || digits.length > 15 || !/^[\d\s()+-]+$/.test(f.phone.trim())) e.phone = 'That phone number does not look right.'
+    }
   }
   return e
 }
@@ -214,7 +221,7 @@ export function composeRequest(f: StartForm, today: string, photoCount: number) 
     '',
     f.name.trim() ? `Name: ${f.name.trim()}` : '',
     `Wanted by: ${f.date ? fmtDay(f.date, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : '-'}${kind === 'maybe' ? ' (inside the possible-delay window)' : ''}`,
-    `Reply by: ${reply}${f.replyVia === 'email' ? ` (${f.email.trim()})` : ' (this chat)'}`,
+    `Reply by: ${reply} (${f.replyVia === 'email' ? f.email.trim() : f.phone.trim()})`,
     `Build: ${f.build.join(', ')}`,
     f.business.trim() ? `Business: ${f.business.trim()}` : '',
     f.trade.trim() ? `What I do: ${f.trade.trim()}` : '',
