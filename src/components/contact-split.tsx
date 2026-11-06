@@ -135,7 +135,7 @@ export function ContactSplit() {
         <Link href="/start" className="split-big">
           {t('Start a project')} <span aria-hidden="true">→</span>
         </Link>
-        <p className="split-sub">{t('No deposit. Like it? Buy it. Don’t? I won’t contact you again.')}</p>
+        <p className="split-sub">{t('Free model, no deposit. Like it? Buy the final site. Don’t? I won’t contact you again.')}</p>
         <div className="split-jumps" role="group" aria-label={t('Jump straight to what you need')}>
           {JUMPS.map((j) => (
             <Link key={j.build} href={`/start?build=${j.build}`} className="split-jump">

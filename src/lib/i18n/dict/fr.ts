@@ -64,7 +64,6 @@ export const fr: Record<string, string> = {
   'Shopify shop': 'boutique Shopify',
   'landing page': 'page d’atterrissage',
   'web app': 'application web',
-  'No deposit. Like it? Buy it. Don’t? I won’t contact you again.': 'Sans acompte. Il vous plaît ? Achetez-le. Sinon ? Je ne vous recontacterai pas.',
   'Jump straight to what you need': 'Allez droit à ce dont vous avez besoin',
   'New website': 'Nouveau site',
   'Landing page': 'Page d’atterrissage',
