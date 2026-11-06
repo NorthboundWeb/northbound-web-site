@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { PageShell } from '@/components/page-shell'
+import { BANK_DETAILS } from '@/lib/contact'
 import { COMPLIMENTARY_MONTH_TERMS, commercialTerms, managementTerms } from '@/lib/services'
 
 export const metadata: Metadata = { title: 'Terms' }
@@ -40,6 +41,17 @@ export default function TermsPage() {
               {managementTerms.map((p) => (
                 <li key={p}>{p}</li>
               ))}
+            </ul>
+          </div>
+
+          <div style={{ marginBottom: 28 }}>
+            <h2 className="section-h" style={{ fontSize: 'clamp(22px, 3vw, 30px)' }}>How to pay</h2>
+            <ul style={{ maxWidth: '46rem', paddingLeft: 20, display: 'grid', gap: 8 }}>
+              <li>Payment is by bank transfer. Pay only when an invoice or amount has been agreed with you.</li>
+              <li>Account name: {BANK_DETAILS.accountName}</li>
+              <li>Sort code: {BANK_DETAILS.sortCode}</li>
+              <li>Account number: {BANK_DETAILS.accountNumber}</li>
+              <li>Please use the name of your business as the payment reference.</li>
             </ul>
           </div>
 

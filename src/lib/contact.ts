@@ -22,3 +22,10 @@ export function whatsappHref(text: string = GREETING) {
 }
 
 export const messageLabel = WHATSAPP_NUMBER ? 'Message me on WhatsApp' : 'Message me on Instagram'
+
+/** Bank transfer details shown on the terms page. Payee details only, no card or login information. */
+export const BANK_DETAILS = {
+  accountName: 'Che Walker trading as Northbound Web',
+  accountNumber: '67872477',
+  sortCode: '04-00-06',
+} as const
