@@ -5,10 +5,10 @@
  */
 
 export const OFFER = {
-  headline: 'I will build your first website before you pay.',
+  headline: 'I will build you a free model of your website.',
   points: [
-    { id: 'free', title: 'No deposit', body: 'Your first website: no deposit and nothing to pay up front. After that, new work starts with a 50% deposit.' },
-    { id: 'buy', title: 'Like it? Buy it.', body: 'If you love it, you buy it. If you do not, I will not contact you again.' },
+    { id: 'free', title: 'Free model', body: 'A model of your first website, built for free with no deposit. The final website is paid for. After that, new work starts with a 50% deposit.' },
+    { id: 'buy', title: 'Like it? Buy the final site.', body: 'If you love the model, you pay for the final website. If you do not, you owe nothing and I will not contact you again.' },
     { id: 'any', title: 'Websites or systems', body: 'Sites, booking systems, shops, portals, tools. Tell me what you need.' },
     { id: 'no-obligation', title: 'No obligation', body: 'If you do not like my approach at all, you do not have to go ahead with anything.' },
   ],

@@ -62,7 +62,7 @@ export function ContactSplit() {
   }
 
   const shown = text.trim()
-  const [pre, post] = t('Get your first {word} built, pay only if you like it').split('{word}')
+  const [pre, post] = t('Get a free model of your {word} built').split('{word}')
 
   return (
     <section id="contact" className="split" aria-label={t('Get in touch')}>

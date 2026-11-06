@@ -49,7 +49,7 @@ export async function SiteFooter() {
       </div>
       <div className="wrap foot-base">
         <span>{t('© Northbound Web · United Kingdom')}</span>
-        <span>{t('Pay only if you like it')}</span>
+        <span>{t('Free model, then pay if you like it')}</span>
       </div>
     </footer>
   )

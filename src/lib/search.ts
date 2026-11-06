@@ -28,7 +28,7 @@ export const SEARCH_INDEX: SearchItem[] = [
   { href: '/tools', title: 'Check your website', kind: 'Tool', words: 'site check score speed google padlock phone quiz tool' },
   { href: '/portal', title: 'Client login', kind: 'Clients', words: 'client login sign in account progress my website status portal' },
   { href: '/email', title: 'Email me', kind: 'Contact', words: 'email contact message write enquiry' },
-  { href: '/start', title: 'Start a project', kind: 'First build', words: 'start project first build no deposit quote enquiry contact book booking get started photos date message whatsapp email' },
+  { href: '/start', title: 'Start a project', kind: 'Free model', words: 'start project first build no deposit quote enquiry contact book booking get started photos date message whatsapp email' },
 ]
 
 export function search(q: string): SearchItem[] {

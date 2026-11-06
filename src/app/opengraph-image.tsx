@@ -11,8 +11,8 @@ export default function OpengraphImage() {
       <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#06080d', padding: 80, color: '#fff' }}>
         <div style={{ display: 'flex', fontSize: 34, color: '#8fb6ff', letterSpacing: -1 }}>Northbound Web</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <div style={{ display: 'flex', fontSize: 84, fontWeight: 700, letterSpacing: -3, lineHeight: 1.02 }}>I will build your first website before you pay.</div>
-          <div style={{ display: 'flex', fontSize: 32, color: '#a3adbd' }}>No deposit. Like it? Buy it. UK small businesses.</div>
+          <div style={{ display: 'flex', fontSize: 84, fontWeight: 700, letterSpacing: -3, lineHeight: 1.02 }}>I will build you a free model of your website.</div>
+          <div style={{ display: 'flex', fontSize: 32, color: '#a3adbd' }}>The final website is paid, and only if you like the model. UK small businesses.</div>
         </div>
         <div style={{ display: 'flex', width: 120, height: 8, borderRadius: 4, background: '#2f7bff' }} />
       </div>

@@ -426,7 +426,7 @@ export function StartFlow() {
             Press send in WhatsApp, {first}<span className="kick">.</span>
           </h1>
           <p className="sub">
-            Your request is typed out in a WhatsApp chat with me. Press send there and I will reply {how}. Nothing to pay for your first website unless you love it.
+            Your request is typed out in a WhatsApp chat with me. Press send there and I will reply {how}. The model is free. The final website is paid, and only if you love the model.
           </p>
           <div className="sf-sendbox">
             <a className="btn solid" href={sent.href} target="_blank" rel="noopener noreferrer">
@@ -483,7 +483,7 @@ export function StartFlow() {
 
   return (
     <>
-      <TopBar count={isOffer ? 'First build' : `${at} / ${STEPS.length - 1}`} progress={at / (STEPS.length - 1)} />
+      <TopBar count={isOffer ? 'Free model' : `${at} / ${STEPS.length - 1}`} progress={at / (STEPS.length - 1)} />
       <div className="sf-wrap" id="main">
         <nav className="sf-rail" aria-label="Steps">
           <ol>
@@ -537,7 +537,7 @@ export function StartFlow() {
                   <h1 className="display sf-hero" tabIndex={-1} ref={heading}>
                     {OFFER.headline}
                   </h1>
-                  <p className="sub">Your first website is built before you pay. Tell me what you need and I build it. If you love it, you buy it. If you do not, I will not contact you again. After that, new websites and systems start with a 50% deposit.</p>
+                  <p className="sub">The model is free. It shows you how your website could look and work. The final website is not free: if you love the model, you buy the full website at the published package price. If you do not, you owe nothing and I will not contact you again. After that, new websites and systems start with a 50% deposit.</p>
                   <div className="sf-offer">
                     {OFFER.points.map((p) => (
                       <button key={p.id} type="button" className="sf-offer-card" onClick={() => goTo('build')}>
@@ -938,11 +938,11 @@ export function StartFlow() {
             </button>
           )}
           <button className="btn solid grow" type="submit" form="sf-form" disabled={processing}>
-            {isOffer ? 'Get my first website' : step === 'review' ? 'Send on WhatsApp' : step === 'photos' && !photos.length ? 'Skip for now' : 'Continue'}
+            {isOffer ? 'Get my free model' : step === 'review' ? 'Send on WhatsApp' : step === 'photos' && !photos.length ? 'Skip for now' : 'Continue'}
           </button>
         </div>
         {!isOffer && saved && <p className="fine">Saved on this device. You can close this and come back.</p>}
-        {isOffer && <p className="fine">Pay only if you like it · No deposit · No calls</p>}
+        {isOffer && <p className="fine">Free model · Final website is paid · No calls</p>}
       </div>
     </>
   )
