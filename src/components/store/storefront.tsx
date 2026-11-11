@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { whatsappHref } from '@/lib/contact'
 import { CATEGORIES, PRODUCTS, priceLabel, searchProducts, type CategoryId, type Product } from '@/lib/store/catalog'
+import { checkDiscount } from '@/app/store/actions'
+import { discounted } from '@/lib/store/discounts'
 import { useT } from '../lang-provider'
 import { Aurora, COOL_PALETTE } from '../aurora'
 import { ProductArt } from './product-art'
@@ -53,6 +55,9 @@ export function Storefront() {
   const [listOpen, setListOpen] = useState(false)
   const [request, setRequest] = useState('')
   const [flash, setFlash] = useState('')
+  const [disc, setDisc] = useState<{ code: string; percent: number; label: string } | null>(null)
+  const [codeIn, setCodeIn] = useState('')
+  const [codeMsg, setCodeMsg] = useState('')
   const loaded = useRef(false)
   const requestBox = useRef<HTMLInputElement>(null)
   const closeSheet = useCallback(() => setOpen(null), [])
@@ -118,10 +123,30 @@ export function Storefront() {
     window.setTimeout(() => setFlash(''), 1800)
   }
 
+  const priceOf = (p: Product) => {
+    if (p.price === null) return priceLabel(p)
+    const base = disc ? discounted(p.price, disc.percent) : p.price
+    return [p.pricePrefix, `£${base.toLocaleString('en-GB')}`, p.priceSuffix].filter(Boolean).join(' ') + (disc ? ` (was £${p.price.toLocaleString('en-GB')})` : '')
+  }
+  const total = list.reduce((n, l) => {
+    const p = PRODUCTS.find((x) => x.id === l.id)
+    return p && p.price !== null ? n + (disc ? discounted(p.price, disc.percent) : p.price) * l.qty : n
+  }, 0)
+
+  async function applyCode() {
+    if (!codeIn.trim()) return
+    const r = await checkDiscount(codeIn)
+    if (r.ok) {
+      setDisc({ code: r.code, percent: r.percent, label: r.label })
+      setCodeMsg('')
+      setCodeIn('')
+    } else setCodeMsg(r.message)
+  }
+
   const listText = list
     .map((l) => {
       const p = PRODUCTS.find((x) => x.id === l.id)
-      return p ? `• ${p.name}${l.option ? ` (${l.option})` : ''}${l.qty > 1 ? ` × ${l.qty}` : ''} — ${priceLabel(p)}` : ''
+      return p ? `• ${p.name}${l.option ? ` (${l.option})` : ''}${l.qty > 1 ? ` × ${l.qty}` : ''} — ${priceOf(p)}` : ''
     })
     .filter(Boolean)
     .join('\n')
@@ -129,6 +154,7 @@ export function Storefront() {
   function send() {
     const parts = ['Hi Che, I found this on the store.']
     if (listText) parts.push(`My list:\n${listText}`)
+    if (disc) parts.push(`Discount code: ${disc.code} (${disc.label})`)
     if (request.trim()) parts.push(`I'd also like: ${request.trim()}`)
     window.open(whatsappHref(parts.join('\n\n')), '_blank', 'noopener,noreferrer')
   }
@@ -264,7 +290,7 @@ export function Storefront() {
                         <b>{p.name}</b>
                         <small>
                           {l.option ? `${l.option} · ` : ''}
-                          {t(priceLabel(p))}
+                          {t(priceOf(p))}
                         </small>
                       </span>
                       <span className="st-qty">
@@ -280,6 +306,33 @@ export function Storefront() {
                   )
                 })}
               </ul>
+            )}
+            {list.length > 0 && (
+              <div className="st-opt">
+                {disc ? (
+                  <p className="st-small">
+                    {t('Code')} <b>{disc.code}</b> · {t(disc.label)}{' '}
+                    <button type="button" className="st-x" onClick={() => setDisc(null)} aria-label={t('Remove code')}>
+                      ×
+                    </button>
+                  </p>
+                ) : (
+                  <form
+                    className="st-opt-row"
+                    onSubmit={(e) => {
+                      e.preventDefault()
+                      void applyCode()
+                    }}
+                  >
+                    <input value={codeIn} onChange={(e) => setCodeIn(e.target.value)} placeholder={t('Discount code')} autoComplete="off" autoCapitalize="characters" aria-label={t('Discount code')} />
+                    <button type="submit" className="pill sm">
+                      {t('Apply')}
+                    </button>
+                  </form>
+                )}
+                {codeMsg && <p className="st-small">{t(codeMsg)}</p>}
+                {total > 0 && <p className="st-small">{t('Total of priced items')}: £{total.toLocaleString('en-GB', { maximumFractionDigits: 2 })}</p>}
+              </div>
             )}
             {list.length > 0 && (
               <div className="st-list-actions">

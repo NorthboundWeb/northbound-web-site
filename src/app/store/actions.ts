@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { limited } from '@/lib/portal/session'
+import { findDiscount } from '@/lib/store/discounts'
 import { STORE_COOKIE, STORE_COOKIE_AGE, codeMatches, storeCodeSet, storeCookieValue } from '@/lib/store/gate'
 
 export type UnlockState = { status: 'idle' | 'error'; message: string }
@@ -26,4 +27,12 @@ export async function unlockStore(_prev: UnlockState, form: FormData): Promise<U
 export async function lockStore() {
   ;(await cookies()).delete({ name: STORE_COOKIE, path: '/store' })
   redirect('/store')
+}
+
+export type DiscountResult = { ok: true; code: string; percent: number; label: string } | { ok: false; message: string }
+
+export async function checkDiscount(code: string): Promise<DiscountResult> {
+  if (await limited('discount', 15, 15 * 60 * 1000)) return { ok: false, message: 'Too many tries. Please wait a few minutes.' }
+  const d = findDiscount(String(code ?? '').slice(0, 40))
+  return d ? { ok: true, ...d } : { ok: false, message: 'That code is not valid.' }
 }
